@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"log"
+	"log/slog"
 	"os"
 	"time"
 
@@ -16,53 +16,52 @@ import (
 )
 
 func main() {
-	// Create data directory if it doesn't exist
 	if err := os.MkdirAll("./data", 0o755); err != nil {
-		log.Fatalf("Failed to create data directory: %v", err)
+		slog.Error("Failed to create data directory", "error", err)
+		os.Exit(1)
 	}
 
-	// Open SQLite database
 	db, err := sql.Open("sqlite", "./data/faas.db")
 	if err != nil {
-		log.Fatalf("Failed to open database: %v", err)
+		slog.Error("Failed to open database", "error", err)
+		os.Exit(1)
 	}
 	defer func() {
 		if err := db.Close(); err != nil {
-			log.Printf("Failed to close database: %v", err)
+			slog.Error("Failed to close database", "error", err)
 		}
 	}()
 
-	// Enable foreign keys
 	if _, err := db.Exec("PRAGMA foreign_keys = ON"); err != nil {
-		log.Fatalf("Failed to enable foreign keys: %v", err)
+		slog.Error("Failed to enable foreign keys", "error", err)
+		os.Exit(1)
 	}
 
-	// Run migrations
-	log.Println("Running database migrations...")
+	slog.Info("Running database migrations")
 	if err := kv.Migrate(db); err != nil {
-		log.Fatalf("Failed to run KV migrations: %v", err)
+		slog.Error("Failed to run KV migrations", "error", err)
+		os.Exit(1)
 	}
 	if err := env.Migrate(db); err != nil {
-		log.Fatalf("Failed to run env migrations: %v", err)
+		slog.Error("Failed to run env migrations", "error", err)
+		os.Exit(1)
 	}
 	if err := logger.Migrate(db); err != nil {
-		log.Fatalf("Failed to run logger migrations: %v", err)
+		slog.Error("Failed to run logger migrations", "error", err)
+		os.Exit(1)
 	}
 	if err := api.Migrate(db); err != nil {
-		log.Fatalf("Failed to run API migrations: %v", err)
+		slog.Error("Failed to run API migrations", "error", err)
+		os.Exit(1)
 	}
-	log.Println("Migrations completed successfully")
+	slog.Info("Migrations completed successfully")
 
-	// Create API database
 	apiDB := api.NewSQLiteDB(db)
-
-	// Create stores and services
 	kvStore := kv.NewSQLiteStore(db)
 	envStore := env.NewSQLiteStore(db)
 	appLogger := logger.NewSQLiteLogger(db)
 	httpClient := internalhttp.NewDefaultClient()
 
-	// Create API server with full configuration
 	server := api.NewServer(api.ServerConfig{
 		DB:               apiDB,
 		Logger:           appLogger,
@@ -73,12 +72,12 @@ func main() {
 		FrontendHandler:  frontend.Handler(),
 	})
 
-	// Start server
 	addr := ":3000"
-	log.Printf("Starting FaaS-Go server on %s", addr)
-	log.Printf("Frontend available at http://localhost%s", addr)
-	log.Printf("API available at http://localhost%s/api", addr)
+	slog.Info("Starting FaaS-Go server", "addr", addr)
+	slog.Info("Frontend available", "url", "http://localhost"+addr)
+	slog.Info("API available", "url", "http://localhost"+addr+"/api")
 	if err := server.ListenAndServe(addr); err != nil {
-		log.Fatalf("Server failed: %v", err)
+		slog.Error("Server failed", "error", err)
+		os.Exit(1)
 	}
 }
