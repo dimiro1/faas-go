@@ -5,12 +5,36 @@ A lightweight, self-hosted Function-as-a-Service platform written in Go with Lua
 ## Features
 
 * **Simple Lua Functions** - Write serverless functions in Lua
+* **Code Editor** - Monaco Editor with autocomplete and inline documentation
 * **HTTP Triggers** - Execute functions via HTTP requests
 * **Built-in APIs** - HTTP client, KV store, environment variables, logging, and more
 * **Version Control** - Track and manage function versions
 * **Execution History** - Monitor function executions and logs
 * **Web Dashboard** - Manage functions through a clean web interface
 * **Lightweight** - Single binary, no external dependencies
+
+## Screenshots
+
+### Dashboard
+![Dashboard](shots/dashboard.png)
+
+### Function Editor
+![Edit Function](shots/edit.png)
+
+### Environment Variables
+![Environment Variables](shots/env.png)
+
+### Testing Functions
+![Test Function](shots/test.png)
+
+### Execution History
+![Executions](shots/executions.png)
+
+### Version Management
+![Versions](shots/versions.png)
+
+### Version Comparison
+![Version Comparison](shots/comparison.png)
 
 ## Quick Start
 
