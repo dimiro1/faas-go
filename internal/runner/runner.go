@@ -60,6 +60,15 @@ func Run(ctx context.Context, deps Dependencies, req Request) (Response, error) 
 	registerEnv(L, deps.Env, req.Context.FunctionID)
 	registerHTTP(L, deps.HTTP)
 
+	// Register utility modules
+	registerJSON(L)
+	registerBase64(L)
+	registerCrypto(L)
+	registerTime(L)
+	registerURL(L)
+	registerStrings(L)
+	registerRandom(L)
+
 	// Load and execute the Lua code
 	if err := L.DoString(req.Code); err != nil {
 		return Response{}, fmt.Errorf("failed to load Lua code: %w", err)

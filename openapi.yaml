@@ -1,0 +1,1029 @@
+openapi: 3.0.4
+info:
+  title: FaaS Application API
+  description: |
+    API for managing and executing serverless functions. This API allows you to create, manage,
+    and execute functions written in Lua, with support for versioning, environment variables,
+    and execution logging.
+  version: 1.0.0
+  contact:
+    name: FaaS API Support
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: http://0.0.0.0:3000
+    description: Default server
+
+tags:
+  - name: Functions
+    description: Function management operations
+  - name: Versions
+    description: Function version management
+  - name: Executions
+    description: Function execution history and logs
+  - name: Runtime
+    description: Function execution endpoints
+
+paths:
+  /api/functions:
+    post:
+      tags:
+        - Functions
+      summary: Create a new function
+      description: Creates a new function with the provided code and metadata. The first version is automatically created and activated.
+      operationId: createFunction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFunctionRequest"
+            examples:
+              simpleFunction:
+                summary: Simple HTTP function
+                value:
+                  name: hello-world
+                  description: A simple hello world function
+                  code: |
+                    function handler(ctx, event)
+                      return {
+                        statusCode = 200,
+                        body = "Hello, World!",
+                        headers = {}
+                      }
+                    end
+      responses:
+        "200":
+          description: Function created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FunctionWithActiveVersion"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    get:
+      tags:
+        - Functions
+      summary: List all functions
+      description: Returns a list of all functions with their active versions
+      operationId: listFunctions
+      responses:
+        "200":
+          description: List of functions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListFunctionsResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/functions/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier of the function
+        schema:
+          type: string
+          example: "abc123xyz"
+
+    get:
+      tags:
+        - Functions
+      summary: Get a specific function
+      description: Returns detailed information about a function including its active version
+      operationId: getFunction
+      responses:
+        "200":
+          description: Function retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FunctionWithActiveVersion"
+        "404":
+          description: Function not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    put:
+      tags:
+        - Functions
+      summary: Update a function
+      description: |
+        Updates function metadata and/or code. If code is provided, a new version is created.
+        All fields are optional.
+      operationId: updateFunction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFunctionRequest"
+            examples:
+              updateMetadata:
+                summary: Update only metadata
+                value:
+                  name: new-function-name
+                  description: Updated description
+              updateCode:
+                summary: Update code (creates new version)
+                value:
+                  code: |
+                    function handler(ctx, event)
+                      return {statusCode = 200, body = "Updated!", headers = {}}
+                    end
+      responses:
+        "200":
+          description: Function updated successfully
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      tags:
+        - Functions
+      summary: Delete a function
+      description: Permanently deletes a function and all its versions
+      operationId: deleteFunction
+      responses:
+        "204":
+          description: Function deleted successfully
+        "404":
+          description: Function not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/functions/{id}/versions:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier of the function
+        schema:
+          type: string
+
+    get:
+      tags:
+        - Versions
+      summary: List all versions of a function
+      description: Returns all versions of a function in descending order (newest first)
+      operationId: listVersions
+      responses:
+        "200":
+          description: Versions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListVersionsResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/functions/{id}/versions/{version}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier of the function
+        schema:
+          type: string
+      - name: version
+        in: path
+        required: true
+        description: Version number
+        schema:
+          type: integer
+          minimum: 1
+          example: 1
+
+    get:
+      tags:
+        - Versions
+      summary: Get a specific version
+      description: Returns detailed information about a specific version of a function
+      operationId: getVersion
+      responses:
+        "200":
+          description: Version retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FunctionVersion"
+        "404":
+          description: Version not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/functions/{id}/versions/{version}/activate:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier of the function
+        schema:
+          type: string
+      - name: version
+        in: path
+        required: true
+        description: Version number to activate
+        schema:
+          type: integer
+          minimum: 1
+
+    post:
+      tags:
+        - Versions
+      summary: Activate a version
+      description: Sets the specified version as the active version for the function
+      operationId: activateVersion
+      responses:
+        "200":
+          description: Version activated successfully
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/functions/{id}/diff/{v1}/{v2}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier of the function
+        schema:
+          type: string
+      - name: v1
+        in: path
+        required: true
+        description: First version number
+        schema:
+          type: integer
+          minimum: 1
+      - name: v2
+        in: path
+        required: true
+        description: Second version number
+        schema:
+          type: integer
+          minimum: 1
+
+    get:
+      tags:
+        - Versions
+      summary: Get diff between two versions
+      description: Returns a line-by-line diff between two versions of a function
+      operationId: getVersionDiff
+      responses:
+        "200":
+          description: Diff retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VersionDiffResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/functions/{id}/env:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier of the function
+        schema:
+          type: string
+
+    put:
+      tags:
+        - Functions
+      summary: Update environment variables
+      description: Updates the environment variables for a function. Does not create a new version.
+      operationId: updateEnvVars
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEnvVarsRequest"
+            examples:
+              setEnvVars:
+                summary: Set environment variables
+                value:
+                  env_vars:
+                    API_KEY: "secret-key-123"
+                    DATABASE_URL: "postgresql://localhost/db"
+                    DEBUG: "true"
+      responses:
+        "200":
+          description: Environment variables updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FunctionVersion"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/functions/{id}/executions:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier of the function
+        schema:
+          type: string
+
+    get:
+      tags:
+        - Executions
+      summary: List executions of a function
+      description: Returns the execution history for a function (up to 100 most recent)
+      operationId: listExecutions
+      responses:
+        "200":
+          description: Executions retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListExecutionsResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/executions/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique execution identifier
+        schema:
+          type: string
+          example: "exec_abc123"
+
+    get:
+      tags:
+        - Executions
+      summary: Get execution details
+      description: Returns detailed information about a specific execution
+      operationId: getExecution
+      responses:
+        "200":
+          description: Execution retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Execution"
+        "404":
+          description: Execution not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/executions/{id}/logs:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique execution identifier
+        schema:
+          type: string
+
+    get:
+      tags:
+        - Executions
+      summary: Get execution logs
+      description: Returns the execution details along with all logs generated during execution
+      operationId: getExecutionLogs
+      responses:
+        "200":
+          description: Execution logs retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutionWithLogs"
+        "404":
+          description: Execution not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /fn/{function_id}:
+    parameters:
+      - name: function_id
+        in: path
+        required: true
+        description: Unique identifier of the function to execute
+        schema:
+          type: string
+          example: "abc123xyz"
+
+    get:
+      tags:
+        - Runtime
+      summary: Execute function with GET method
+      description: |
+        Executes the active version of a function with an HTTP GET request.
+        Returns custom response headers:
+        - X-Function-Id: The function's unique ID
+        - X-Function-Version-Id: The version ID that was executed
+        - X-Execution-Id: Unique ID for this execution
+        - X-Execution-Duration-Ms: Execution time in milliseconds
+      operationId: executeFunctionGet
+      parameters:
+        - in: query
+          name: query parameters
+          description: Any query parameters are passed to the function
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        "200":
+          description: Function executed successfully (status code may vary based on function response)
+          headers:
+            X-Function-Id:
+              description: The function's unique ID
+              schema:
+                type: string
+            X-Function-Version-Id:
+              description: The version ID that was executed
+              schema:
+                type: string
+            X-Execution-Id:
+              description: Unique ID for this execution
+              schema:
+                type: string
+            X-Execution-Duration-Ms:
+              description: Execution time in milliseconds
+              schema:
+                type: integer
+          content:
+            "*/*":
+              schema:
+                type: string
+                description: Response body from the function
+        "404":
+          description: Function not found
+        "500":
+          description: Function execution failed
+
+    post:
+      tags:
+        - Runtime
+      summary: Execute function with POST method
+      description: |
+        Executes the active version of a function with an HTTP POST request.
+        Returns custom response headers:
+        - X-Function-Id: The function's unique ID
+        - X-Function-Version-Id: The version ID that was executed
+        - X-Execution-Id: Unique ID for this execution
+        - X-Execution-Duration-Ms: Execution time in milliseconds
+      operationId: executeFunctionPost
+      parameters:
+        - in: query
+          name: query parameters
+          description: Any query parameters are passed to the function
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      requestBody:
+        description: Request body passed to the function
+        content:
+          "*/*":
+            schema:
+              type: string
+      responses:
+        "200":
+          description: Function executed successfully (status code may vary based on function response)
+          headers:
+            X-Function-Id:
+              schema:
+                type: string
+            X-Function-Version-Id:
+              schema:
+                type: string
+            X-Execution-Id:
+              schema:
+                type: string
+            X-Execution-Duration-Ms:
+              schema:
+                type: integer
+          content:
+            "*/*":
+              schema:
+                type: string
+        "404":
+          description: Function not found
+        "500":
+          description: Function execution failed
+
+    put:
+      tags:
+        - Runtime
+      summary: Execute function with PUT method
+      description: |
+        Executes the active version of a function with an HTTP PUT request.
+        Returns custom response headers similar to GET and POST.
+      operationId: executeFunctionPut
+      parameters:
+        - in: query
+          name: query parameters
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+      responses:
+        "200":
+          description: Function executed successfully
+          headers:
+            X-Function-Id:
+              schema:
+                type: string
+            X-Function-Version-Id:
+              schema:
+                type: string
+            X-Execution-Id:
+              schema:
+                type: string
+            X-Execution-Duration-Ms:
+              schema:
+                type: integer
+          content:
+            "*/*":
+              schema:
+                type: string
+        "404":
+          description: Function not found
+        "500":
+          description: Function execution failed
+
+    delete:
+      tags:
+        - Runtime
+      summary: Execute function with DELETE method
+      description: |
+        Executes the active version of a function with an HTTP DELETE request.
+        Returns custom response headers similar to GET and POST.
+      operationId: executeFunctionDelete
+      parameters:
+        - in: query
+          name: query parameters
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        "200":
+          description: Function executed successfully
+          headers:
+            X-Function-Id:
+              schema:
+                type: string
+            X-Function-Version-Id:
+              schema:
+                type: string
+            X-Execution-Id:
+              schema:
+                type: string
+            X-Execution-Duration-Ms:
+              schema:
+                type: integer
+          content:
+            "*/*":
+              schema:
+                type: string
+        "404":
+          description: Function not found
+        "500":
+          description: Function execution failed
+
+components:
+  schemas:
+    Function:
+      type: object
+      required:
+        - id
+        - name
+        - env_vars
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the function
+          example: "abc123xyz"
+        name:
+          type: string
+          description: Human-readable name for the function
+          example: "hello-world"
+        description:
+          type: string
+          nullable: true
+          description: Optional description of what the function does
+          example: "A simple hello world function"
+        env_vars:
+          type: object
+          additionalProperties:
+            type: string
+          description: Environment variables available to the function
+          example:
+            API_KEY: "secret-123"
+            DEBUG: "true"
+        created_at:
+          type: integer
+          format: int64
+          description: Unix timestamp when the function was created
+          example: 1672531200
+        updated_at:
+          type: integer
+          format: int64
+          description: Unix timestamp when the function was last updated
+          example: 1672617600
+
+    FunctionVersion:
+      type: object
+      required:
+        - id
+        - function_id
+        - version
+        - code
+        - created_at
+        - is_active
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this version
+          example: "ver_abc123"
+        function_id:
+          type: string
+          description: ID of the parent function
+          example: "abc123xyz"
+        version:
+          type: integer
+          description: Version number (incremental)
+          example: 1
+          minimum: 1
+        code:
+          type: string
+          description: Lua code for this version
+          example: |
+            function handler(ctx, event)
+              return {statusCode = 200, body = "Hello", headers = {}}
+            end
+        created_at:
+          type: integer
+          format: int64
+          description: Unix timestamp when this version was created
+          example: 1672531200
+        created_by:
+          type: string
+          nullable: true
+          description: User who created this version (if applicable)
+          example: "user@example.com"
+        is_active:
+          type: boolean
+          description: Whether this is the currently active version
+          example: true
+
+    Execution:
+      type: object
+      required:
+        - id
+        - function_id
+        - function_version_id
+        - execution_id
+        - status
+        - created_at
+      properties:
+        id:
+          type: string
+          description: Internal database ID
+          example: "1"
+        function_id:
+          type: string
+          description: ID of the function that was executed
+          example: "abc123xyz"
+        function_version_id:
+          type: string
+          description: ID of the version that was executed
+          example: "ver_abc123"
+        execution_id:
+          type: string
+          description: Unique execution identifier
+          example: "exec_xyz789"
+        status:
+          type: string
+          enum:
+            - pending
+            - success
+            - error
+          description: Status of the execution
+          example: "success"
+        duration_ms:
+          type: integer
+          format: int64
+          nullable: true
+          description: Execution duration in milliseconds
+          example: 125
+        error_message:
+          type: string
+          nullable: true
+          description: Error message if execution failed
+          example: "Runtime error: attempt to call nil value"
+        created_at:
+          type: integer
+          format: int64
+          description: Unix timestamp when execution started
+          example: 1672531200
+
+    ExecutionWithLogCount:
+      allOf:
+        - $ref: "#/components/schemas/Execution"
+        - type: object
+          required:
+            - log_count
+          properties:
+            log_count:
+              type: integer
+              format: int64
+              description: Number of log entries for this execution
+              example: 5
+
+    LogEntry:
+      type: object
+      required:
+        - id
+        - execution_id
+        - level
+        - message
+        - timestamp
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the log entry
+          example: "log_123"
+        execution_id:
+          type: string
+          description: ID of the execution this log belongs to
+          example: "exec_xyz789"
+        level:
+          type: string
+          description: Log level
+          enum:
+            - debug
+            - info
+            - warn
+            - error
+          example: "info"
+        message:
+          type: string
+          description: Log message content
+          example: "Processing request for user 123"
+        timestamp:
+          type: integer
+          format: int64
+          description: Unix timestamp when log was created
+          example: 1672531200
+
+    DiffLine:
+      type: object
+      required:
+        - line_type
+        - content
+      properties:
+        line_type:
+          type: string
+          enum:
+            - unchanged
+            - added
+            - removed
+          description: Type of change for this line
+          example: "unchanged"
+        old_line:
+          type: integer
+          nullable: true
+          description: Line number in old version (null for added lines)
+          example: 5
+        new_line:
+          type: integer
+          nullable: true
+          description: Line number in new version (null for removed lines)
+          example: 5
+        content:
+          type: string
+          description: Content of the line
+          example: "  return {statusCode = 200}"
+
+    CreateFunctionRequest:
+      type: object
+      required:
+        - name
+        - code
+      properties:
+        name:
+          type: string
+          description: Name for the function
+          example: "hello-world"
+          minLength: 1
+        description:
+          type: string
+          nullable: true
+          description: Optional description
+          example: "A simple hello world function"
+        code:
+          type: string
+          description: Lua code for the function
+          example: |
+            function handler(ctx, event)
+              return {statusCode = 200, body = "Hello", headers = {}}
+            end
+
+    UpdateFunctionRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+          description: New name for the function
+          example: "updated-name"
+        description:
+          type: string
+          nullable: true
+          description: New description
+          example: "Updated description"
+        code:
+          type: string
+          nullable: true
+          description: New code (creates a new version)
+          example: |
+            function handler(ctx, event)
+              return {statusCode = 200, body = "Updated!", headers = {}}
+            end
+
+    UpdateEnvVarsRequest:
+      type: object
+      required:
+        - env_vars
+      properties:
+        env_vars:
+          type: object
+          additionalProperties:
+            type: string
+          description: Environment variables to set
+          example:
+            API_KEY: "new-secret"
+            DATABASE_URL: "postgresql://localhost/db"
+
+    FunctionWithActiveVersion:
+      allOf:
+        - $ref: "#/components/schemas/Function"
+        - type: object
+          required:
+            - active_version
+          properties:
+            active_version:
+              $ref: "#/components/schemas/FunctionVersion"
+
+    ListFunctionsResponse:
+      type: object
+      required:
+        - functions
+      properties:
+        functions:
+          type: array
+          items:
+            $ref: "#/components/schemas/FunctionWithActiveVersion"
+
+    ListVersionsResponse:
+      type: object
+      required:
+        - versions
+      properties:
+        versions:
+          type: array
+          items:
+            $ref: "#/components/schemas/FunctionVersion"
+
+    ListExecutionsResponse:
+      type: object
+      required:
+        - executions
+      properties:
+        executions:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExecutionWithLogCount"
+
+    ExecutionWithLogs:
+      allOf:
+        - $ref: "#/components/schemas/Execution"
+        - type: object
+          required:
+            - logs
+          properties:
+            logs:
+              type: array
+              items:
+                $ref: "#/components/schemas/LogEntry"
+
+    VersionDiffResponse:
+      type: object
+      required:
+        - old_version
+        - new_version
+        - diff
+      properties:
+        old_version:
+          type: integer
+          description: First version number
+          example: 1
+        new_version:
+          type: integer
+          description: Second version number
+          example: 2
+        diff:
+          type: array
+          items:
+            $ref: "#/components/schemas/DiffLine"
+          description: Line-by-line diff
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Function not found"
