@@ -1,5 +1,5 @@
-import { Icons } from '../icons.js';
-import { API } from '../api.js';
+import { Icons } from "../icons.js";
+import { API } from "../api.js";
 
 export const VersionDiff = {
   func: null,
@@ -73,7 +73,7 @@ export const VersionDiff = {
           "div",
           {
             style:
-              "max-height: 600px; overflow-y: auto; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace; font-size: 13px; background: #0a0a0a;",
+              "max-height: 600px; overflow-y: auto; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace; font-size: 13px; background: #1e1e1e;",
           },
           m(
             "table",
@@ -99,7 +99,7 @@ export const VersionDiff = {
                         "td",
                         {
                           style:
-                            "width: 40px; padding: 2px 8px; text-align: right; color: #666; border-right: 1px solid #262626; user-select: none; background: #171717;",
+                            "width: 40px; padding: 2px 8px; text-align: right; color: #666; border-right: 1px solid #3e3e42; user-select: none; background: #252526;",
                         },
                         line.old_line || "",
                       ),
@@ -107,7 +107,7 @@ export const VersionDiff = {
                         "td",
                         {
                           style:
-                            "width: 40px; padding: 2px 8px; text-align: right; color: #666; border-right: 1px solid #262626; user-select: none; background: #171717;",
+                            "width: 40px; padding: 2px 8px; text-align: right; color: #666; border-right: 1px solid #3e3e42; user-select: none; background: #252526;",
                         },
                         line.new_line || "",
                       ),
@@ -115,7 +115,7 @@ export const VersionDiff = {
                         "td",
                         {
                           style:
-                            "width: 20px; padding: 2px 8px; text-align: center; border-right: 1px solid #262626; user-select: none; font-weight: bold; color: " +
+                            "width: 20px; padding: 2px 8px; text-align: center; border-right: 1px solid #3e3e42; user-select: none; font-weight: bold; color: " +
                             (line.line_type === "added"
                               ? "#86efac"
                               : line.line_type === "removed"

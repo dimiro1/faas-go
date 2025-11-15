@@ -228,14 +228,6 @@ export const FunctionDetail = {
         m(
           "a.tab",
           {
-            class: FunctionDetail.activeTab === "code" ? "active" : "",
-            onclick: () => FunctionDetail.setTab("code"),
-          },
-          "Code",
-        ),
-        m(
-          "a.tab",
-          {
             class: FunctionDetail.activeTab === "env" ? "active" : "",
             onclick: () => FunctionDetail.setTab("env"),
           },
@@ -267,49 +259,108 @@ export const FunctionDetail = {
         ),
       ]),
 
-      // Overview Tab
+      // Overview Tab (combined with Code)
       FunctionDetail.activeTab === "overview" &&
-        m(".card", [
-          m(".card-header", m(".card-title", "Function Details")),
-          m("table", [
-            m("tbody", [
-              m("tr", [
-                m("td", m("strong", "ID")),
-                m("td", m(IdPill, { id: func.id })),
-              ]),
-              m("tr", [m("td", m("strong", "Name")), m("td", func.name)]),
-              m("tr", [
-                m("td", m("strong", "Active Version")),
-                m(
-                  "td",
-                  m(".badge.badge-success", `v${func.active_version.version}`),
-                ),
-              ]),
-              m("tr", [
-                m("td", m("strong", "Created")),
-                m("td", formatUnixTimestamp(func.created_at)),
-              ]),
-              m("tr", [
-                m("td", m("strong", "Updated")),
-                m("td", formatUnixTimestamp(func.updated_at)),
+        m(".layout-with-sidebar", [
+          m(".main-column", [
+            m(".card", [
+              m(
+                ".card-header",
+                m(".card-title", `Code v${func.active_version.version}`),
+              ),
+              m("div", { style: "padding: 16px;" }, [
+                m(CodeEditor, {
+                  id: "code-viewer",
+                  value: func.active_version.code,
+                  readOnly: true,
+                }),
               ]),
             ]),
           ]),
-        ]),
-
-      // Code Tab
-      FunctionDetail.activeTab === "code" &&
-        m(".card", [
-          m(
-            ".card-header",
-            m(".card-title", `Code (Version ${func.active_version.version})`),
-          ),
-          m("div", { style: "padding: 16px;" }, [
-            m(CodeEditor, {
-              id: "code-viewer",
-              value: func.active_version.code,
-              readOnly: true,
-            }),
+          m(".docs-sidebar", [
+            m(".docs-header", [
+              m("h3", "Details"),
+              m("p.docs-subtitle", "Function metadata"),
+            ]),
+            m(".docs-content", { style: "padding: 12px;" }, [
+              m("table", { style: "width: 100%; font-size: 11px;" }, [
+                m("tbody", [
+                  m("tr", [
+                    m(
+                      "td",
+                      { style: "padding: 6px 8px; color: #858585;" },
+                      "ID",
+                    ),
+                    m(
+                      "td",
+                      { style: "padding: 6px 8px;" },
+                      m(IdPill, { id: func.id }),
+                    ),
+                  ]),
+                  m("tr", [
+                    m(
+                      "td",
+                      { style: "padding: 6px 8px; color: #858585;" },
+                      "Name",
+                    ),
+                    m(
+                      "td",
+                      {
+                        style:
+                          "padding: 6px 8px; font-family: var(--font-mono);",
+                      },
+                      func.name,
+                    ),
+                  ]),
+                  m("tr", [
+                    m(
+                      "td",
+                      { style: "padding: 6px 8px; color: #858585;" },
+                      "Version",
+                    ),
+                    m(
+                      "td",
+                      { style: "padding: 6px 8px;" },
+                      m(
+                        ".badge.badge-success",
+                        { style: "font-size: 10px;" },
+                        `v${func.active_version.version}`,
+                      ),
+                    ),
+                  ]),
+                  m("tr", [
+                    m(
+                      "td",
+                      { style: "padding: 6px 8px; color: #858585;" },
+                      "Created",
+                    ),
+                    m(
+                      "td",
+                      {
+                        style:
+                          "padding: 6px 8px; font-family: var(--font-mono); font-size: 10px;",
+                      },
+                      formatUnixTimestamp(func.created_at),
+                    ),
+                  ]),
+                  m("tr", [
+                    m(
+                      "td",
+                      { style: "padding: 6px 8px; color: #858585;" },
+                      "Updated",
+                    ),
+                    m(
+                      "td",
+                      {
+                        style:
+                          "padding: 6px 8px; font-family: var(--font-mono); font-size: 10px;",
+                      },
+                      formatUnixTimestamp(func.updated_at),
+                    ),
+                  ]),
+                ]),
+              ]),
+            ]),
           ]),
         ]),
 
@@ -512,216 +563,354 @@ export const FunctionDetail = {
             body: FunctionDetail.testRequest.body,
           }),
 
-          m(".card", [
-            m(".card-header", m(".card-title", "Test Function")),
-            m("div", { style: "padding: 24px;" }, [
-              m(".form-group", [
-                m("label.form-label", "Method"),
-                m(
-                  "select.form-select",
-                  {
-                    value: FunctionDetail.testRequest.method,
-                    onchange: (e) =>
-                      (FunctionDetail.testRequest.method = e.target.value),
-                  },
-                  [
-                    m("option", { value: "GET" }, "GET"),
-                    m("option", { value: "POST" }, "POST"),
-                    m("option", { value: "PUT" }, "PUT"),
-                    m("option", { value: "DELETE" }, "DELETE"),
-                  ],
-                ),
-              ]),
-              m(".form-group", [
-                m("label.form-label", "Query Parameters"),
-                m("input.form-input", {
-                  value: FunctionDetail.testRequest.query,
-                  oninput: (e) =>
-                    (FunctionDetail.testRequest.query = e.target.value),
-                  placeholder: "key1=value1&key2=value2",
-                  style: "font-family: monospace;",
-                }),
-              ]),
-              m(".form-group", [
-                m("label.form-label", "Request Body"),
-                m("textarea.form-textarea", {
-                  value: FunctionDetail.testRequest.body,
-                  oninput: (e) =>
-                    (FunctionDetail.testRequest.body = e.target.value),
-                  rows: 8,
-                  style: "font-family: monospace;",
-                }),
-              ]),
-              m(
-                "button.btn.btn-primary",
-                {
-                  onclick: FunctionDetail.executeTest,
-                },
-                [Icons.play(), "  Execute"],
-              ),
-
-              FunctionDetail.testResponse &&
-                m("div", { style: "margin-top: 24px;" }, [
+          m(".layout-with-sidebar", [
+            // Request (left)
+            m(".main-column", [
+              m(".card", [
+                m(".card-header", m(".card-title", "Request")),
+                m("div", { style: "padding: 16px;" }, [
                   m(".form-group", [
-                    m("label.form-label", "Response"),
+                    m("label.form-label", "Method"),
                     m(
-                      "div",
-                      m(
-                        ".badge",
-                        {
-                          class:
-                            FunctionDetail.testResponse.status === 200
-                              ? "badge-success"
-                              : "",
-                        },
-                        `Status: ${FunctionDetail.testResponse.status}`,
-                      ),
+                      "select.form-select",
+                      {
+                        value: FunctionDetail.testRequest.method,
+                        onchange: (e) =>
+                          (FunctionDetail.testRequest.method = e.target.value),
+                      },
+                      [
+                        m("option", { value: "GET" }, "GET"),
+                        m("option", { value: "POST" }, "POST"),
+                        m("option", { value: "PUT" }, "PUT"),
+                        m("option", { value: "DELETE" }, "DELETE"),
+                      ],
                     ),
                   ]),
                   m(".form-group", [
-                    m("label.form-label", "Body"),
+                    m("label.form-label", "Query Parameters"),
+                    m("input.form-input", {
+                      value: FunctionDetail.testRequest.query,
+                      oninput: (e) =>
+                        (FunctionDetail.testRequest.query = e.target.value),
+                      placeholder: "key1=value1&key2=value2",
+                      style: "font-family: monospace;",
+                    }),
+                  ]),
+                  m(".form-group", [
+                    m("label.form-label", "Request Body"),
+                    m("textarea.form-textarea", {
+                      value: FunctionDetail.testRequest.body,
+                      oninput: (e) =>
+                        (FunctionDetail.testRequest.body = e.target.value),
+                      rows: 8,
+                      style: "font-family: monospace;",
+                    }),
+                  ]),
+                  m(
+                    "button.btn.btn-primary",
+                    {
+                      onclick: FunctionDetail.executeTest,
+                    },
+                    [Icons.play(), "  Execute"],
+                  ),
+                ]),
+              ]),
+            ]),
+
+            // Response (right)
+            m(".docs-sidebar", { style: "top: 0; position: relative;" }, [
+              FunctionDetail.testResponse
+                ? m("div", { style: "padding: 16px;" }, [
                     m(
-                      "pre",
+                      ".docs-header",
                       {
                         style:
-                          "background: #0a0a0a; padding: 12px; border-radius: 4px; margin: 0; border: 1px solid #262626; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace; font-size: 13px; line-height: 1.5; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; min-height: 100px; max-height: 400px; overflow-y: auto;",
+                          "padding: 0 0 12px 0; border-bottom: 1px solid #3e3e42;",
                       },
-                      FunctionDetail.testResponse.body,
+                      [
+                        m("h3", "Response"),
+                        m(
+                          ".badge",
+                          {
+                            class:
+                              FunctionDetail.testResponse.status === 200
+                                ? "badge-success"
+                                : FunctionDetail.testResponse.status >= 400
+                                  ? "badge-error"
+                                  : "",
+                            style: "margin-top: 4px;",
+                          },
+                          `${FunctionDetail.testResponse.status}`,
+                        ),
+                      ],
                     ),
-                  ]),
-                  FunctionDetail.testLogs.length > 0 &&
-                    m(".form-group", { style: "margin-top: 24px;" }, [
-                      m("label.form-label", "Logs"),
+                    m("div", { style: "margin-top: 12px;" }, [
                       m(
-                        "div",
+                        "label.form-label",
+                        { style: "font-size: 11px; margin-bottom: 6px;" },
+                        "Body",
+                      ),
+                      m(
+                        "pre",
                         {
                           style:
-                            "max-height: 300px; overflow-y: auto; border: 1px solid #262626; border-radius: 4px;",
+                            "background: #1e1e1e; padding: 10px; border-radius: 4px; margin: 0; border: 1px solid #3e3e42; font-family: var(--font-mono); font-size: 11px; line-height: 1.5; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; max-height: 300px; overflow-y: auto;",
                         },
-                        m("table", { style: "margin: 0;" }, [
-                          m("thead", [
-                            m("tr", [
-                              m("th", { style: "width: 80px;" }, "Level"),
-                              m("th", { style: "width: 180px;" }, "Timestamp"),
-                              m("th", "Message"),
-                            ]),
-                          ]),
-                          m(
-                            "tbody",
-                            FunctionDetail.testLogs.map((log) =>
-                              m("tr", [
-                                m(
-                                  "td",
-                                  m(
-                                    "span.badge",
-                                    {
-                                      class:
-                                        log.level.toLowerCase() === "error"
-                                          ? "badge-error"
-                                          : log.level.toLowerCase() === "warn"
-                                            ? "badge-warn"
-                                            : log.level.toLowerCase() === "info"
-                                              ? "badge-info"
-                                              : "badge-debug",
-                                    },
-                                    log.level.toUpperCase(),
-                                  ),
-                                ),
-                                m(
-                                  "td",
-                                  {
-                                    style:
-                                      "font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace; font-size: 12px; color: #a3a3a3;",
-                                  },
-                                  formatUnixTimestamp(log.created_at, "time"),
-                                ),
-                                m(
-                                  "td",
-                                  {
-                                    style:
-                                      "font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace; font-size: 13px;",
-                                  },
-                                  log.message,
-                                ),
-                              ]),
-                            ),
-                          ),
-                        ]),
+                        FunctionDetail.testResponse.body,
                       ),
                     ]),
-                ]),
+                    FunctionDetail.testLogs.length > 0 &&
+                      m("div", { style: "margin-top: 16px;" }, [
+                        m(
+                          "label.form-label",
+                          { style: "font-size: 11px; margin-bottom: 6px;" },
+                          "Logs",
+                        ),
+                        m(
+                          "div",
+                          {
+                            style:
+                              "max-height: 300px; overflow-y: auto; border: 1px solid #3e3e42; border-radius: 4px;",
+                          },
+                          m("table", { style: "margin: 0; font-size: 11px;" }, [
+                            m("thead", [
+                              m("tr", [
+                                m(
+                                  "th",
+                                  { style: "width: 60px; padding: 8px;" },
+                                  "Level",
+                                ),
+                                m("th", { style: "padding: 8px;" }, "Message"),
+                              ]),
+                            ]),
+                            m(
+                              "tbody",
+                              FunctionDetail.testLogs.map((log) =>
+                                m("tr", [
+                                  m(
+                                    "td",
+                                    { style: "padding: 6px 8px;" },
+                                    m(
+                                      "span.badge",
+                                      {
+                                        class:
+                                          log.level.toLowerCase() === "error"
+                                            ? "badge-error"
+                                            : log.level.toLowerCase() === "warn"
+                                              ? "badge-warn"
+                                              : log.level.toLowerCase() ===
+                                                  "info"
+                                                ? "badge-info"
+                                                : "badge-debug",
+                                        style:
+                                          "font-size: 9px; padding: 2px 6px;",
+                                      },
+                                      log.level.toUpperCase(),
+                                    ),
+                                  ),
+                                  m(
+                                    "td",
+                                    {
+                                      style:
+                                        "font-family: var(--font-mono); font-size: 11px; padding: 6px 8px;",
+                                    },
+                                    log.message,
+                                  ),
+                                ]),
+                              ),
+                            ),
+                          ]),
+                        ),
+                      ]),
+                  ])
+                : m(
+                    "div",
+                    {
+                      style:
+                        "padding: 16px; text-align: center; color: #858585;",
+                    },
+                    [
+                      m("p", { style: "margin: 0;" }, "No response yet"),
+                      m(
+                        "p",
+                        { style: "margin: 8px 0 0 0; font-size: 11px;" },
+                        "Execute a request to see the response",
+                      ),
+                    ],
+                  ),
             ]),
           ]),
         ]),
 
       // Environment Tab
       FunctionDetail.activeTab === "env" &&
-        m(".card", [
-          m(".card-header", [
-            m(".card-title", "Environment Variables"),
-            m(
-              "button.btn.btn-icon",
-              {
-                onclick: () =>
-                  FunctionDetail.envVars.push({ key: "", value: "" }),
-              },
-              Icons.plus(),
-            ),
-          ]),
-          m("div", { style: "padding: 24px;" }, [
-            FunctionDetail.envVars.length === 0
-              ? m(
-                  ".text-center",
-                  { style: "color: #a3a3a3; padding: 48px 0;" },
-                  "No environment variables. Click + to add one.",
-                )
-              : FunctionDetail.envVars.map((envVar, i) =>
+        m(".layout-with-sidebar", [
+          m(".main-column", [
+            m(".card", [
+              m(".card-header", [
+                m(".card-title", "Environment Variables"),
+                m(".actions", [
                   m(
-                    ".form-group",
+                    "button.btn.btn-primary",
                     {
-                      key: i,
-                      style: "display: flex; gap: 8px; align-items: center;",
+                      onclick: FunctionDetail.saveEnvVars,
+                      disabled: FunctionDetail.savingEnv,
+                    },
+                    FunctionDetail.savingEnv ? "Saving..." : "Save Changes",
+                  ),
+                  m(
+                    "button.btn.btn-icon",
+                    {
+                      onclick: () =>
+                        FunctionDetail.envVars.push({ key: "", value: "" }),
+                    },
+                    Icons.plus(),
+                  ),
+                ]),
+              ]),
+              FunctionDetail.envVars.length === 0
+                ? m(
+                    ".text-center",
+                    { style: "color: #858585; padding: 48px 0;" },
+                    "No environment variables. Click + to add one.",
+                  )
+                : m("table", [
+                    m("thead", [
+                      m("tr", [
+                        m("th", { style: "width: 30%;" }, "Key"),
+                        m("th", "Value"),
+                        m(
+                          "th",
+                          { style: "width: 60px; text-align: center;" },
+                          "",
+                        ),
+                      ]),
+                    ]),
+                    m(
+                      "tbody",
+                      FunctionDetail.envVars.map((envVar, i) =>
+                        m("tr", { key: i }, [
+                          m("td", [
+                            m("input.form-input", {
+                              value: envVar.key,
+                              oninput: (e) => (envVar.key = e.target.value),
+                              placeholder: "KEY",
+                              style:
+                                "font-family: var(--font-mono); text-transform: uppercase; width: 100%;",
+                            }),
+                          ]),
+                          m("td", [
+                            m("input.form-input", {
+                              value: envVar.value,
+                              oninput: (e) => (envVar.value = e.target.value),
+                              placeholder: "value",
+                              style:
+                                "font-family: var(--font-mono); width: 100%;",
+                            }),
+                          ]),
+                          m("td", { style: "text-align: center;" }, [
+                            m(
+                              "button.btn.btn-icon",
+                              {
+                                onclick: () =>
+                                  FunctionDetail.envVars.splice(i, 1),
+                                title: "Delete",
+                              },
+                              Icons.xMark(),
+                            ),
+                          ]),
+                        ]),
+                      ),
+                    ),
+                  ]),
+            ]),
+          ]),
+          m(".docs-sidebar", [
+            m(".docs-header", [
+              m("h3", "Environment Variables"),
+              m("p.docs-subtitle", "Usage in functions"),
+            ]),
+            m(".docs-content", [
+              m(".docs-section", [
+                m(
+                  "p",
+                  {
+                    style:
+                      "font-size: 11px; color: #cccccc; line-height: 1.5; margin-bottom: 12px;",
+                  },
+                  "Environment variables are available in your functions through the env API.",
+                ),
+                m(".docs-methods", [
+                  m(".docs-method", [
+                    m("code.docs-signature", "env.get(key)"),
+                    m("span.docs-desc", "Get environment variable value"),
+                  ]),
+                  m(".docs-method", [
+                    m("code.docs-signature", "env.set(key, value)"),
+                    m("span.docs-desc", "Set environment variable (persisted)"),
+                  ]),
+                  m(".docs-method", [
+                    m("code.docs-signature", "env.delete(key)"),
+                    m("span.docs-desc", "Delete environment variable"),
+                  ]),
+                ]),
+              ]),
+              m(
+                ".docs-section",
+                {
+                  style:
+                    "margin-top: 16px; padding-top: 16px; border-top: 1px solid #3e3e42;",
+                },
+                [
+                  m("h4.docs-section-title", "Example"),
+                  m(
+                    "pre.docs-example",
+                    {
+                      oncreate: (vnode) => {
+                        hljs.highlightElement(vnode.dom.querySelector("code"));
+                      },
                     },
                     [
-                      m("input.form-input", {
-                        value: envVar.key,
-                        oninput: (e) => (envVar.key = e.target.value),
-                        placeholder: "KEY",
-                        style: "flex: 1;",
-                      }),
-                      m("input.form-input", {
-                        value: envVar.value,
-                        oninput: (e) => (envVar.value = e.target.value),
-                        placeholder: "value",
-                        style: "flex: 1;",
-                      }),
                       m(
-                        "button.btn.btn-icon",
-                        {
-                          onclick: () => FunctionDetail.envVars.splice(i, 1),
-                        },
-                        Icons.xMark(),
+                        "code.language-lua",
+                        `-- Get API key
+local apiKey = env.get("API_KEY")
+
+-- Use in HTTP request
+local res = http.get(url, {
+  headers = {
+    ["Authorization"] = apiKey
+  }
+})`,
                       ),
                     ],
                   ),
-                ),
-            m(
-              "div",
-              {
-                style:
-                  "display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;",
-              },
-              [
-                m(
-                  "button.btn.btn-primary",
-                  {
-                    onclick: FunctionDetail.saveEnvVars,
-                    disabled: FunctionDetail.savingEnv,
-                  },
-                  FunctionDetail.savingEnv ? "Saving..." : "Save Changes",
-                ),
-              ],
-            ),
+                ],
+              ),
+              m(
+                ".docs-section",
+                {
+                  style:
+                    "margin-top: 16px; padding-top: 16px; border-top: 1px solid #3e3e42;",
+                },
+                [
+                  m("h4.docs-section-title", "Best Practices"),
+                  m(
+                    "ul",
+                    {
+                      style:
+                        "font-size: 11px; color: #858585; line-height: 1.6; margin: 8px 0 0 0; padding-left: 20px;",
+                    },
+                    [
+                      m("li", "Use UPPER_CASE for keys"),
+                      m("li", "Store secrets and API keys"),
+                      m("li", "Don't hardcode sensitive data"),
+                      m("li", "Use descriptive key names"),
+                    ],
+                  ),
+                ],
+              ),
+            ]),
           ]),
         ]),
     ]);

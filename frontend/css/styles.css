@@ -4,14 +4,21 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family:
+:root {
+    --font-mono:
+        "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas,
+        "Courier New", monospace;
+    --font-sans:
         -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
         Cantarell, sans-serif;
-    font-size: 14px;
+}
+
+body {
+    font-family: var(--font-sans);
+    font-size: 13px;
     line-height: 1.5;
-    color: #e5e5e5;
-    background: #0a0a0a;
+    color: #cccccc;
+    background: #1e1e1e;
 }
 
 .container {
@@ -22,7 +29,7 @@ body {
 
 /* Header */
 header {
-    border-bottom: 1px solid #262626;
+    border-bottom: 1px solid #3e3e42;
     padding: 16px 0;
 }
 
@@ -39,7 +46,7 @@ header .container {
     font-size: 16px;
     font-weight: 600;
     text-decoration: none;
-    color: #e5e5e5;
+    color: #cccccc;
 }
 
 /* Main Content */
@@ -65,7 +72,7 @@ main {
 }
 
 .page-subtitle {
-    color: #a3a3a3;
+    color: #858585;
     font-size: 14px;
 }
 
@@ -75,9 +82,9 @@ main {
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
-    border: 1px solid #404040;
-    background: #1a1a1a;
-    color: #e5e5e5;
+    border: 1px solid #3e3e42;
+    background: #2d2d30;
+    color: #cccccc;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -87,8 +94,8 @@ main {
 }
 
 .btn:hover {
-    background: #262626;
-    border-color: #525252;
+    background: #3e3e42;
+    border-color: #4e4e52;
 }
 
 .btn-icon {
@@ -114,27 +121,27 @@ main {
 }
 
 .btn-secondary {
-    background: #262626;
-    color: #e5e5e5;
-    border-color: #404040;
+    background: #3e3e42;
+    color: #cccccc;
+    border-color: #3e3e42;
 }
 
 .btn-secondary:hover {
-    background: #404040;
-    border-color: #525252;
+    background: #4e4e52;
+    border-color: #4e4e52;
 }
 
 /* Card */
 .card {
-    border: 1px solid #262626;
+    border: 1px solid #3e3e42;
     border-radius: 8px;
-    background: #171717;
+    background: #252526;
     overflow: hidden;
 }
 
 .card-header {
     padding: 16px 20px;
-    border-bottom: 1px solid #262626;
+    border-bottom: 1px solid #3e3e42;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -149,7 +156,7 @@ main {
 
 .card-subtitle {
     font-size: 13px;
-    color: #a3a3a3;
+    color: #858585;
 }
 
 /* Table */
@@ -160,11 +167,13 @@ table {
 
 thead th {
     text-align: left;
-    padding: 12px 20px;
-    font-weight: 500;
-    font-size: 13px;
-    color: #a3a3a3;
-    border-bottom: 1px solid #262626;
+    padding: 10px 16px;
+    font-weight: 600;
+    font-size: 11px;
+    color: #858585;
+    border-bottom: 1px solid #3e3e42;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 thead th.th-actions {
@@ -172,8 +181,9 @@ thead th.th-actions {
 }
 
 tbody td {
-    padding: 16px 20px;
-    border-bottom: 1px solid #1a1a1a;
+    padding: 12px 16px;
+    border-bottom: 1px solid #2d2d30;
+    font-size: 13px;
 }
 
 tbody td.td-actions {
@@ -181,7 +191,14 @@ tbody td.td-actions {
 }
 
 tbody tr:hover {
-    background: #1a1a1a;
+    background: #2d2d30;
+}
+
+/* Monospace cells for technical data */
+.td-mono {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: -0.01em;
 }
 
 .actions {
@@ -193,12 +210,14 @@ tbody tr:hover {
 /* Badge */
 .badge {
     display: inline-block;
-    padding: 2px 8px;
-    font-size: 12px;
-    font-weight: 500;
-    border-radius: 4px;
-    background: #262626;
-    color: #a3a3a3;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    background: #3e3e42;
+    color: #858585;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
 }
 
 .badge-success {
@@ -222,27 +241,50 @@ tbody tr:hover {
 }
 
 .badge-debug {
-    background: #262626;
-    color: #a3a3a3;
+    background: #3e3e42;
+    color: #858585;
+}
+
+/* Code blocks */
+code,
+pre {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: -0.01em;
 }
 
 /* ID Pill */
 .id-pill {
-    display: inline-block;
-    padding: 2px 8px;
-    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    font-size: 11px;
     font-weight: 500;
+    border-radius: 6px;
+    background: #3e3e42;
+    color: #858585;
+    font-family: var(--font-mono);
+    letter-spacing: -0.01em;
+}
+
+.id-pill-copy {
+    cursor: pointer;
+    padding: 2px;
     border-radius: 4px;
-    background: #262626;
-    color: #a3a3a3;
-    font-family: "Monaco", "Menlo", "Ubuntu Mono", "Consolas", monospace;
+    opacity: 0.6;
+    transition: opacity 0.1s;
+}
+
+.id-pill-copy:hover {
+    opacity: 1;
 }
 
 /* Tabs */
 .tabs {
     display: flex;
     gap: 24px;
-    border-bottom: 1px solid #262626;
+    border-bottom: 1px solid #3e3e42;
     margin-bottom: 24px;
 }
 
@@ -250,14 +292,14 @@ tbody tr:hover {
     padding: 12px 0;
     border-bottom: 2px solid transparent;
     cursor: pointer;
-    color: #a3a3a3;
+    color: #858585;
     font-weight: 500;
     text-decoration: none;
     transition: all 0.15s;
 }
 
 .tab:hover {
-    color: #e5e5e5;
+    color: #cccccc;
 }
 
 .tab.active {
@@ -275,7 +317,7 @@ tbody tr:hover {
     margin-bottom: 6px;
     font-weight: 500;
     font-size: 13px;
-    color: #e5e5e5;
+    color: #cccccc;
 }
 
 .form-input,
@@ -283,12 +325,12 @@ tbody tr:hover {
 .form-select {
     width: 100%;
     padding: 8px 12px;
-    border: 1px solid #404040;
+    border: 1px solid #3e3e42;
     border-radius: 6px;
     font-size: 14px;
     font-family: inherit;
-    background: #0a0a0a;
-    color: #e5e5e5;
+    background: #2d2d30;
+    color: #cccccc;
 }
 
 .form-input:focus,
@@ -305,7 +347,7 @@ tbody tr:hover {
 
 /* Code Editor */
 .CodeMirror {
-    border: 1px solid #262626;
+    border: 1px solid #3e3e42;
     border-radius: 6px;
     height: auto;
     min-height: 400px;
@@ -326,8 +368,8 @@ tbody tr:hover {
 }
 
 .modal {
-    background: #171717;
-    border: 1px solid #262626;
+    background: #252526;
+    border: 1px solid #3e3e42;
     border-radius: 8px;
     max-width: 600px;
     width: 100%;
@@ -338,7 +380,7 @@ tbody tr:hover {
 
 .modal-header {
     padding: 20px 24px;
-    border-bottom: 1px solid #262626;
+    border-bottom: 1px solid #3e3e42;
 }
 
 .modal-title {
@@ -353,7 +395,7 @@ tbody tr:hover {
 
 .modal-footer {
     padding: 16px 24px;
-    border-top: 1px solid #262626;
+    border-top: 1px solid #3e3e42;
     display: flex;
     justify-content: flex-end;
     gap: 12px;
@@ -378,9 +420,9 @@ tbody tr:hover {
     gap: 12px;
     padding: 12px 16px;
     border-radius: 6px;
-    background: #262626;
-    border: 1px solid #404040;
-    color: #e5e5e5;
+    background: #3e3e42;
+    border: 1px solid #4e4e52;
+    color: #cccccc;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
     animation: slideIn 0.2s ease-out;
     min-width: 250px;
@@ -442,7 +484,7 @@ tbody tr:hover {
 .loading {
     padding: 48px;
     text-align: center;
-    color: #a3a3a3;
+    color: #858585;
 }
 
 /* Pagination */
@@ -452,12 +494,12 @@ tbody tr:hover {
     align-items: center;
     justify-content: space-between;
     padding: 16px 24px;
-    border-top: 1px solid #262626;
+    border-top: 1px solid #3e3e42;
     flex-wrap: wrap;
 }
 
 .pagination-info {
-    color: #a3a3a3;
+    color: #858585;
     font-size: 13px;
     min-width: 150px;
 }
@@ -477,15 +519,15 @@ tbody tr:hover {
 
 .pagination-button:disabled {
     cursor: not-allowed;
-    background: #1a1a1a;
+    background: #2d2d30;
     color: #666;
-    border-color: #262626;
+    border-color: #3e3e42;
     opacity: 0.5;
 }
 
 .pagination-button:disabled:hover {
-    background: #1a1a1a;
-    border-color: #262626;
+    background: #2d2d30;
+    border-color: #3e3e42;
 }
 
 .pagination-pages {
@@ -514,11 +556,144 @@ tbody tr:hover {
     display: flex;
     gap: 8px;
     align-items: center;
-    color: #a3a3a3;
+    color: #858585;
     font-size: 13px;
 }
 
 .pagination-limit .form-select {
     width: auto;
     min-width: 80px;
+}
+
+/* Two-column layout for create/edit pages */
+.layout-with-sidebar {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+    align-items: start;
+}
+
+.main-column {
+    min-width: 0;
+}
+
+/* Documentation Sidebar */
+.docs-sidebar {
+    position: sticky;
+    top: 24px;
+    background: #252526;
+    border: 1px solid #3e3e42;
+    border-radius: 6px;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    font-size: 12px;
+}
+
+.docs-header {
+    padding: 16px;
+    border-bottom: 1px solid #3e3e42;
+}
+
+.docs-header h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 4px 0;
+}
+
+.docs-subtitle {
+    font-size: 11px;
+    color: #858585;
+    margin: 0;
+}
+
+.docs-content {
+    padding: 12px;
+}
+
+.docs-section {
+    margin-bottom: 20px;
+}
+
+.docs-section:last-child {
+    margin-bottom: 0;
+}
+
+.docs-section-title {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    color: #4ec9b0;
+    margin: 0 0 4px 0;
+}
+
+.docs-section-desc {
+    font-size: 11px;
+    color: #858585;
+    margin: 0 0 8px 0;
+}
+
+.docs-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.docs-method {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px 8px;
+    background: #1e1e1e;
+    border-radius: 4px;
+    border-left: 2px solid #3e3e42;
+}
+
+.docs-method:hover {
+    border-left-color: #ff6b2c;
+    background: #2d2d30;
+}
+
+.docs-example {
+    background: #1e1e1e;
+    padding: 6px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+    overflow-x: auto;
+}
+
+.docs-example code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.docs-signature {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #dcdcaa;
+    letter-spacing: -0.01em;
+}
+
+.docs-desc {
+    font-size: 10px;
+    color: #858585;
+}
+
+/* Scrollbar styling for docs sidebar */
+.docs-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.docs-sidebar::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+.docs-sidebar::-webkit-scrollbar-thumb {
+    background: #3e3e42;
+    border-radius: 4px;
+}
+
+.docs-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #4e4e52;
 }

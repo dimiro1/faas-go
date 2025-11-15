@@ -1,8 +1,8 @@
-import { Icons } from '../icons.js';
-import { API } from '../api.js';
-import { Toast } from '../components/toast.js';
-import { FunctionDocs } from '../components/function-docs.js';
-import { CodeEditor } from '../components/code-editor.js';
+import { Icons } from "../icons.js";
+import { API } from "../api.js";
+import { Toast } from "../components/toast.js";
+import { FunctionDocs } from "../components/function-docs.js";
+import { CodeEditor } from "../components/code-editor.js";
 
 export const FunctionCreate = {
   formData: {
@@ -62,61 +62,71 @@ end`,
         ]),
       ]),
 
-      m(".card.mb-24", [
-        m(".card-header", m(".card-title", "Function Details")),
-        m("div", { style: "padding: 24px;" }, [
-          m(".form-group", [
-            m("label.form-label", "Name"),
-            m("input.form-input", {
-              value: FunctionCreate.formData.name,
-              oninput: (e) => (FunctionCreate.formData.name = e.target.value),
-              placeholder: "my-function",
-              required: true,
-            }),
+      m(".layout-with-sidebar", [
+        // Main column
+        m(".main-column", [
+          m(".card.mb-24", [
+            m(".card-header", m(".card-title", "Function Details")),
+            m("div", { style: "padding: 16px;" }, [
+              m(".form-group", [
+                m("label.form-label", "Name"),
+                m("input.form-input", {
+                  value: FunctionCreate.formData.name,
+                  oninput: (e) =>
+                    (FunctionCreate.formData.name = e.target.value),
+                  placeholder: "my-function",
+                  required: true,
+                }),
+              ]),
+              m(".form-group", [
+                m("label.form-label", "Description"),
+                m("textarea.form-textarea", {
+                  value: FunctionCreate.formData.description,
+                  oninput: (e) =>
+                    (FunctionCreate.formData.description = e.target.value),
+                  placeholder: "What does this function do?",
+                  rows: 2,
+                }),
+              ]),
+            ]),
           ]),
-          m(".form-group", [
-            m("label.form-label", "Description"),
-            m("textarea.form-textarea", {
-              value: FunctionCreate.formData.description,
-              oninput: (e) =>
-                (FunctionCreate.formData.description = e.target.value),
-              placeholder: "What does this function do?",
-              rows: 2,
-            }),
+
+          m(".card.mb-24", [
+            m(".card-header", m(".card-title", "Function Code")),
+            m("div", { style: "padding: 16px;" }, [
+              m(CodeEditor, {
+                id: "code-editor",
+                value: FunctionCreate.formData.code,
+                onChange: (value) => {
+                  FunctionCreate.formData.code = value;
+                },
+              }),
+            ]),
           ]),
-        ]),
-      ]),
 
-      m(FunctionDocs),
-
-      m(".card.mb-24", [
-        m(".card-header", m(".card-title", "Function Code (Lua)")),
-        m("div", { style: "padding: 24px;" }, [
-          m(CodeEditor, {
-            id: "code-editor",
-            value: FunctionCreate.formData.code,
-            onChange: (value) => {
-              FunctionCreate.formData.code = value;
-            },
-          }),
-        ]),
-      ]),
-
-      m(
-        "div",
-        { style: "display: flex; justify-content: flex-end; gap: 12px;" },
-        [
-          m("a.btn", { href: "#!/functions" }, "Cancel"),
           m(
-            "button.btn.btn-primary",
+            "div",
             {
-              onclick: FunctionCreate.createFunction,
-              disabled: !FunctionCreate.formData.name,
+              style:
+                "display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 24px;",
             },
-            "Create Function",
+            [
+              m("a.btn", { href: "#!/functions" }, "Cancel"),
+              m(
+                "button.btn.btn-primary",
+                {
+                  onclick: FunctionCreate.createFunction,
+                  disabled: !FunctionCreate.formData.name,
+                },
+                "Create Function",
+              ),
+            ],
           ),
-        ],
-      ),
+        ]),
+
+        // Sidebar
+        m(FunctionDocs),
+      ]),
     ]);
   },
 };

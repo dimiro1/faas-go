@@ -1,4 +1,59 @@
 const API_DOCS = {
+  "ctx.executionId": {
+    signature: "ctx.executionId: string",
+    snippet: "ctx.executionId",
+    description: "Unique identifier for this execution",
+  },
+  "ctx.functionId": {
+    signature: "ctx.functionId: string",
+    snippet: "ctx.functionId",
+    description: "Function identifier",
+  },
+  "ctx.functionName": {
+    signature: "ctx.functionName: string",
+    snippet: "ctx.functionName",
+    description: "Function name",
+  },
+  "ctx.version": {
+    signature: "ctx.version: string",
+    snippet: "ctx.version",
+    description: "Function version",
+  },
+  "ctx.requestId": {
+    signature: "ctx.requestId: string",
+    snippet: "ctx.requestId",
+    description: "HTTP request identifier",
+  },
+  "ctx.startedAt": {
+    signature: "ctx.startedAt: number",
+    snippet: "ctx.startedAt",
+    description: "Execution start timestamp (Unix seconds)",
+  },
+  "event.method": {
+    signature: "event.method: string",
+    snippet: "event.method",
+    description: "HTTP method (GET, POST, PUT, DELETE, etc.)",
+  },
+  "event.path": {
+    signature: "event.path: string",
+    snippet: "event.path",
+    description: "Request path",
+  },
+  "event.body": {
+    signature: "event.body: string",
+    snippet: "event.body",
+    description: "Request body as string",
+  },
+  "event.headers": {
+    signature: "event.headers: table",
+    snippet: "event.headers",
+    description: "Request headers (table with header name as key)",
+  },
+  "event.query": {
+    signature: "event.query: table",
+    snippet: "event.query",
+    description: "Query parameters (table with param name as key)",
+  },
   "log.info": {
     signature: "log.info(message: string)",
     snippet: 'log.info("${1:message}")',
@@ -319,6 +374,96 @@ const registerLuaCompletions = () => {
         documentation: "HTTP handler function template",
       });
 
+      // Add counter example
+      suggestions.push({
+        label: "example-counter",
+        kind: monaco.languages.CompletionItemKind.Snippet,
+        insertText: [
+          "function handler(ctx, event)",
+          "\t-- Get current count from KV store",
+          '\tlocal count = kv.get("counter") or "0"',
+          "\tlocal newCount = tonumber(count) + 1",
+          "\t",
+          "\t-- Save updated count",
+          '\tkv.set("counter", tostring(newCount))',
+          "\t",
+          '\tlog.info("Counter incremented to: " .. newCount)',
+          "\t",
+          "\treturn {",
+          "\t\tstatusCode = 200,",
+          '\t\theaders = { ["Content-Type"] = "application/json" },',
+          "\t\tbody = json.encode({ count = newCount })",
+          "\t}",
+          "end",
+        ].join("\n"),
+        insertTextRules:
+          monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+        documentation: "Simple counter using KV store",
+      });
+
+      // Add hello world example
+      suggestions.push({
+        label: "example-hello",
+        kind: monaco.languages.CompletionItemKind.Snippet,
+        insertText: [
+          "function handler(ctx, event)",
+          "\t-- Parse query parameters from event",
+          '\tlocal name = "World"',
+          "\tif event.query and event.query.name then",
+          "\t\tname = event.query.name",
+          "\tend",
+          "\t",
+          '\tlog.info("Greeting: " .. name)',
+          "\t",
+          "\treturn {",
+          "\t\tstatusCode = 200,",
+          '\t\theaders = { ["Content-Type"] = "application/json" },',
+          '\t\tbody = json.encode({ message = "Hello, " .. name .. "!" })',
+          "\t}",
+          "end",
+        ].join("\n"),
+        insertTextRules:
+          monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+        documentation: "Hello world with query parameters",
+      });
+
+      // Add HTTP request example
+      suggestions.push({
+        label: "example-http",
+        kind: monaco.languages.CompletionItemKind.Snippet,
+        insertText: [
+          "function handler(ctx, event)",
+          "\t-- Make external HTTP request",
+          '\tlocal apiKey = env.get("API_KEY")',
+          '\tlocal url = "https://api.example.com/data"',
+          "\t",
+          "\tlocal response = http.get(url)",
+          "\t",
+          "\tif response.status == 200 then",
+          "\t\tlocal data = json.decode(response.body)",
+          '\t\tlog.info("API request successful")',
+          "\t\t",
+          "\t\treturn {",
+          "\t\t\tstatusCode = 200,",
+          '\t\t\theaders = { ["Content-Type"] = "application/json" },',
+          "\t\t\tbody = json.encode(data)",
+          "\t\t}",
+          "\telse",
+          '\t\tlog.error("API request failed: " .. response.status)',
+          "\t\t",
+          "\t\treturn {",
+          "\t\t\tstatusCode = 502,",
+          '\t\t\theaders = { ["Content-Type"] = "application/json" },',
+          '\t\t\tbody = json.encode({ error = "API request failed" })',
+          "\t\t}",
+          "\tend",
+          "end",
+        ].join("\n"),
+        insertTextRules:
+          monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+        documentation: "Example HTTP request with error handling",
+      });
+
       return { suggestions };
     },
   });
@@ -343,33 +488,38 @@ export const CodeEditor = {
       style: `height: ${height}; border: 1px solid #444;`,
       oncreate: (divVnode) => {
         const container = divVnode.dom;
-        if (container && window.monaco) {
-          registerLuaCompletions();
+        if (container) {
+          // Use require to load Monaco Editor from CDN
+          require(["vs/editor/editor.main"], function () {
+            if (!window.monaco) return;
 
-          const editor = monaco.editor.create(container, {
-            value: value || "",
-            language: language,
-            theme: theme,
-            readOnly: readOnly,
-            automaticLayout: true,
-            minimap: {
-              enabled: minimap,
-            },
-            lineNumbers: lineNumbers ? "on" : "off",
-            scrollBeyondLastLine: false,
-            fontSize: 14,
-            tabSize: 2,
-            suggestOnTriggerCharacters: true,
-            quickSuggestions: true,
-          });
+            registerLuaCompletions();
 
-          if (onChange) {
-            editor.onDidChangeModelContent(() => {
-              onChange(editor.getValue());
+            const editor = monaco.editor.create(container, {
+              value: value || "",
+              language: language,
+              theme: theme,
+              readOnly: readOnly,
+              automaticLayout: true,
+              minimap: {
+                enabled: minimap,
+              },
+              lineNumbers: lineNumbers ? "on" : "off",
+              scrollBeyondLastLine: false,
+              fontSize: 14,
+              tabSize: 2,
+              suggestOnTriggerCharacters: true,
+              quickSuggestions: true,
             });
-          }
 
-          vnode.state.editor = editor;
+            if (onChange) {
+              editor.onDidChangeModelContent(() => {
+                onChange(editor.getValue());
+              });
+            }
+
+            vnode.state.editor = editor;
+          });
         }
       },
       onupdate: (divVnode) => {

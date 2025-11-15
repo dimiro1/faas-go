@@ -12,11 +12,11 @@
         <link
             rel="stylesheet"
             data-name="vs/editor/editor.main"
-            href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.css"
+            href="https://unpkg.com/monaco-editor@0.54.0/min/vs/editor/editor.main.css"
         />
         <link
             rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/monokai.min.css"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/vs2015.min.css"
         />
     </head>
     <body>
@@ -32,13 +32,12 @@
         <script>
             var require = {
                 paths: {
-                    vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs",
+                    vs: "https://unpkg.com/monaco-editor@0.54.0/min/vs",
                 },
             };
         </script>
-        <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.nls.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.js"></script>
+        <script src="https://unpkg.com/monaco-editor@0.54.0/min/vs/loader.js"></script>
+        <script src="https://unpkg.com/monaco-editor@0.54.0/min/vs/editor/editor.main.js"></script>
         <script type="module" src="/js/app.js"></script>
     </body>
 </html>

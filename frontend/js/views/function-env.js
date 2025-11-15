@@ -1,6 +1,6 @@
-import { Icons } from '../icons.js';
-import { API } from '../api.js';
-import { Toast } from '../components/toast.js';
+import { Icons } from "../icons.js";
+import { API } from "../api.js";
+import { Toast } from "../components/toast.js";
 
 export const FunctionEnv = {
   func: null,
@@ -18,7 +18,7 @@ export const FunctionEnv = {
       const func = await API.functions.get(id);
       FunctionEnv.func = func;
       FunctionEnv.envVars = Object.entries(func.env_vars || {}).map(
-        ([key, value]) => ({ key, value })
+        ([key, value]) => ({ key, value }),
       );
     } catch (e) {
       console.error("Failed to load function:", e);
@@ -82,15 +82,15 @@ export const FunctionEnv = {
             {
               onclick: () => FunctionEnv.envVars.push({ key: "", value: "" }),
             },
-            Icons.plus()
+            Icons.plus(),
           ),
         ]),
         m("div", { style: "padding: 24px;" }, [
           FunctionEnv.envVars.length === 0
             ? m(
                 ".text-center",
-                { style: "color: #a3a3a3; padding: 48px 0;" },
-                "No environment variables. Click + to add one."
+                { style: "color: #858585; padding: 48px 0;" },
+                "No environment variables. Click + to add one.",
               )
             : FunctionEnv.envVars.map((envVar, i) =>
                 m(
@@ -117,10 +117,10 @@ export const FunctionEnv = {
                       {
                         onclick: () => FunctionEnv.envVars.splice(i, 1),
                       },
-                      Icons.xMark()
+                      Icons.xMark(),
                     ),
-                  ]
-                )
+                  ],
+                ),
               ),
         ]),
       ]),
@@ -129,20 +129,16 @@ export const FunctionEnv = {
         "div",
         { style: "display: flex; justify-content: flex-end; gap: 12px;" },
         [
-          m(
-            "a.btn",
-            { href: `#!/functions/${FunctionEnv.func.id}` },
-            "Cancel"
-          ),
+          m("a.btn", { href: `#!/functions/${FunctionEnv.func.id}` }, "Cancel"),
           m(
             "button.btn.btn-primary",
             {
               onclick: FunctionEnv.saveEnvVars,
               disabled: FunctionEnv.saving,
             },
-            FunctionEnv.saving ? "Saving..." : "Save Changes"
+            FunctionEnv.saving ? "Saving..." : "Save Changes",
           ),
-        ]
+        ],
       ),
     ]);
   },
