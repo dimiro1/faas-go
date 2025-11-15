@@ -2,53 +2,92 @@ package api
 
 import (
 	"net/http"
+	"time"
+
+	"github.com/dimiro1/faas-go/internal/env"
+	internalhttp "github.com/dimiro1/faas-go/internal/http"
+	"github.com/dimiro1/faas-go/internal/kv"
+	"github.com/dimiro1/faas-go/internal/logger"
 )
 
 // Server represents the API server
 type Server struct {
-	handler *Handler
-	mux     *http.ServeMux
-	db      DB
+	mux      *http.ServeMux
+	db       DB
+	execDeps *ExecuteFunctionDeps
 }
 
-// NewServer creates a new API server with all routes configured
+// ServerConfig holds configuration for creating a Server
+type ServerConfig struct {
+	DB               DB
+	Logger           logger.Logger
+	KVStore          kv.Store
+	EnvStore         env.Store
+	HTTPClient       internalhttp.Client
+	ExecutionTimeout time.Duration
+}
+
+// NewServer creates a new API server with minimal configuration (for testing)
 func NewServer(db DB) *Server {
 	s := &Server{
-		handler: NewHandler(db),
-		mux:     http.NewServeMux(),
-		db:      db,
+		mux: http.NewServeMux(),
+		db:  db,
 	}
 
 	s.setupRoutes()
 	return s
 }
 
-// setupRoutes configures all API routes
+// NewServerWithConfig creates a new API server with full configuration
+func NewServerWithConfig(config ServerConfig) *Server {
+	execDeps := &ExecuteFunctionDeps{
+		DB:               config.DB,
+		Logger:           config.Logger,
+		KVStore:          config.KVStore,
+		EnvStore:         config.EnvStore,
+		HTTPClient:       config.HTTPClient,
+		ExecutionTimeout: config.ExecutionTimeout,
+	}
+
+	s := &Server{
+		mux:      http.NewServeMux(),
+		db:       config.DB,
+		execDeps: execDeps,
+	}
+
+	s.setupRoutes()
+	return s
+}
+
+// setupRoutes configures all API routes using functional handlers
 func (s *Server) setupRoutes() {
-	// Function Management
-	s.mux.HandleFunc("POST /api/functions", s.handler.CreateFunction)
-	s.mux.HandleFunc("GET /api/functions", s.handler.ListFunctions)
-	s.mux.HandleFunc("GET /api/functions/{id}", s.handler.GetFunction)
-	s.mux.HandleFunc("PUT /api/functions/{id}", s.handler.UpdateFunction)
-	s.mux.HandleFunc("DELETE /api/functions/{id}", s.handler.DeleteFunction)
-	s.mux.HandleFunc("PUT /api/functions/{id}/env", s.handler.UpdateEnvVars)
+	// Function Management - only need DB
+	s.mux.HandleFunc("POST /api/functions", CreateFunctionHandler(s.db))
+	s.mux.HandleFunc("GET /api/functions", ListFunctionsHandler(s.db))
+	s.mux.HandleFunc("GET /api/functions/{id}", GetFunctionHandler(s.db))
+	s.mux.HandleFunc("PUT /api/functions/{id}", UpdateFunctionHandler(s.db))
+	s.mux.HandleFunc("DELETE /api/functions/{id}", DeleteFunctionHandler(s.db))
+	s.mux.HandleFunc("PUT /api/functions/{id}/env", UpdateEnvVarsHandler(s.db))
 
-	// Version Management
-	s.mux.HandleFunc("GET /api/functions/{id}/versions", s.handler.ListVersions)
-	s.mux.HandleFunc("GET /api/functions/{id}/versions/{version}", s.handler.GetVersion)
-	s.mux.HandleFunc("POST /api/functions/{id}/versions/{version}/activate", s.handler.ActivateVersion)
-	s.mux.HandleFunc("GET /api/functions/{id}/diff/{v1}/{v2}", s.handler.GetVersionDiff)
+	// Version Management - only need DB
+	s.mux.HandleFunc("GET /api/functions/{id}/versions", ListVersionsHandler(s.db))
+	s.mux.HandleFunc("GET /api/functions/{id}/versions/{version}", GetVersionHandler(s.db))
+	s.mux.HandleFunc("POST /api/functions/{id}/versions/{version}/activate", ActivateVersionHandler(s.db))
+	s.mux.HandleFunc("GET /api/functions/{id}/diff/{v1}/{v2}", GetVersionDiffHandler(s.db))
 
-	// Execution History
-	s.mux.HandleFunc("GET /api/functions/{id}/executions", s.handler.ListExecutions)
-	s.mux.HandleFunc("GET /api/executions/{id}", s.handler.GetExecution)
-	s.mux.HandleFunc("GET /api/executions/{id}/logs", s.handler.GetExecutionLogs)
+	// Execution History - only need DB
+	s.mux.HandleFunc("GET /api/functions/{id}/executions", ListExecutionsHandler(s.db))
+	s.mux.HandleFunc("GET /api/executions/{id}", GetExecutionHandler(s.db))
+	s.mux.HandleFunc("GET /api/executions/{id}/logs", GetExecutionLogsHandler(s.db))
 
-	// Runtime Execution (all HTTP methods)
-	s.mux.HandleFunc("GET /fn/{function_id}", s.handler.ExecuteFunction)
-	s.mux.HandleFunc("POST /fn/{function_id}", s.handler.ExecuteFunction)
-	s.mux.HandleFunc("PUT /fn/{function_id}", s.handler.ExecuteFunction)
-	s.mux.HandleFunc("DELETE /fn/{function_id}", s.handler.ExecuteFunction)
+	// Runtime Execution - needs all dependencies
+	if s.execDeps != nil {
+		executeHandler := ExecuteFunctionHandler(*s.execDeps)
+		s.mux.HandleFunc("GET /fn/{function_id}", executeHandler)
+		s.mux.HandleFunc("POST /fn/{function_id}", executeHandler)
+		s.mux.HandleFunc("PUT /fn/{function_id}", executeHandler)
+		s.mux.HandleFunc("DELETE /fn/{function_id}", executeHandler)
+	}
 }
 
 // Handler returns the http.Handler with all middleware applied

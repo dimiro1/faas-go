@@ -7,6 +7,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/dimiro1/faas-go/internal/env"
+	internalhttp "github.com/dimiro1/faas-go/internal/http"
+	"github.com/dimiro1/faas-go/internal/kv"
+	"github.com/dimiro1/faas-go/internal/logger"
 )
 
 // Helper function to create a test function in the database with an initial version
@@ -405,38 +410,326 @@ func TestGetExecutionLogs(t *testing.T) {
 }
 
 func TestExecuteFunction(t *testing.T) {
-	server := NewServer(NewMemoryDB())
-
-	tests := []struct {
-		method string
-		path   string
-	}{
-		{http.MethodGet, "/fn/func_123"},
-		{http.MethodPost, "/fn/func_123"},
-		{http.MethodPut, "/fn/func_123"},
-		{http.MethodDelete, "/fn/func_123"},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.method, func(t *testing.T) {
-			req := httptest.NewRequest(tt.method, tt.path, nil)
-			w := httptest.NewRecorder()
-
-			server.Handler().ServeHTTP(w, req)
-
-			if w.Code != http.StatusOK {
-				t.Errorf("expected status 200, got %d", w.Code)
-			}
-
-			// Check custom headers
-			if w.Header().Get("X-Function-Id") == "" {
-				t.Error("expected X-Function-Id header")
-			}
-			if w.Header().Get("X-Execution-Id") == "" {
-				t.Error("expected X-Execution-Id header")
-			}
+	t.Run("success with simple response", func(t *testing.T) {
+		db := NewMemoryDB()
+		server := NewServerWithConfig(ServerConfig{
+			DB:         db,
+			Logger:     logger.NewMemoryLogger(),
+			KVStore:    kv.NewMemoryStore(),
+			EnvStore:   env.NewMemoryStore(),
+			HTTPClient: internalhttp.NewDefaultClient(),
 		})
-	}
+
+		fn := createTestFunction(t, db)
+		_, err := db.CreateVersion(context.Background(), fn.ID, `
+function handler(ctx, event)
+  return {
+    statusCode = 200,
+    body = '{"message": "success"}'
+  }
+end
+`, nil)
+		if err != nil {
+			t.Fatalf("Failed to create version: %v", err)
+		}
+
+		req := httptest.NewRequest(http.MethodPost, "/fn/"+fn.ID, nil)
+		w := httptest.NewRecorder()
+
+		server.Handler().ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected status 200, got %d: %s", w.Code, w.Body.String())
+		}
+
+		if w.Header().Get("X-Function-Id") != fn.ID {
+			t.Errorf("expected X-Function-Id %s, got %s", fn.ID, w.Header().Get("X-Function-Id"))
+		}
+		if w.Header().Get("X-Execution-Id") == "" {
+			t.Error("expected X-Execution-Id header")
+		}
+		if w.Header().Get("X-Execution-Duration-Ms") == "" {
+			t.Error("expected X-Execution-Duration-Ms header")
+		}
+	})
+
+	t.Run("success with request body", func(t *testing.T) {
+		db := NewMemoryDB()
+		server := NewServerWithConfig(ServerConfig{
+			DB:         db,
+			Logger:     logger.NewMemoryLogger(),
+			KVStore:    kv.NewMemoryStore(),
+			EnvStore:   env.NewMemoryStore(),
+			HTTPClient: internalhttp.NewDefaultClient(),
+		})
+
+		fn := createTestFunction(t, db)
+		_, err := db.CreateVersion(context.Background(), fn.ID, `
+function handler(ctx, event)
+  return {
+    statusCode = 200,
+    body = event.body
+  }
+end
+`, nil)
+		if err != nil {
+			t.Fatalf("Failed to create version: %v", err)
+		}
+
+		requestBody := `{"name": "test"}`
+		req := httptest.NewRequest(http.MethodPost, "/fn/"+fn.ID, bytes.NewReader([]byte(requestBody)))
+		w := httptest.NewRecorder()
+
+		server.Handler().ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected status 200, got %d", w.Code)
+		}
+
+		if w.Body.String() != requestBody {
+			t.Errorf("expected body %s, got %s", requestBody, w.Body.String())
+		}
+	})
+
+	t.Run("success with custom status code", func(t *testing.T) {
+		db := NewMemoryDB()
+		server := NewServerWithConfig(ServerConfig{
+			DB:         db,
+			Logger:     logger.NewMemoryLogger(),
+			KVStore:    kv.NewMemoryStore(),
+			EnvStore:   env.NewMemoryStore(),
+			HTTPClient: internalhttp.NewDefaultClient(),
+		})
+
+		fn := createTestFunction(t, db)
+		_, err := db.CreateVersion(context.Background(), fn.ID, `
+function handler(ctx, event)
+  return {
+    statusCode = 201,
+    body = '{"created": true}'
+  }
+end
+`, nil)
+		if err != nil {
+			t.Fatalf("Failed to create version: %v", err)
+		}
+
+		req := httptest.NewRequest(http.MethodPost, "/fn/"+fn.ID, nil)
+		w := httptest.NewRecorder()
+
+		server.Handler().ServeHTTP(w, req)
+
+		if w.Code != http.StatusCreated {
+			t.Errorf("expected status 201, got %d", w.Code)
+		}
+	})
+
+	t.Run("success with custom headers", func(t *testing.T) {
+		db := NewMemoryDB()
+		server := NewServerWithConfig(ServerConfig{
+			DB:         db,
+			Logger:     logger.NewMemoryLogger(),
+			KVStore:    kv.NewMemoryStore(),
+			EnvStore:   env.NewMemoryStore(),
+			HTTPClient: internalhttp.NewDefaultClient(),
+		})
+
+		fn := createTestFunction(t, db)
+		_, err := db.CreateVersion(context.Background(), fn.ID, `
+function handler(ctx, event)
+  return {
+    statusCode = 200,
+    headers = {
+      ["X-Custom-Header"] = "custom-value",
+      ["Content-Type"] = "text/plain"
+    },
+    body = 'hello'
+  }
+end
+`, nil)
+		if err != nil {
+			t.Fatalf("Failed to create version: %v", err)
+		}
+
+		req := httptest.NewRequest(http.MethodGet, "/fn/"+fn.ID, nil)
+		w := httptest.NewRecorder()
+
+		server.Handler().ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Errorf("expected status 200, got %d", w.Code)
+		}
+
+		if w.Header().Get("X-Custom-Header") != "custom-value" {
+			t.Errorf("expected X-Custom-Header 'custom-value', got %s", w.Header().Get("X-Custom-Header"))
+		}
+	})
+
+	t.Run("error with syntax error in lua code", func(t *testing.T) {
+		db := NewMemoryDB()
+		server := NewServerWithConfig(ServerConfig{
+			DB:         db,
+			Logger:     logger.NewMemoryLogger(),
+			KVStore:    kv.NewMemoryStore(),
+			EnvStore:   env.NewMemoryStore(),
+			HTTPClient: internalhttp.NewDefaultClient(),
+		})
+
+		fn := createTestFunction(t, db)
+		_, err := db.CreateVersion(context.Background(), fn.ID, `
+function handler(ctx, event)
+  return {
+    statusCode = 200
+    -- missing comma
+    body = 'test'
+  }
+end
+`, nil)
+		if err != nil {
+			t.Fatalf("Failed to create version: %v", err)
+		}
+
+		req := httptest.NewRequest(http.MethodPost, "/fn/"+fn.ID, nil)
+		w := httptest.NewRecorder()
+
+		server.Handler().ServeHTTP(w, req)
+
+		if w.Code != http.StatusInternalServerError {
+			t.Errorf("expected status 500, got %d", w.Code)
+		}
+	})
+
+	t.Run("error with runtime error in lua code", func(t *testing.T) {
+		db := NewMemoryDB()
+		server := NewServerWithConfig(ServerConfig{
+			DB:         db,
+			Logger:     logger.NewMemoryLogger(),
+			KVStore:    kv.NewMemoryStore(),
+			EnvStore:   env.NewMemoryStore(),
+			HTTPClient: internalhttp.NewDefaultClient(),
+		})
+
+		fn := createTestFunction(t, db)
+		_, err := db.CreateVersion(context.Background(), fn.ID, `
+function handler(ctx, event)
+  error("Something went wrong!")
+end
+`, nil)
+		if err != nil {
+			t.Fatalf("Failed to create version: %v", err)
+		}
+
+		req := httptest.NewRequest(http.MethodPost, "/fn/"+fn.ID, nil)
+		w := httptest.NewRecorder()
+
+		server.Handler().ServeHTTP(w, req)
+
+		if w.Code != http.StatusInternalServerError {
+			t.Errorf("expected status 500, got %d", w.Code)
+		}
+
+		var resp map[string]string
+		if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
+			t.Fatalf("failed to decode response: %v", err)
+		}
+
+		if resp["error"] != "Function execution failed" {
+			t.Errorf("expected generic error message, got %q", resp["error"])
+		}
+
+		if w.Header().Get("X-Execution-Id") == "" {
+			t.Error("expected X-Execution-Id header even on error")
+		}
+	})
+
+	t.Run("error with function not found", func(t *testing.T) {
+		db := NewMemoryDB()
+		server := NewServerWithConfig(ServerConfig{
+			DB:         db,
+			Logger:     logger.NewMemoryLogger(),
+			KVStore:    kv.NewMemoryStore(),
+			EnvStore:   env.NewMemoryStore(),
+			HTTPClient: internalhttp.NewDefaultClient(),
+		})
+
+		req := httptest.NewRequest(http.MethodPost, "/fn/nonexistent", nil)
+		w := httptest.NewRecorder()
+
+		server.Handler().ServeHTTP(w, req)
+
+		if w.Code != http.StatusNotFound {
+			t.Errorf("expected status 404, got %d", w.Code)
+		}
+	})
+
+	t.Run("error with no active version", func(t *testing.T) {
+		db := NewMemoryDB()
+		server := NewServerWithConfig(ServerConfig{
+			DB:         db,
+			Logger:     logger.NewMemoryLogger(),
+			KVStore:    kv.NewMemoryStore(),
+			EnvStore:   env.NewMemoryStore(),
+			HTTPClient: internalhttp.NewDefaultClient(),
+		})
+
+		fn := Function{
+			ID:          "test-no-version",
+			Name:        "test",
+			Description: nil,
+			EnvVars:     map[string]string{},
+		}
+		_, err := db.CreateFunction(context.Background(), fn)
+		if err != nil {
+			t.Fatalf("Failed to create function: %v", err)
+		}
+
+		req := httptest.NewRequest(http.MethodPost, "/fn/"+fn.ID, nil)
+		w := httptest.NewRecorder()
+
+		server.Handler().ServeHTTP(w, req)
+
+		if w.Code != http.StatusInternalServerError {
+			t.Errorf("expected status 500, got %d", w.Code)
+		}
+	})
+
+	t.Run("different HTTP methods", func(t *testing.T) {
+		db := NewMemoryDB()
+		server := NewServerWithConfig(ServerConfig{
+			DB:         db,
+			Logger:     logger.NewMemoryLogger(),
+			KVStore:    kv.NewMemoryStore(),
+			EnvStore:   env.NewMemoryStore(),
+			HTTPClient: internalhttp.NewDefaultClient(),
+		})
+
+		fn := createTestFunction(t, db)
+		_, err := db.CreateVersion(context.Background(), fn.ID, `
+function handler(ctx, event)
+  return {
+    statusCode = 200,
+    body = '{"method": "' .. event.method .. '"}'
+  }
+end
+`, nil)
+		if err != nil {
+			t.Fatalf("Failed to create version: %v", err)
+		}
+
+		methods := []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodDelete}
+		for _, method := range methods {
+			t.Run(method, func(t *testing.T) {
+				req := httptest.NewRequest(method, "/fn/"+fn.ID, nil)
+				w := httptest.NewRecorder()
+
+				server.Handler().ServeHTTP(w, req)
+
+				if w.Code != http.StatusOK {
+					t.Errorf("expected status 200 for %s, got %d", method, w.Code)
+				}
+			})
+		}
+	})
 }
 
 func TestCORSMiddleware(t *testing.T) {
