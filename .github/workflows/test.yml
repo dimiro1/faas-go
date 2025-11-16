@@ -56,7 +56,7 @@ jobs:
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2
+          version: latest
 
       - name: Run staticcheck
         uses: dominikh/staticcheck-action@v1
