@@ -14,7 +14,6 @@ Here some ideas that I want to implement, the order is not important:
 - Pub Sub
 - Be able to call other functions
 - Cron/scheduling events
-- Add a dockerfile for easy deployment
 - Improve the way the state is handled in the UI
 - Re-evalute mithriljs
 - Consider store events in the execution

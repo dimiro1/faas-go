@@ -29,9 +29,9 @@ clean:
 	@echo "Cleaning..."
 	@rm -rf $(BUILD_DIR)
 
-run: build
+run:
 	@echo "Running application..."
-	@./$(BUILD_DIR)/$(BINARY_NAME)
+	@go run ./cmd
 
 all: lint test build
 	@echo "All checks passed!"
