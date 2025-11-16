@@ -323,3 +323,103 @@ func TestLoadConfig_PartialEnv(t *testing.T) {
 		t.Errorf("expected generated API key, got %s", config.APIKey)
 	}
 }
+
+func TestLoadBaseURL_Default(t *testing.T) {
+	getenv := func(key string) string {
+		return ""
+	}
+
+	baseURL := loadBaseURL(getenv, "3000")
+
+	expected := "http://localhost:3000"
+	if baseURL != expected {
+		t.Errorf("expected base URL %s, got %s", expected, baseURL)
+	}
+}
+
+func TestLoadBaseURL_DefaultCustomPort(t *testing.T) {
+	getenv := func(key string) string {
+		return ""
+	}
+
+	baseURL := loadBaseURL(getenv, "8080")
+
+	expected := "http://localhost:8080"
+	if baseURL != expected {
+		t.Errorf("expected base URL %s, got %s", expected, baseURL)
+	}
+}
+
+func TestLoadBaseURL_FromEnv(t *testing.T) {
+	getenv := func(key string) string {
+		if key == "BASE_URL" {
+			return "https://myapp.example.com"
+		}
+		return ""
+	}
+
+	baseURL := loadBaseURL(getenv, "3000")
+
+	expected := "https://myapp.example.com"
+	if baseURL != expected {
+		t.Errorf("expected base URL %s, got %s", expected, baseURL)
+	}
+}
+
+func TestLoadBaseURL_EnvTakesPrecedence(t *testing.T) {
+	getenv := func(key string) string {
+		if key == "BASE_URL" {
+			return "https://production.example.com"
+		}
+		return ""
+	}
+
+	baseURL := loadBaseURL(getenv, "9000")
+
+	expected := "https://production.example.com"
+	if baseURL != expected {
+		t.Errorf("expected base URL %s, got %s", expected, baseURL)
+	}
+}
+
+func TestLoadConfig_WithBaseURL(t *testing.T) {
+	tmpDir := t.TempDir()
+	env := map[string]string{
+		"PORT":     "8080",
+		"BASE_URL": "https://faas.example.com",
+		"API_KEY":  "test-key",
+	}
+
+	getenv := func(key string) string {
+		return env[key]
+	}
+
+	config, err := loadConfig(getenv, tmpDir)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if config.BaseURL != "https://faas.example.com" {
+		t.Errorf("expected base URL 'https://faas.example.com', got %s", config.BaseURL)
+	}
+}
+
+func TestLoadConfig_BaseURLDefaultsToLocalhost(t *testing.T) {
+	getenv := func(key string) string {
+		if key == "PORT" {
+			return "4000"
+		}
+		return ""
+	}
+
+	tmpDir := t.TempDir()
+	config, err := loadConfig(getenv, tmpDir)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	expected := "http://localhost:4000"
+	if config.BaseURL != expected {
+		t.Errorf("expected base URL %s, got %s", expected, config.BaseURL)
+	}
+}

@@ -1363,3 +1363,87 @@ end
 		t.Errorf("unexpected body: %q", resp.HTTP.Body)
 	}
 }
+
+func TestRun_Context_BaseURL(t *testing.T) {
+	deps := Dependencies{
+		Logger: logger.NewMemoryLogger(),
+		KV:     kv.NewMemoryStore(),
+		Env:    env.NewMemoryStore(),
+		HTTP:   &internalhttp.FakeClient{},
+	}
+
+	execCtx := &events.ExecutionContext{
+		ExecutionID: "exec-123",
+		FunctionID:  "test-function",
+		StartedAt:   time.Now().Unix(),
+		BaseURL:     "https://myapp.example.com",
+	}
+
+	event := events.HTTPEvent{
+		Method: "GET",
+		Path:   "/",
+	}
+
+	luaCode := `
+function handler(ctx, event)
+	local callbackUrl = ctx.baseUrl .. "/fn/" .. ctx.functionId
+
+	return {
+		statusCode = 200,
+		body = "Callback URL: " .. callbackUrl
+	}
+end
+`
+
+	resp, err := Run(context.Background(), deps, Request{Context: execCtx, Event: event, Code: luaCode})
+	if err != nil {
+		t.Fatalf("Run failed: %v", err)
+	}
+
+	expectedBody := "Callback URL: https://myapp.example.com/fn/test-function"
+	if resp.HTTP.Body != expectedBody {
+		t.Errorf("expected body %q, got %q", expectedBody, resp.HTTP.Body)
+	}
+}
+
+func TestRun_Context_BaseURL_EmptyString(t *testing.T) {
+	deps := Dependencies{
+		Logger: logger.NewMemoryLogger(),
+		KV:     kv.NewMemoryStore(),
+		Env:    env.NewMemoryStore(),
+		HTTP:   &internalhttp.FakeClient{},
+	}
+
+	execCtx := &events.ExecutionContext{
+		ExecutionID: "exec-123",
+		FunctionID:  "test-function",
+		StartedAt:   time.Now().Unix(),
+		BaseURL:     "", // Empty base URL
+	}
+
+	event := events.HTTPEvent{
+		Method: "GET",
+		Path:   "/",
+	}
+
+	luaCode := `
+function handler(ctx, event)
+	local baseUrl = ctx.baseUrl or "not-set"
+
+	return {
+		statusCode = 200,
+		body = "BaseURL: " .. baseUrl
+	}
+end
+`
+
+	resp, err := Run(context.Background(), deps, Request{Context: execCtx, Event: event, Code: luaCode})
+	if err != nil {
+		t.Fatalf("Run failed: %v", err)
+	}
+
+	expectedBody := "BaseURL: not-set"
+	if resp.HTTP.Body != expectedBody {
+		t.Errorf("expected body %q, got %q", expectedBody, resp.HTTP.Body)
+	}
+}

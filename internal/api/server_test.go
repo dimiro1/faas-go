@@ -73,6 +73,7 @@ func createTestServer(db DB) *Server {
 		EnvStore:   env.NewMemoryStore(),
 		HTTPClient: internalhttp.NewDefaultClient(),
 		APIKey:     "test-api-key",
+		BaseURL:    "http://localhost:8080",
 	})
 }
 

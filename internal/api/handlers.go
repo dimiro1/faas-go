@@ -26,6 +26,7 @@ type ExecuteFunctionDeps struct {
 	EnvStore         env.Store
 	HTTPClient       internalhttp.Client
 	ExecutionTimeout time.Duration
+	BaseURL          string
 }
 
 // Helper functions
@@ -586,6 +587,7 @@ func ExecuteFunctionHandler(deps ExecuteFunctionDeps) http.HandlerFunc {
 			FunctionID:  functionID,
 			StartedAt:   time.Now().Unix(),
 			Version:     strconv.Itoa(version.Version),
+			BaseURL:     deps.BaseURL,
 		}
 
 		// Create execution record

@@ -29,6 +29,11 @@ const API_DOCS = {
     snippet: "ctx.startedAt",
     description: "Execution start timestamp (Unix seconds)",
   },
+  "ctx.baseUrl": {
+    signature: "ctx.baseUrl: string",
+    snippet: "ctx.baseUrl",
+    description: "Base URL of the server deployment",
+  },
   "event.method": {
     signature: "event.method: string",
     snippet: "event.method",

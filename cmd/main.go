@@ -79,6 +79,7 @@ func main() {
 		ExecutionTimeout: config.ExecutionTimeout,
 		FrontendHandler:  frontend.Handler(),
 		APIKey:           config.APIKey,
+		BaseURL:          config.BaseURL,
 	})
 
 	addr := ":" + config.Port

@@ -37,6 +37,10 @@ export const FunctionDocs = {
               m("code.docs-signature", "ctx.startedAt"),
               m("span.docs-desc", "Start timestamp"),
             ]),
+            m(".docs-method", [
+              m("code.docs-signature", "ctx.baseUrl"),
+              m("span.docs-desc", "Base URL of server"),
+            ]),
           ]),
           m(
             "pre.docs-example",
@@ -49,7 +53,8 @@ export const FunctionDocs = {
               m(
                 "code.language-lua",
                 `log.info("Execution: " .. ctx.executionId)
-log.info("Function: " .. ctx.functionName)`,
+-- Build full URL for callback
+local callback = ctx.baseUrl .. "/fn/" .. ctx.functionId`,
               ),
             ],
           ),

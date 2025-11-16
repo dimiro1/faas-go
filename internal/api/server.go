@@ -30,6 +30,7 @@ type ServerConfig struct {
 	ExecutionTimeout time.Duration
 	FrontendHandler  http.Handler
 	APIKey           string
+	BaseURL          string
 }
 
 // NewServer creates a new API server with full configuration
@@ -41,6 +42,7 @@ func NewServer(config ServerConfig) *Server {
 		EnvStore:         config.EnvStore,
 		HTTPClient:       config.HTTPClient,
 		ExecutionTimeout: config.ExecutionTimeout,
+		BaseURL:          config.BaseURL,
 	}
 
 	s := &Server{

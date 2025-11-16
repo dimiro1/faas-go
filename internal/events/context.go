@@ -19,4 +19,7 @@ type ExecutionContext struct {
 
 	// Function name or identifier
 	FunctionName string `json:"function_name,omitempty"`
+
+	// Base URL of the server deployment
+	BaseURL string `json:"base_url,omitempty"`
 }

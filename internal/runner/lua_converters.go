@@ -50,6 +50,10 @@ func contextToLuaTable(L *lua.LState, ctx *events.ExecutionContext) *lua.LTable 
 		L.SetField(tbl, "version", lua.LString(ctx.Version))
 	}
 
+	if ctx.BaseURL != "" {
+		L.SetField(tbl, "baseUrl", lua.LString(ctx.BaseURL))
+	}
+
 	return tbl
 }
 

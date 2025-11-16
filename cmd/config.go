@@ -15,6 +15,7 @@ type Config struct {
 	DataDir          string
 	ExecutionTimeout time.Duration
 	APIKey           string
+	BaseURL          string
 }
 
 func loadPort(getenv func(string) string) string {
@@ -88,6 +89,14 @@ func loadAPIKey(getenv func(string) string, dataDir string) (string, error) {
 	return apiKey, nil
 }
 
+func loadBaseURL(getenv func(string) string, port string) string {
+	baseURL := getenv("BASE_URL")
+	if baseURL == "" {
+		baseURL = "http://localhost:" + port
+	}
+	return baseURL
+}
+
 func initDataDir(getenv func(string) string) (string, error) {
 	dataDir := getenv("DATA_DIR")
 	if dataDir == "" {
@@ -103,6 +112,7 @@ func loadConfig(getenv func(string) string, dataDir string) (Config, error) {
 	port := loadPort(getenv)
 	dataDir = loadDataDir(getenv, dataDir)
 	timeout := loadTimeout(getenv)
+	baseURL := loadBaseURL(getenv, port)
 
 	apiKey, err := loadAPIKey(getenv, dataDir)
 	if err != nil {
@@ -114,5 +124,6 @@ func loadConfig(getenv func(string) string, dataDir string) (Config, error) {
 		DataDir:          dataDir,
 		ExecutionTimeout: timeout,
 		APIKey:           apiKey,
+		BaseURL:          baseURL,
 	}, nil
 }
