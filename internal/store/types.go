@@ -25,6 +25,7 @@ type Function struct {
 	Name        string            `json:"name"`
 	Description *string           `json:"description,omitempty"`
 	EnvVars     map[string]string `json:"env_vars"`
+	Disabled    bool              `json:"disabled"`
 	CreatedAt   int64             `json:"created_at"`
 	UpdatedAt   int64             `json:"updated_at"`
 }
@@ -89,4 +90,5 @@ type UpdateFunctionRequest struct {
 	Name        *string `json:"name,omitempty"`
 	Description *string `json:"description,omitempty"`
 	Code        *string `json:"code,omitempty"`
+	Disabled    *bool   `json:"disabled,omitempty"`
 }

@@ -29,10 +29,10 @@ func (db *SQLiteDB) CreateFunction(ctx context.Context, fn Function) (Function, 
 		fn.EnvVars = make(map[string]string)
 	}
 
-	query := `INSERT INTO functions (id, name, description, created_at, updated_at)
-	          VALUES (?, ?, ?, ?, ?)`
+	query := `INSERT INTO functions (id, name, description, disabled, created_at, updated_at)
+	          VALUES (?, ?, ?, ?, ?, ?)`
 
-	_, err := db.db.ExecContext(ctx, query, fn.ID, fn.Name, fn.Description, fn.CreatedAt, fn.UpdatedAt)
+	_, err := db.db.ExecContext(ctx, query, fn.ID, fn.Name, fn.Description, fn.Disabled, fn.CreatedAt, fn.UpdatedAt)
 	if err != nil {
 		return Function{}, fmt.Errorf("failed to insert function: %w", err)
 	}
@@ -41,14 +41,14 @@ func (db *SQLiteDB) CreateFunction(ctx context.Context, fn Function) (Function, 
 }
 
 func (db *SQLiteDB) GetFunction(ctx context.Context, id string) (Function, error) {
-	query := `SELECT id, name, description, created_at, updated_at
+	query := `SELECT id, name, description, disabled, created_at, updated_at
 	          FROM functions WHERE id = ?`
 
 	var fn Function
 	var description sql.NullString
 
 	err := db.db.QueryRowContext(ctx, query, id).Scan(
-		&fn.ID, &fn.Name, &description, &fn.CreatedAt, &fn.UpdatedAt,
+		&fn.ID, &fn.Name, &description, &fn.Disabled, &fn.CreatedAt, &fn.UpdatedAt,
 	)
 	if err == sql.ErrNoRows {
 		return Function{}, fmt.Errorf("function not found")
@@ -78,7 +78,7 @@ func (db *SQLiteDB) ListFunctions(ctx context.Context, params PaginationParams) 
 	params = params.Normalize()
 
 	query := `SELECT
-		f.id, f.name, f.description, f.created_at, f.updated_at,
+		f.id, f.name, f.description, f.disabled, f.created_at, f.updated_at,
 		fv.id, fv.version, fv.code, fv.created_at, fv.created_by
 	FROM functions f
 	LEFT JOIN function_versions fv ON f.id = fv.function_id AND fv.is_active = 1
@@ -101,7 +101,7 @@ func (db *SQLiteDB) ListFunctions(ctx context.Context, params PaginationParams) 
 		var versionCreatedBy sql.NullString
 
 		if err := rows.Scan(
-			&fn.ID, &fn.Name, &description, &fn.CreatedAt, &fn.UpdatedAt,
+			&fn.ID, &fn.Name, &description, &fn.Disabled, &fn.CreatedAt, &fn.UpdatedAt,
 			&versionID, &versionNum, &versionCode, &versionCreatedAt, &versionCreatedBy,
 		); err != nil {
 			return nil, 0, fmt.Errorf("failed to scan function: %w", err)
@@ -164,6 +164,14 @@ func (db *SQLiteDB) UpdateFunction(ctx context.Context, id string, updates Updat
 			updates.Description, time.Now().Unix(), id)
 		if err != nil {
 			return fmt.Errorf("failed to update description: %w", err)
+		}
+	}
+
+	if updates.Disabled != nil {
+		_, err = tx.ExecContext(ctx, "UPDATE functions SET disabled = ?, updated_at = ? WHERE id = ?",
+			*updates.Disabled, time.Now().Unix(), id)
+		if err != nil {
+			return fmt.Errorf("failed to update disabled status: %w", err)
 		}
 	}
 

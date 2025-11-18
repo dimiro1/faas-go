@@ -67,7 +67,7 @@ func ValidateUpdateFunctionRequest(req *store.UpdateFunctionRequest) error {
 	}
 
 	// At least one field must be provided
-	if req.Name == nil && req.Description == nil && req.Code == nil {
+	if req.Name == nil && req.Description == nil && req.Code == nil && req.Disabled == nil {
 		return &ValidationError{Field: "request", Message: "at least one field must be provided for update"}
 	}
 

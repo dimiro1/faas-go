@@ -109,6 +109,9 @@ func (db *MemoryDB) UpdateFunction(ctx context.Context, id string, updates Updat
 	if updates.Description != nil {
 		fn.Description = updates.Description
 	}
+	if updates.Disabled != nil {
+		fn.Disabled = *updates.Disabled
+	}
 
 	fn.UpdatedAt = time.Now().Unix()
 	db.functions[id] = fn

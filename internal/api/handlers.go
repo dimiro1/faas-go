@@ -229,7 +229,7 @@ func UpdateFunctionHandler(database store.DB) http.HandlerFunc {
 		}
 
 		// If metadata is provided, update the function
-		if req.Name != nil || req.Description != nil {
+		if req.Name != nil || req.Description != nil || req.Disabled != nil {
 			err := database.UpdateFunction(r.Context(), id, req)
 			if err != nil {
 				writeError(w, http.StatusNotFound, "Function not found")
@@ -544,9 +544,15 @@ func ExecuteFunctionHandler(deps ExecuteFunctionDeps) http.HandlerFunc {
 		executionID := generateID()
 
 		// Get the function
-		_, err := deps.DB.GetFunction(r.Context(), functionID)
+		fn, err := deps.DB.GetFunction(r.Context(), functionID)
 		if err != nil {
 			writeError(w, http.StatusNotFound, "Function not found")
+			return
+		}
+
+		// Check if function is disabled
+		if fn.Disabled {
+			writeError(w, http.StatusForbidden, "Function is disabled")
 			return
 		}
 

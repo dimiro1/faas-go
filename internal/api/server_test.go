@@ -808,6 +808,121 @@ end
 	})
 }
 
+func TestUpdateFunction_ToggleDisabled(t *testing.T) {
+	database := store.NewMemoryDB()
+	server := createTestServer(database)
+
+	// Create a test function first
+	fn := createTestFunction(t, database)
+
+	// Disable the function
+	disabled := true
+	reqBody := store.UpdateFunctionRequest{
+		Disabled: &disabled,
+	}
+
+	body, _ := json.Marshal(reqBody)
+	req := makeAuthRequest(http.MethodPut, "/api/functions/"+fn.ID, body)
+	w := httptest.NewRecorder()
+
+	server.Handler().ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("expected status 200, got %d", w.Code)
+	}
+
+	// Verify the function is disabled
+	updated, err := database.GetFunction(context.Background(), fn.ID)
+	if err != nil {
+		t.Fatalf("failed to get updated function: %v", err)
+	}
+
+	if !updated.Disabled {
+		t.Error("expected function to be disabled")
+	}
+
+	// Enable the function again
+	enabled := false
+	reqBody2 := store.UpdateFunctionRequest{
+		Disabled: &enabled,
+	}
+
+	body2, _ := json.Marshal(reqBody2)
+	req2 := makeAuthRequest(http.MethodPut, "/api/functions/"+fn.ID, body2)
+	w2 := httptest.NewRecorder()
+
+	server.Handler().ServeHTTP(w2, req2)
+
+	if w2.Code != http.StatusOK {
+		t.Errorf("expected status 200, got %d", w2.Code)
+	}
+
+	// Verify the function is enabled
+	reenabled, err := database.GetFunction(context.Background(), fn.ID)
+	if err != nil {
+		t.Fatalf("failed to get re-enabled function: %v", err)
+	}
+
+	if reenabled.Disabled {
+		t.Error("expected function to be enabled")
+	}
+}
+
+func TestExecuteFunction_DisabledFunction(t *testing.T) {
+	database := store.NewMemoryDB()
+	server := NewServer(ServerConfig{
+		DB:         database,
+		Logger:     logger.NewMemoryLogger(),
+		KVStore:    kv.NewMemoryStore(),
+		EnvStore:   env.NewMemoryStore(),
+		HTTPClient: internalhttp.NewDefaultClient(),
+		APIKey:     "test-api-key",
+	})
+
+	// Create a test function
+	fn := createTestFunction(t, database)
+	_, err := database.CreateVersion(context.Background(), fn.ID, `
+function handler(ctx, event)
+  return {
+    statusCode = 200,
+    body = '{"message": "success"}'
+  }
+end
+`, nil)
+	if err != nil {
+		t.Fatalf("Failed to create version: %v", err)
+	}
+
+	// Disable the function
+	disabled := true
+	updates := store.UpdateFunctionRequest{
+		Disabled: &disabled,
+	}
+	if err := database.UpdateFunction(context.Background(), fn.ID, updates); err != nil {
+		t.Fatalf("Failed to disable function: %v", err)
+	}
+
+	// Try to execute the disabled function
+	req := httptest.NewRequest(http.MethodPost, "/fn/"+fn.ID, nil)
+	w := httptest.NewRecorder()
+
+	server.Handler().ServeHTTP(w, req)
+
+	// Should return 403 Forbidden
+	if w.Code != http.StatusForbidden {
+		t.Errorf("expected status 403, got %d", w.Code)
+	}
+
+	var resp map[string]string
+	if err := json.NewDecoder(w.Body).Decode(&resp); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
+
+	if resp["error"] != "Function is disabled" {
+		t.Errorf("expected error 'Function is disabled', got %q", resp["error"])
+	}
+}
+
 func TestCORSMiddleware(t *testing.T) {
 	server := createTestServer(store.NewMemoryDB())
 

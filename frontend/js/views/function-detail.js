@@ -181,6 +181,28 @@ export const FunctionDetail = {
     }
   },
 
+  toggleDisabled: async () => {
+    const newDisabledState = !FunctionDetail.func.disabled;
+    const action = newDisabledState ? "disable" : "enable";
+
+    if (!confirm(`Are you sure you want to ${action} this function?`)) {
+      return;
+    }
+
+    try {
+      await API.functions.update(FunctionDetail.func.id, {
+        disabled: newDisabledState,
+      });
+      Toast.show(
+        `Function ${newDisabledState ? "disabled" : "enabled"} successfully`,
+        "success",
+      );
+      FunctionDetail.loadData(FunctionDetail.func.id);
+    } catch (e) {
+      Toast.show(`Failed to ${action} function: ` + e.message, "error");
+    }
+  },
+
   view: (vnode) => {
     if (FunctionDetail.loading) {
       return m(".loading", "Loading...");
@@ -196,11 +218,29 @@ export const FunctionDetail = {
       m(".page-header", [
         m(".page-title", [
           m("div", [
-            m("h1", func.name),
+            m("h1", [
+              func.name,
+              func.disabled &&
+                m(
+                  ".badge.badge-error",
+                  { style: "margin-left: 12px; font-size: 12px;" },
+                  "Disabled",
+                ),
+            ]),
             m(".page-subtitle", func.description || "No description"),
           ]),
           m(".actions", [
             m("a.btn", { href: "#!/functions" }, [Icons.arrowLeft(), "  Back"]),
+            m(
+              "button.btn",
+              {
+                onclick: FunctionDetail.toggleDisabled,
+                style: func.disabled ? "color: #4ade80;" : "color: #fbbf24;",
+              },
+              func.disabled
+                ? [Icons.play(), "  Enable"]
+                : [Icons.pause(), "  Disable"],
+            ),
             m(
               "button.btn",
               {

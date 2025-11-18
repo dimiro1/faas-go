@@ -41,6 +41,7 @@ func TestSQLiteDB_CreateFunction(t *testing.T) {
 		Name:        "test-function",
 		Description: &desc,
 		EnvVars:     map[string]string{"KEY": "value"},
+		Disabled:    false,
 	}
 
 	created, err := sqliteDB.CreateFunction(ctx, fn)
@@ -53,6 +54,9 @@ func TestSQLiteDB_CreateFunction(t *testing.T) {
 	}
 	if created.Name != fn.Name {
 		t.Errorf("Expected Name %s, got %s", fn.Name, created.Name)
+	}
+	if created.Disabled != false {
+		t.Error("Expected Disabled to be false")
 	}
 	if created.CreatedAt == 0 {
 		t.Error("Expected CreatedAt to be set")
@@ -776,6 +780,173 @@ func TestSQLiteDB_DeleteFunction_CascadesExecutions(t *testing.T) {
 	_, err = sqliteDB.GetExecution(ctx, exec.ID)
 	if err == nil {
 		t.Error("Expected execution to be cascade deleted")
+	}
+}
+
+// Disabled function tests
+
+func TestSQLiteDB_UpdateFunction_ToggleDisabled(t *testing.T) {
+	db, sqliteDB := setupTestDB(t)
+	defer func() { _ = db.Close() }()
+
+	ctx := context.Background()
+
+	// Create a function
+	fn := Function{
+		ID:       "func_disabled_test",
+		Name:     "disabled-test",
+		EnvVars:  make(map[string]string),
+		Disabled: false,
+	}
+
+	created, err := sqliteDB.CreateFunction(ctx, fn)
+	if err != nil {
+		t.Fatalf("CreateFunction failed: %v", err)
+	}
+
+	if created.Disabled {
+		t.Error("Expected Disabled to be false initially")
+	}
+
+	// Sleep to ensure UpdatedAt will be different
+	time.Sleep(1 * time.Second)
+
+	// Disable the function
+	disabledTrue := true
+	updates := UpdateFunctionRequest{
+		Disabled: &disabledTrue,
+	}
+
+	if err := sqliteDB.UpdateFunction(ctx, fn.ID, updates); err != nil {
+		t.Fatalf("UpdateFunction failed: %v", err)
+	}
+
+	// Retrieve and verify
+	updated, err := sqliteDB.GetFunction(ctx, fn.ID)
+	if err != nil {
+		t.Fatalf("GetFunction failed: %v", err)
+	}
+
+	if !updated.Disabled {
+		t.Error("Expected Disabled to be true after update")
+	}
+	if updated.UpdatedAt <= created.UpdatedAt {
+		t.Error("Expected UpdatedAt to be newer")
+	}
+
+	// Sleep again
+	time.Sleep(1 * time.Second)
+
+	// Enable the function again
+	disabledFalse := false
+	updates = UpdateFunctionRequest{
+		Disabled: &disabledFalse,
+	}
+
+	if err := sqliteDB.UpdateFunction(ctx, fn.ID, updates); err != nil {
+		t.Fatalf("UpdateFunction failed: %v", err)
+	}
+
+	// Retrieve and verify
+	enabled, err := sqliteDB.GetFunction(ctx, fn.ID)
+	if err != nil {
+		t.Fatalf("GetFunction failed: %v", err)
+	}
+
+	if enabled.Disabled {
+		t.Error("Expected Disabled to be false after re-enabling")
+	}
+	if enabled.UpdatedAt <= updated.UpdatedAt {
+		t.Error("Expected UpdatedAt to be newer after re-enabling")
+	}
+}
+
+func TestSQLiteDB_GetFunction_DisabledField(t *testing.T) {
+	db, sqliteDB := setupTestDB(t)
+	defer func() { _ = db.Close() }()
+
+	ctx := context.Background()
+
+	// Create a disabled function
+	fn := Function{
+		ID:       "func_disabled_get",
+		Name:     "disabled-get-test",
+		EnvVars:  make(map[string]string),
+		Disabled: true,
+	}
+
+	_, err := sqliteDB.CreateFunction(ctx, fn)
+	if err != nil {
+		t.Fatalf("CreateFunction failed: %v", err)
+	}
+
+	// Get the function
+	retrieved, err := sqliteDB.GetFunction(ctx, fn.ID)
+	if err != nil {
+		t.Fatalf("GetFunction failed: %v", err)
+	}
+
+	if !retrieved.Disabled {
+		t.Error("Expected Disabled to be true")
+	}
+}
+
+func TestSQLiteDB_ListFunctions_IncludesDisabledStatus(t *testing.T) {
+	db, sqliteDB := setupTestDB(t)
+	defer func() { _ = db.Close() }()
+
+	ctx := context.Background()
+
+	// Create one enabled and one disabled function
+	fn1 := Function{
+		ID:       "func_list_enabled",
+		Name:     "enabled-func",
+		EnvVars:  make(map[string]string),
+		Disabled: false,
+	}
+	fn2 := Function{
+		ID:       "func_list_disabled",
+		Name:     "disabled-func",
+		EnvVars:  make(map[string]string),
+		Disabled: true,
+	}
+
+	if _, err := sqliteDB.CreateFunction(ctx, fn1); err != nil {
+		t.Fatalf("CreateFunction fn1 failed: %v", err)
+	}
+	if _, err := sqliteDB.CreateFunction(ctx, fn2); err != nil {
+		t.Fatalf("CreateFunction fn2 failed: %v", err)
+	}
+
+	// List functions
+	functions, total, err := sqliteDB.ListFunctions(ctx, PaginationParams{Limit: 10, Offset: 0})
+	if err != nil {
+		t.Fatalf("ListFunctions failed: %v", err)
+	}
+
+	if len(functions) != 2 {
+		t.Errorf("Expected 2 functions, got %d", len(functions))
+	}
+	if total != 2 {
+		t.Errorf("Expected total 2, got %d", total)
+	}
+
+	// Verify disabled status is preserved
+	var foundEnabled, foundDisabled bool
+	for _, fn := range functions {
+		if fn.ID == fn1.ID && !fn.Disabled {
+			foundEnabled = true
+		}
+		if fn.ID == fn2.ID && fn.Disabled {
+			foundDisabled = true
+		}
+	}
+
+	if !foundEnabled {
+		t.Error("Expected to find enabled function with Disabled=false")
+	}
+	if !foundDisabled {
+		t.Error("Expected to find disabled function with Disabled=true")
 	}
 }
 

@@ -89,7 +89,15 @@ export const FunctionsList = {
                   "tbody",
                   FunctionsList.functions.map((func) =>
                     m("tr", { key: func.id }, [
-                      m("td", func.name),
+                      m("td", [
+                        func.name,
+                        func.disabled &&
+                          m(
+                            ".badge.badge-error",
+                            { style: "margin-left: 8px; font-size: 10px;" },
+                            "Disabled",
+                          ),
+                      ]),
                       m("td", func.description || "No description"),
                       m(
                         "td",

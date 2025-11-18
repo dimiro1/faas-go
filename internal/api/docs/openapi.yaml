@@ -300,6 +300,14 @@ paths:
                     function handler(ctx, event)
                       return {statusCode = 200, body = "Updated!", headers = {}}
                     end
+              disableFunction:
+                summary: Disable function
+                value:
+                  disabled: true
+              enableFunction:
+                summary: Enable function
+                value:
+                  disabled: false
       responses:
         "200":
           description: Function updated successfully
@@ -804,6 +812,17 @@ paths:
               schema:
                 type: string
                 description: Response body from the function
+        "403":
+          description: Function is disabled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                disabled:
+                  summary: Function disabled
+                  value:
+                    error: "Function is disabled"
         "404":
           description: Function not found
         "500":
@@ -856,6 +875,12 @@ paths:
             "*/*":
               schema:
                 type: string
+        "403":
+          description: Function is disabled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: Function not found
         "500":
@@ -902,6 +927,12 @@ paths:
             "*/*":
               schema:
                 type: string
+        "403":
+          description: Function is disabled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: Function not found
         "500":
@@ -943,6 +974,12 @@ paths:
             "*/*":
               schema:
                 type: string
+        "403":
+          description: Function is disabled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "404":
           description: Function not found
         "500":
@@ -993,6 +1030,7 @@ components:
         - id
         - name
         - env_vars
+        - disabled
         - created_at
         - updated_at
       properties:
@@ -1017,6 +1055,11 @@ components:
           example:
             API_KEY: "secret-123"
             DEBUG: "true"
+        disabled:
+          type: boolean
+          description: Whether the function is disabled and cannot be executed
+          example: false
+          default: false
         created_at:
           type: integer
           format: int64
@@ -1257,6 +1300,11 @@ components:
             end
           minLength: 1
           maxLength: 1048576
+        disabled:
+          type: boolean
+          nullable: true
+          description: Set to true to disable the function (preventing execution), false to enable it
+          example: false
 
     UpdateEnvVarsRequest:
       type: object
