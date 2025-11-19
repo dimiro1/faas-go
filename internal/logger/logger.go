@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dimiro1/faas-go/internal/masking"
 	"github.com/rs/xid"
 	_ "modernc.org/sqlite"
 )
@@ -74,10 +75,13 @@ func (m *MemoryLogger) Log(executionID string, level LogLevel, message string) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
+	// Mask sensitive data in log messages
+	maskedMessage := masking.MaskLogMessage(message)
+
 	entry := LogEntry{
 		ExecutionID: executionID,
 		Level:       level,
-		Message:     message,
+		Message:     maskedMessage,
 		Timestamp:   time.Now().Unix(),
 	}
 
@@ -198,10 +202,13 @@ func NewSQLiteLogger(db *sql.DB) *SQLiteLogger {
 
 // Log records a log entry with the specified executionID, level and message
 func (s *SQLiteLogger) Log(executionID string, level LogLevel, message string) {
+	// Mask sensitive data in log messages
+	maskedMessage := masking.MaskLogMessage(message)
+
 	id := xid.New().String()
 	_, err := s.db.Exec(
 		"INSERT INTO logs (id, execution_id, level, message, timestamp) VALUES (?, ?, ?, ?, ?)",
-		id, executionID, int(level), message, time.Now().Unix(),
+		id, executionID, int(level), maskedMessage, time.Now().Unix(),
 	)
 	if err != nil {
 		// For now, we silently ignore errors to match the Logger interface

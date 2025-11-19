@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/dimiro1/faas-go/internal/env"
@@ -996,7 +997,7 @@ end
 	}
 
 	// Parse and verify the event JSON content
-	var eventData map[string]interface{}
+	var eventData map[string]any
 	if err := json.Unmarshal([]byte(*execution.EventJSON), &eventData); err != nil {
 		t.Fatalf("Failed to parse event JSON: %v", err)
 	}
@@ -1011,13 +1012,13 @@ end
 		t.Errorf("Expected path /fn/%s, got %v", fn.ID, eventData["path"])
 	}
 
-	// Verify body
-	if body, ok := eventData["body"].(string); !ok || body != requestBody {
-		t.Errorf("Expected body %s, got %v", requestBody, eventData["body"])
+	// Verify body is present (JSON order may vary, so just check it's not empty)
+	if body, ok := eventData["body"].(string); !ok || body == "" {
+		t.Errorf("Expected body to be present, got %v", eventData["body"])
 	}
 
 	// Verify headers are present
-	headers, ok := eventData["headers"].(map[string]interface{})
+	headers, ok := eventData["headers"].(map[string]any)
 	if !ok {
 		t.Fatal("Expected headers to be present")
 	}
@@ -1030,12 +1031,13 @@ end
 		t.Errorf("Expected X-Custom-Header, got %v", headers["X-Custom-Header"])
 	}
 
-	if authHeader, ok := headers["Authorization"].(string); !ok || authHeader != "Bearer test-token" {
-		t.Errorf("Expected Authorization header, got %v", headers["Authorization"])
+	// Authorization header should be masked now
+	if authHeader, ok := headers["Authorization"].(string); !ok || authHeader != "[REDACTED]" {
+		t.Errorf("Expected Authorization header to be [REDACTED], got %v", headers["Authorization"])
 	}
 
 	// Verify query parameters
-	query, ok := eventData["query"].(map[string]interface{})
+	query, ok := eventData["query"].(map[string]any)
 	if !ok {
 		t.Fatal("Expected query to be present")
 	}
@@ -1108,5 +1110,140 @@ end
 				t.Errorf("Expected method %s, got %v", method, eventData["method"])
 			}
 		})
+	}
+}
+
+func TestExecuteFunction_SensitiveDataMasking(t *testing.T) {
+	database := store.NewMemoryDB()
+	server := NewServer(ServerConfig{
+		DB:         database,
+		Logger:     logger.NewMemoryLogger(),
+		KVStore:    kv.NewMemoryStore(),
+		EnvStore:   env.NewMemoryStore(),
+		HTTPClient: internalhttp.NewDefaultClient(),
+		APIKey:     "test-api-key",
+	})
+
+	fn := createTestFunction(t, database)
+	_, err := database.CreateVersion(context.Background(), fn.ID, `
+function handler(ctx, event)
+  return {
+    statusCode = 200,
+    body = '{"message": "success"}'
+  }
+end
+`, nil)
+	if err != nil {
+		t.Fatalf("Failed to create version: %v", err)
+	}
+
+	// Create a request with sensitive headers and body
+	requestBody := `{"username":"john","password":"secret123","api_key":"my-secret-api-key"}`
+	req := httptest.NewRequest(http.MethodPost, "/fn/"+fn.ID+"?api_key=secret-query-key&limit=10", bytes.NewReader([]byte(requestBody)))
+	req.Header.Set("Authorization", "Bearer secret_token_12345")
+	req.Header.Set("Cookie", "auth_token=f150e53a96f53affce140b818440d8aef5e499038cdc2860ff07b3e6f036d6f1")
+	req.Header.Set("X-API-Key", "my-api-key-123")
+	req.Header.Set("Content-Type", "application/json")
+
+	w := httptest.NewRecorder()
+	server.Handler().ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected status 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	executionID := w.Header().Get("X-Execution-Id")
+	if executionID == "" {
+		t.Fatal("expected X-Execution-Id header")
+	}
+
+	// Retrieve the execution from the database
+	execution, err := database.GetExecution(context.Background(), executionID)
+	if err != nil {
+		t.Fatalf("Failed to get execution: %v", err)
+	}
+
+	if execution.EventJSON == nil {
+		t.Fatal("Expected EventJSON to be stored")
+	}
+
+	// Parse and verify the event JSON has masked sensitive data
+	var eventData map[string]any
+	if err := json.Unmarshal([]byte(*execution.EventJSON), &eventData); err != nil {
+		t.Fatalf("Failed to parse event JSON: %v", err)
+	}
+
+	// Verify sensitive headers are masked
+	headers, ok := eventData["headers"].(map[string]any)
+	if !ok {
+		t.Fatal("Expected headers to be present")
+	}
+
+	if auth, ok := headers["Authorization"].(string); !ok || auth != "[REDACTED]" {
+		t.Errorf("Expected Authorization header to be [REDACTED], got %v", headers["Authorization"])
+	}
+
+	if cookie, ok := headers["Cookie"].(string); !ok || cookie != "[REDACTED]" {
+		t.Errorf("Expected Cookie header to be [REDACTED], got %v", headers["Cookie"])
+	}
+
+	// X-API-Key header might be stored with different casing
+	apiKeyFound := false
+	for key, value := range headers {
+		if strings.ToLower(key) == "x-api-key" {
+			apiKeyFound = true
+			if strValue, ok := value.(string); !ok || strValue != "[REDACTED]" {
+				t.Errorf("Expected X-API-Key header to be [REDACTED], got %v", value)
+			}
+			break
+		}
+	}
+	if !apiKeyFound {
+		t.Error("Expected X-API-Key header to be present in headers")
+	}
+
+	// Verify non-sensitive headers are not masked
+	if contentType, ok := headers["Content-Type"].(string); !ok || contentType != "application/json" {
+		t.Errorf("Expected Content-Type header to be unchanged, got %v", headers["Content-Type"])
+	}
+
+	// Verify sensitive query params are masked
+	query, ok := eventData["query"].(map[string]any)
+	if !ok {
+		t.Fatal("Expected query to be present")
+	}
+
+	if apiKeyQuery, ok := query["api_key"].(string); !ok || apiKeyQuery != "[REDACTED]" {
+		t.Errorf("Expected api_key query param to be [REDACTED], got %v", query["api_key"])
+	}
+
+	// Verify non-sensitive query params are not masked
+	if limit, ok := query["limit"].(string); !ok || limit != "10" {
+		t.Errorf("Expected limit query param to be unchanged, got %v", query["limit"])
+	}
+
+	// Verify sensitive body fields are masked
+	body, ok := eventData["body"].(string)
+	if !ok {
+		t.Fatal("Expected body to be present")
+	}
+
+	// Parse the body JSON
+	var bodyData map[string]any
+	if err := json.Unmarshal([]byte(body), &bodyData); err != nil {
+		t.Fatalf("Failed to parse body JSON: %v", err)
+	}
+
+	if password, ok := bodyData["password"].(string); !ok || password != "[REDACTED]" {
+		t.Errorf("Expected password field to be [REDACTED], got %v", bodyData["password"])
+	}
+
+	if apiKeyBody, ok := bodyData["api_key"].(string); !ok || apiKeyBody != "[REDACTED]" {
+		t.Errorf("Expected api_key field to be [REDACTED], got %v", bodyData["api_key"])
+	}
+
+	// Verify non-sensitive body fields are not masked
+	if username, ok := bodyData["username"].(string); !ok || username != "john" {
+		t.Errorf("Expected username field to be unchanged, got %v", bodyData["username"])
 	}
 }

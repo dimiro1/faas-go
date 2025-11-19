@@ -14,6 +14,7 @@ import (
 	internalhttp "github.com/dimiro1/faas-go/internal/http"
 	"github.com/dimiro1/faas-go/internal/kv"
 	"github.com/dimiro1/faas-go/internal/logger"
+	"github.com/dimiro1/faas-go/internal/masking"
 	"github.com/dimiro1/faas-go/internal/runner"
 	"github.com/dimiro1/faas-go/internal/store"
 	"github.com/rs/xid"
@@ -602,8 +603,11 @@ func ExecuteFunctionHandler(deps ExecuteFunctionDeps) http.HandlerFunc {
 			BaseURL:     deps.BaseURL,
 		}
 
-		// Serialize the event to JSON for storage
-		eventJSONBytes, err := json.Marshal(httpEvent)
+		// Mask sensitive data in the event before storing
+		maskedEvent := masking.MaskHTTPEvent(httpEvent)
+
+		// Serialize the masked event to JSON for storage
+		eventJSONBytes, err := json.Marshal(maskedEvent)
 		if err != nil {
 			writeError(w, http.StatusInternalServerError, "Failed to serialize event")
 			return

@@ -3,6 +3,7 @@ package logger
 import (
 	"database/sql"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/dimiro1/faas-go/internal/migrate"
@@ -200,4 +201,149 @@ func TestMemoryLogger_Clear(t *testing.T) {
 	if logger.Count() != 0 {
 		t.Errorf("Expected count 0 after clear, got %d", logger.Count())
 	}
+}
+
+func TestMemoryLogger_SensitiveDataMasking(t *testing.T) {
+	logger := NewMemoryLogger()
+
+	testCases := []struct {
+		name             string
+		message          string
+		shouldContain    string
+		shouldNotContain string
+	}{
+		{
+			name:             "JWT token masked",
+			message:          "User authenticated with JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+			shouldContain:    "[REDACTED]",
+			shouldNotContain: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+		},
+		{
+			name:             "Bearer token masked",
+			message:          "Authorization: Bearer abc123def456ghi789",
+			shouldContain:    "[REDACTED]",
+			shouldNotContain: "abc123def456ghi789",
+		},
+		{
+			name:             "API key masked",
+			message:          "Using API key: sk_live_51234567890abcdefghij",
+			shouldContain:    "[REDACTED]",
+			shouldNotContain: "sk_live_51234567890abcdefghij",
+		},
+		{
+			name:             "AWS key masked",
+			message:          "AWS Access Key: AKIAIOSFODNN7EXAMPLE",
+			shouldContain:    "[REDACTED]",
+			shouldNotContain: "AKIAIOSFODNN7EXAMPLE",
+		},
+		{
+			name:             "Password masked",
+			message:          "User password: my_secret_password_123",
+			shouldContain:    "[REDACTED]",
+			shouldNotContain: "my_secret_password_123",
+		},
+		{
+			name:             "Regular message unchanged",
+			message:          "User logged in successfully",
+			shouldContain:    "User logged in successfully",
+			shouldNotContain: "[REDACTED]",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			executionID := "test-exec-" + tc.name
+			logger.Info(executionID, tc.message)
+
+			entries := logger.Entries(executionID)
+			if len(entries) != 1 {
+				t.Fatalf("Expected 1 entry, got %d", len(entries))
+			}
+
+			loggedMessage := entries[0].Message
+
+			if tc.shouldContain != "" && !contains(loggedMessage, tc.shouldContain) {
+				t.Errorf("Expected logged message to contain %q, got %q", tc.shouldContain, loggedMessage)
+			}
+
+			if tc.shouldNotContain != "" && contains(loggedMessage, tc.shouldNotContain) {
+				t.Errorf("Expected logged message to NOT contain %q, but it does: %q", tc.shouldNotContain, loggedMessage)
+			}
+
+			// Clean up
+			logger.Clear()
+		})
+	}
+}
+
+func TestSQLiteLogger_SensitiveDataMasking(t *testing.T) {
+	db := setupTestDB(t)
+	defer func() { _ = db.Close() }()
+
+	logger := NewSQLiteLogger(db)
+
+	testCases := []struct {
+		name             string
+		message          string
+		shouldContain    string
+		shouldNotContain string
+	}{
+		{
+			name:             "JWT token masked",
+			message:          "Authenticated with token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U",
+			shouldContain:    "[REDACTED]",
+			shouldNotContain: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9",
+		},
+		{
+			name:             "Bearer token masked",
+			message:          "Request with Authorization: Bearer secret_token_here",
+			shouldContain:    "[REDACTED]",
+			shouldNotContain: "secret_token_here",
+		},
+		{
+			name:             "API key masked",
+			message:          "API Key provided: api_key=sk_test_1234567890abcdef",
+			shouldContain:    "[REDACTED]",
+			shouldNotContain: "sk_test_1234567890abcdef",
+		},
+		{
+			name:             "Multiple secrets masked",
+			message:          "Credentials: password=mysecret123 and token=abc123def456ghi",
+			shouldContain:    "[REDACTED]",
+			shouldNotContain: "mysecret123",
+		},
+		{
+			name:             "Regular message unchanged",
+			message:          "Processing request from user ID 12345",
+			shouldContain:    "Processing request from user ID 12345",
+			shouldNotContain: "[REDACTED]",
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			executionID := "test-exec-sqlite-" + tc.name
+			logger.Info(executionID, tc.message)
+
+			entries := logger.Entries(executionID)
+			if len(entries) != 1 {
+				t.Fatalf("Expected 1 entry, got %d", len(entries))
+			}
+
+			loggedMessage := entries[0].Message
+
+			if tc.shouldContain != "" && !contains(loggedMessage, tc.shouldContain) {
+				t.Errorf("Expected logged message to contain %q, got %q", tc.shouldContain, loggedMessage)
+			}
+
+			if tc.shouldNotContain != "" && contains(loggedMessage, tc.shouldNotContain) {
+				t.Errorf("Expected logged message to NOT contain %q, but it does: %q", tc.shouldNotContain, loggedMessage)
+			}
+		})
+	}
+}
+
+// Helper function to check if a string contains a substring
+func contains(str, substr string) bool {
+	return strings.Contains(str, substr)
 }
