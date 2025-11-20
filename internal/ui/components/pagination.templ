@@ -1,0 +1,91 @@
+package components
+
+import "fmt"
+
+type PaginationInfo struct {
+	CurrentStart int
+	CurrentEnd   int
+	Total        int
+	PerPage      int
+	HasPrev      bool
+	HasNext      bool
+}
+
+css pagination() {
+	padding: 0.75rem 1rem;
+	border-top: 1px solid var(--color-border);
+	background-color: var(--color-surface-30);
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+}
+
+css paginationInfo() {
+	font-size: var(--text-xs);
+	color: var(--color-subtle);
+}
+
+css paginationInfoHighlight() {
+	font-weight: 500;
+	color: white;
+}
+
+css paginationControls() {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+
+css paginationButtons() {
+	display: flex;
+	border-radius: 4px;
+	border: 1px solid var(--color-border);
+	overflow: hidden;
+}
+
+css paginationBtn() {
+	padding: 0.25rem 0.75rem;
+	background-color: var(--color-surface-50);
+	border: none;
+	font-size: var(--text-xs);
+	cursor: pointer;
+	transition: background-color 0.2s;
+	color: var(--color-text);
+}
+
+css paginationBtnDisabled() {
+	color: var(--color-subtle);
+	cursor: not-allowed;
+}
+
+css paginationBtnBorder() {
+	border-right: 1px solid var(--color-border);
+}
+
+templ Pagination(info PaginationInfo) {
+	<div class={ pagination() }>
+		<div class={ paginationInfo() }>
+			Showing <span class={ paginationInfoHighlight() }>{ fmt.Sprintf("%d", info.CurrentStart) }</span> to
+			<span class={ paginationInfoHighlight() }>{ fmt.Sprintf("%d", info.CurrentEnd) }</span> of
+			<span class={ paginationInfoHighlight() }>{ fmt.Sprintf("%d", info.Total) }</span> results
+		</div>
+		<div class={ paginationControls() }>
+			@Select([]string{"10 per page", "20 per page", "50 per page"})
+			<div class={ paginationButtons() }>
+				if info.HasPrev {
+					<button class={ paginationBtn(), paginationBtnBorder() }>Previous</button>
+				} else {
+					<button class={ paginationBtn(), paginationBtnDisabled(), paginationBtnBorder() } disabled>Previous</button>
+				}
+				if info.HasNext {
+					<button class={ paginationBtn() }>Next</button>
+				} else {
+					<button class={ paginationBtn(), paginationBtnDisabled() } disabled>Next</button>
+				}
+			</div>
+		</div>
+	</div>
+}

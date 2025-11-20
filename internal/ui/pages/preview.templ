@@ -1,0 +1,247 @@
+package pages
+
+import "github.com/dimiro1/faas-go/internal/ui/components"
+
+// Preview page that renders all components for visual inspection
+templ PreviewDashboard() {
+	@components.Layout("FaaS Console - Dashboard") {
+		@components.Header("dashboard", "")
+		@Dashboard(
+			[]components.Function{
+				{ID: "hello", Name: "hello", Description: "This is just a hello function", Enabled: true, Invocations: "1,203", LastUpdated: "2m ago"},
+				{ID: "image-resize", Name: "image-resize", Description: "Resizes uploaded images", Enabled: false, Invocations: "0", LastUpdated: "5d ago"},
+			},
+			components.PaginationInfo{CurrentStart: 1, CurrentEnd: 2, Total: 2, PerPage: 10, HasPrev: false, HasNext: false},
+		)
+	}
+}
+
+templ PreviewCreateFunction() {
+	@components.Layout("FaaS Console - Create Function") {
+		@components.Header("create", "")
+		@CreateFunction([]components.Template{
+			{ID: "hello", Name: "Hello World", Icon: "fa-code", Description: "Basic HTTP response example.", Selected: true},
+			{ID: "json", Name: "JSON API", Icon: "fa-exchange-alt", Description: "Parse JSON input and return JSON.", Selected: false},
+			{ID: "webhook", Name: "Webhook", Icon: "fa-bell", Description: "Validate and process webhooks.", Selected: false},
+		})
+	}
+}
+
+templ PreviewFunctionDetails() {
+	@components.Layout("FaaS Console - hello") {
+		@components.Header("details", "hello")
+		@components.FunctionDetailsView(
+			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			[]components.Tab{
+				{ID: "metrics", Name: "Metrics", Active: true},
+				{ID: "code", Name: "Code", Active: false},
+				{ID: "settings", Name: "Settings", Active: false},
+				{ID: "executions", Name: "Executions", Active: false},
+				{ID: "test", Name: "Test", Active: false},
+			},
+			"metrics",
+			"/functions/hello",
+			false,
+		) {
+			@components.TabContent("metrics", true) {
+				@components.MetricsTab(
+					[]components.StatCard{
+						{Label: "Total Calls (24h)", Value: "14,230", Change: "12% vs yesterday", IsPositive: true},
+						{Label: "Error Count", Value: "23", Change: "0.16% Error Rate", IsPositive: false},
+						{Label: "Success Rate", Value: "99.84%", Change: "Healthy", IsPositive: false, IsSuccess: true},
+						{Label: "Avg Duration", Value: "42", Unit: "ms", Change: "P99: 120ms", IsPositive: false},
+					},
+					[]components.BarData{
+						{Height: 40, Tooltip: "400 calls"},
+						{Height: 65, Tooltip: "650 calls"},
+						{Height: 45, Tooltip: "450 calls"},
+						{Height: 80, Tooltip: "800 calls"},
+						{Height: 30, Tooltip: "300 calls"},
+						{Height: 55, Tooltip: "550 calls"},
+						{Height: 90, Tooltip: "900 calls"},
+						{Height: 70, Tooltip: "700 calls"},
+						{Height: 40, Tooltip: "400 calls"},
+						{Height: 60, Tooltip: "600 calls"},
+						{Height: 20, Tooltip: "200 calls"},
+						{Height: 50, Tooltip: "500 calls"},
+						{Height: 75, Tooltip: "750 calls"},
+						{Height: 65, Tooltip: "650 calls"},
+						{Height: 85, Tooltip: "850 calls"},
+					},
+				)
+			}
+		}
+	}
+}
+
+templ PreviewCodeTab() {
+	@components.Layout("FaaS Console - hello - Code") {
+		@components.Header("details", "hello")
+		@components.FunctionDetailsView(
+			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			[]components.Tab{
+				{ID: "metrics", Name: "Metrics", Active: false},
+				{ID: "code", Name: "Code", Active: true},
+				{ID: "settings", Name: "Settings", Active: false},
+				{ID: "executions", Name: "Executions", Active: false},
+				{ID: "test", Name: "Test", Active: false},
+			},
+			"code",
+			"/functions/hello",
+			true,
+		) {
+			@components.TabContent("code", true) {
+				@components.CodeTab(
+					components.CodeFile{
+						Filename: "handler.lua",
+						Language: "Lua 5.4",
+						Code: `<span class="lua-kw">local</span> json <span class="lua-kw">=</span> <span class="lua-func">require</span>(<span class="lua-str">"json"</span>)
+
+<span class="lua-comment">-- Main entry point for the function</span>
+<span class="lua-kw">function</span> <span class="lua-func">handler</span>(ctx, event)
+  <span class="lua-func">print</span>(<span class="lua-str">"Function invoked with method: "</span> .. event.method)
+
+  <span class="lua-kw">local</span> response <span class="lua-kw">=</span> {
+    <span class="lua-field">message</span> <span class="lua-kw">=</span> <span class="lua-str">"Hello from Lua!"</span>,
+    <span class="lua-field">timestamp</span> <span class="lua-kw">=</span> os.<span class="lua-func">time</span>()
+  }
+
+  <span class="lua-kw">return</span> {
+    <span class="lua-field">statusCode</span> <span class="lua-kw">=</span> <span class="lua-num">200</span>,
+    <span class="lua-field">headers</span> <span class="lua-kw">=</span> { [<span class="lua-str">"Content-Type"</span>] = <span class="lua-str">"application/json"</span> },
+    <span class="lua-field">body</span> <span class="lua-kw">=</span> json.<span class="lua-func">encode</span>(response)
+  }
+<span class="lua-kw">end</span>`,
+						Lines: 17,
+					},
+					[]components.ApiSection{
+						{
+							ID:          "ctx",
+							Name:        "Context",
+							Description: "Runtime information about the current execution.",
+							Active:      true,
+							Items: []components.ApiDocItem{
+								{Name: "ctx.executionId", Type: "string", Description: "Unique ID for the current request.", Category: "ctx"},
+								{Name: "ctx.functionId", Type: "string", Description: "The unique identifier of the function.", Category: "ctx"},
+								{Name: "ctx.env", Type: "table", Description: "Access environment variables.", Category: "ctx"},
+							},
+							Example: `print("Exec ID: " .. ctx.executionId)`,
+						},
+						{
+							ID:          "event",
+							Name:        "Event",
+							Description: "Incoming HTTP request data.",
+							Active:      false,
+							Items: []components.ApiDocItem{
+								{Name: "event.method", Type: "string", Description: "HTTP method (GET, POST, etc).", Category: "event"},
+								{Name: "event.body", Type: "string", Description: "Raw request body content.", Category: "event"},
+								{Name: "event.query", Type: "table", Description: "Key-value table of query params.", Category: "event"},
+							},
+						},
+						{
+							ID:          "modules",
+							Name:        "Modules",
+							Description: "Built-in utility modules.",
+							Active:      false,
+							Items: []components.ApiDocItem{
+								{Name: "json", Type: "module", Description: "JSON encode/decode functions.", Category: "module"},
+							},
+						},
+					},
+				)
+			}
+		}
+	}
+}
+
+templ PreviewSettingsTab() {
+	@components.Layout("FaaS Console - hello - Settings") {
+		@components.Header("details", "hello")
+		@components.FunctionDetailsView(
+			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			[]components.Tab{
+				{ID: "metrics", Name: "Metrics", Active: false},
+				{ID: "code", Name: "Code", Active: false},
+				{ID: "settings", Name: "Settings", Active: true},
+				{ID: "executions", Name: "Executions", Active: false},
+				{ID: "test", Name: "Test", Active: false},
+			},
+			"settings",
+			"/functions/hello",
+			false,
+		) {
+			@components.TabContent("settings", true) {
+				@components.SettingsTab(components.SettingsData{
+					FunctionName:  "hello",
+					Description:   "This is just a hello function",
+					Enabled:       true,
+					InvocationURL: "https://api.faas.com/v1/fn_8s7d6f87",
+					EnvVars: []components.EnvVar{
+						{Key: "STRIPE_SECRET_KEY", Value: "sk_live_51Mz..."},
+						{Key: "DB_URL", Value: "postgres://..."},
+					},
+				})
+			}
+		}
+	}
+}
+
+templ PreviewExecutionsTab() {
+	@components.Layout("FaaS Console - hello - Executions") {
+		@components.Header("details", "hello")
+		@components.FunctionDetailsView(
+			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			[]components.Tab{
+				{ID: "metrics", Name: "Metrics", Active: false},
+				{ID: "code", Name: "Code", Active: false},
+				{ID: "settings", Name: "Settings", Active: false},
+				{ID: "executions", Name: "Executions", Active: true},
+				{ID: "test", Name: "Test", Active: false},
+			},
+			"executions",
+			"/functions/hello",
+			false,
+		) {
+			@components.TabContent("executions", true) {
+				@components.ExecutionsTab(components.ExecutionsData{
+					Executions: []components.Execution{
+						{ID: "exec_12345abcde", Status: "SUCCESS", Duration: "12ms", Time: "10:42:05 PM"},
+					},
+					Pagination: components.PaginationInfo{CurrentStart: 1, CurrentEnd: 10, Total: 1203, PerPage: 10, HasPrev: false, HasNext: true},
+					BaseURL:    "/functions/hello/executions",
+				})
+			}
+		}
+	}
+}
+
+templ PreviewTestTab() {
+	@components.Layout("FaaS Console - hello - Test") {
+		@components.Header("details", "hello")
+		@components.FunctionDetailsView(
+			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			[]components.Tab{
+				{ID: "metrics", Name: "Metrics", Active: false},
+				{ID: "code", Name: "Code", Active: false},
+				{ID: "settings", Name: "Settings", Active: false},
+				{ID: "executions", Name: "Executions", Active: false},
+				{ID: "test", Name: "Test", Active: true},
+			},
+			"test",
+			"/functions/hello",
+			false,
+		) {
+			@components.TabContent("test", true) {
+				@components.TestTab(components.TestTabData{
+					Examples: []components.CodeExample{
+						{ID: "curl", Label: "cURL", Code: `curl -X POST https://api.faas.com/v1/fn_8s7d6f87 \<br/>-H "Content-Type: application/json" \<br/>-d '{"key":"value"}'`, Active: true},
+						{ID: "node", Label: "Node.js", Code: `fetch('https://api.faas.com/v1/fn_8s7d6f87', {<br/>method: 'POST',<br/>headers: {'Content-Type': 'application/json'},<br/>body: JSON.stringify({key: 'value'})<br/>});`, Active: false},
+						{ID: "python", Label: "Python", Code: `import requests<br/><br/>requests.post('https://api.faas.com/v1/fn_8s7d6f87', json={'key':'value'})`, Active: false},
+					},
+					URL:     "https://api.faas.com/v1/fn_8s7d6f87",
+					Methods: []string{"GET", "POST"},
+				})
+			}
+		}
+	}
+}

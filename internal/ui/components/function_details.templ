@@ -1,0 +1,108 @@
+package components
+
+type FunctionDetails struct {
+	ID          string
+	Name        string
+	Description string
+	Enabled     bool
+}
+
+css functionDetailsMain() {
+	padding: 2rem;
+	animation: fadeIn 0.3s ease-out;
+}
+
+css functionDetailsHeader() {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: 1.5rem;
+}
+
+css functionDetailsLeft() {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+css functionDetailsDivider() {
+	width: 1px;
+	height: 40px;
+	background-color: var(--color-border);
+}
+
+css functionDetailsInfo() {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+css functionDetailsTitle() {
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: var(--color-text);
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+css functionDetailsDescription() {
+	font-size: 0.875rem;
+	color: var(--color-text-muted);
+	margin: 0;
+}
+
+css functionDetailsActions() {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+css saveChangesBtn() {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.375rem 0.75rem;
+	border-radius: 4px;
+	border: 1px solid var(--color-border);
+	background-color: white;
+	color: black;
+	font-size: var(--text-xs);
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 10px 15px -3px rgba(255, 255, 255, 0.05);
+}
+
+templ FunctionDetailsView(fn FunctionDetails, tabs []Tab, activeTab string, baseURL string, showSaveButton bool) {
+	<main class={ functionDetailsMain() }>
+		<!-- Header -->
+		<div class={ functionDetailsHeader() }>
+			<div class={ functionDetailsLeft() }>
+				@BackButton("/")
+				<div class={ functionDetailsDivider() }></div>
+				<div class={ functionDetailsInfo() }>
+					<h1 class={ functionDetailsTitle() }>
+						{ fn.Name }
+						@IDBadge(fn.ID, true)
+					</h1>
+					<p class={ functionDetailsDescription() }>{ fn.Description }</p>
+				</div>
+			</div>
+			<div class={ functionDetailsActions() }>
+				@StatusBadgeWithGlow(fn.Enabled)
+				if showSaveButton {
+					<button class={ saveChangesBtn() }>
+						<i class="fas fa-save"></i> Save Changes
+					</button>
+				}
+			</div>
+		</div>
+		<!-- Tabs -->
+		@Tabs(tabs, baseURL)
+		<!-- Tab Content -->
+		@TabContainer() {
+			{ children... }
+		}
+	</main>
+}

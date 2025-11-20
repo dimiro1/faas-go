@@ -1,0 +1,34 @@
+package components
+
+css responseViewerTitle() {
+	font-size: var(--text-sm);
+	font-weight: 600;
+	color: var(--color-text);
+	margin: 0 0 1rem 0;
+}
+
+css responseViewerContent() {
+	padding: 3rem 2rem;
+	background-color: var(--color-panel);
+	border-radius: 6px;
+	border: 1px dashed var(--color-border);
+	text-align: center;
+	min-height: 200px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+css responsePlaceholder() {
+	color: var(--color-text-muted);
+	font-size: var(--text-sm);
+}
+
+templ ResponseViewer() {
+	@CardPadded() {
+		<h3 class={ responseViewerTitle() }>Response</h3>
+		<div class={ responseViewerContent() }>
+			<span class={ responsePlaceholder() }>Send a request to see the response</span>
+		</div>
+	}
+}

@@ -1,0 +1,48 @@
+package components
+
+type EnvVar struct {
+	Key   string
+	Value string
+}
+
+css envVarRow() {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+	margin-bottom: 0.75rem;
+}
+
+css envVarInputKey() {
+	width: 33.333%;
+}
+
+css envVarInputValue() {
+	flex: 1;
+	color: var(--color-text-muted);
+}
+
+css iconButton() {
+	padding: 0.5rem;
+	border: none;
+	border-radius: 6px;
+	background: none;
+	color: var(--color-text-muted);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+css iconButtonDanger() {
+	color: var(--color-text-muted);
+}
+
+templ EnvVarRow(env EnvVar) {
+	<div class={ envVarRow() }>
+		<input type="text" value={ env.Key } class={ inputBase(), inputMono(), envVarInputKey() } placeholder="Key"/>
+		<input type="password" value={ env.Value } class={ inputBase(), inputMono(), envVarInputValue() } placeholder="Value"/>
+		<button class={ iconButton(), iconButtonDanger() }>
+			<i class="fas fa-trash"></i>
+		</button>
+	</div>
+}

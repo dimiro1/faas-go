@@ -1,0 +1,108 @@
+package pages
+
+import "github.com/dimiro1/faas-go/internal/ui/components"
+
+css createFunctionMain() {
+	padding: 2rem;
+	animation: fadeIn 0.3s ease-out;
+	max-width: 42rem;
+	margin: 0 auto;
+	margin-top: 2.5rem;
+}
+
+css createFunctionHeader() {
+	margin-bottom: 2rem;
+}
+
+css createFunctionBack() {
+	margin-bottom: 1rem;
+}
+
+css createFunctionTitle() {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var(--color-text);
+	margin: 0 0 0.5rem 0;
+}
+
+css createFunctionSubtitle() {
+	font-size: 0.875rem;
+	color: var(--color-text-muted);
+	margin: 0;
+}
+
+css createFunctionForm() {
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background-color: var(--color-surface-30);
+	padding: 1.5rem;
+}
+
+css createFormGroup() {
+	margin-bottom: 1.5rem;
+}
+
+css createFormLabel() {
+	display: block;
+	font-size: var(--text-sm);
+	font-weight: 500;
+	color: var(--color-text);
+	margin-bottom: 0.5rem;
+}
+
+css createFormInput() {
+	width: 100%;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	background-color: var(--color-background);
+	color: var(--color-text);
+	font-size: var(--text-sm);
+	outline: none;
+}
+
+css templateGrid() {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1rem;
+}
+
+css formActions() {
+	display: flex;
+	gap: 0.5rem;
+	margin-top: 2rem;
+}
+
+templ CreateFunction(templates []components.Template) {
+	<main class={ createFunctionMain() }>
+		<div class={ createFunctionHeader() }>
+			<div class={ createFunctionBack() }>
+				@components.BackButton("/")
+			</div>
+			<h1 class={ createFunctionTitle() }>Create New Function</h1>
+			<p class={ createFunctionSubtitle() }>Initialize a new serverless function using Lua.</p>
+		</div>
+		<div class={ createFunctionForm() }>
+			<div class={ createFormGroup() }>
+				<label class={ createFormLabel() }>Function Name</label>
+				<input type="text" placeholder="e.g., payment-webhook" class={ createFormInput() }/>
+			</div>
+			<div class={ createFormGroup() }>
+				<label class={ createFormLabel() }>Starter Template</label>
+				<div class={ templateGrid() }>
+					for _, tmpl := range templates {
+						@components.TemplateCard(tmpl)
+					}
+				</div>
+			</div>
+			<div class={ formActions() }>
+				@components.ButtonLink("/", components.ButtonGhost, "") {
+					Cancel
+				}
+				@components.Button(components.ButtonPrimary, "") {
+					Create Function
+				}
+			</div>
+		</div>
+	</main>
+}

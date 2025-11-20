@@ -1,0 +1,102 @@
+package components
+
+import "fmt"
+
+type CodeFile struct {
+	Filename string
+	Language string
+	Code     string
+	Lines    int
+}
+
+css codeTabContainer() {
+	display: grid;
+	grid-template-columns: 1fr 300px;
+	gap: 1.5rem;
+	height: 600px;
+}
+
+css codeEditorShadow() {
+	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+css codeEditorFilename() {
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--color-text);
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+css codeEditorLang() {
+	font-size: var(--text-2xs);
+	font-family: var(--font-mono);
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+}
+
+css codeEditorContent() {
+	padding: 1rem;
+	overflow-x: auto;
+}
+
+css codeEditorLines() {
+	display: flex;
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	line-height: 1.75;
+}
+
+css codeLineNumbers() {
+	display: flex;
+	flex-direction: column;
+	text-align: right;
+	padding-right: 1rem;
+	margin-right: 1rem;
+	border-right: 1px solid var(--color-border);
+	color: var(--color-text-muted);
+	user-select: none;
+}
+
+css codeContent() {
+	flex: 1;
+	color: var(--color-text);
+}
+
+css codeContentPre() {
+	margin: 0;
+}
+
+templ CodeTab(file CodeFile, apiSections []ApiSection) {
+	<div class={ codeTabContainer() }>
+		<!-- Code Editor -->
+		<div class={ card(), codeEditorShadow() }>
+			<div class={ cardHeader() }>
+				<span class={ codeEditorFilename() }>
+					<i class="fas fa-file-code" style="color: var(--color-accent)"></i>
+					{ file.Filename }
+				</span>
+				<span class={ codeEditorLang() }>{ file.Language }</span>
+			</div>
+			<div class={ codeEditorContent() }>
+				<div class={ codeEditorLines() }>
+					<div class={ codeLineNumbers() }>
+						for i := 1; i <= file.Lines; i++ {
+							<span>{ fmt.Sprintf("%d", i) }</span>
+						}
+					</div>
+					<div class={ codeContent() }>
+						<pre class={ codeContentPre() }>
+							<code>
+								@templ.Raw(file.Code)
+							</code>
+						</pre>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- API Reference Sidebar -->
+		@ApiReference(apiSections)
+	</div>
+}

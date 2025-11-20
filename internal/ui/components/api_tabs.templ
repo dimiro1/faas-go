@@ -1,0 +1,9 @@
+package components
+
+templ ApiTabs(sections []ApiSection) {
+	@CardHeaderTabs() {
+		for _, section := range sections {
+			@CardTabButton(section.Name, section.Active)
+		}
+	}
+}

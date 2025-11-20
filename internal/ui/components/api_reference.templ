@@ -1,0 +1,157 @@
+package components
+
+type ApiDocItem struct {
+	Name        string
+	Type        string
+	Description string
+	Category    string // "ctx", "event", "module"
+}
+
+type ApiSection struct {
+	ID          string
+	Name        string
+	Description string
+	Items       []ApiDocItem
+	Example     string
+	Active      bool
+}
+
+css apiContent() {
+	padding: 1rem;
+	overflow-y: auto;
+	flex-grow: 1;
+}
+
+css apiDescription() {
+	font-size: var(--text-2xs);
+	color: var(--color-text-muted);
+	margin: 0 0 0.5rem 0;
+}
+
+css apiDocItem() {
+	padding: 0.5rem;
+	border-radius: 4px;
+	margin-bottom: 0.5rem;
+	background-color: var(--color-panel);
+	border: 1px solid var(--color-border);
+	transition: border-color 0.2s;
+	cursor: help;
+}
+
+
+css apiDocItemHeader() {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 0.25rem;
+}
+
+css apiDocItemName() {
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	font-weight: 700;
+	color: var(--color-text);
+}
+
+css apiDocItemNameCtx() {
+	color: var(--color-api-ctx);
+}
+
+css apiDocItemNameEvent() {
+	color: var(--color-api-event);
+}
+
+css apiDocItemNameModule() {
+	color: var(--color-api-mod);
+}
+
+css apiDocItemType() {
+	font-family: var(--font-mono);
+	font-size: var(--text-2xs);
+	color: var(--color-text-muted);
+	border: 1px solid var(--color-border);
+	padding: 0 0.25rem;
+	border-radius: 2px;
+}
+
+css apiDocItemDescription() {
+	font-size: var(--text-2xs);
+	color: var(--color-text-muted);
+	margin: 0;
+}
+
+css apiExample() {
+	margin-top: 1rem;
+	padding: 0.5rem;
+	background-color: var(--color-surface-50);
+	border-radius: 4px;
+	border: 1px solid var(--color-border);
+}
+
+css apiExampleLabel() {
+	font-size: var(--text-2xs);
+	font-weight: 700;
+	color: var(--color-text-muted);
+	margin: 0 0 0.25rem 0;
+}
+
+css apiExampleCode() {
+	font-family: var(--font-mono);
+	font-size: var(--text-2xs);
+	color: var(--color-api-ctx);
+	display: block;
+}
+
+templ ApiReference(sections []ApiSection) {
+	@Card() {
+		@ApiTabs(sections)
+		<div class={ apiContent() }>
+			for _, section := range sections {
+				if section.Active {
+					@ApiSectionContent(section)
+				}
+			}
+		</div>
+	}
+}
+
+templ ApiSectionContent(section ApiSection) {
+	<p class={ apiDescription() }>{ section.Description }</p>
+	for _, item := range section.Items {
+		@ApiDocItemComponent(item)
+	}
+	if section.Example != "" {
+		<div class={ apiExample() }>
+			<p class={ apiExampleLabel() }>Example:</p>
+			<code class={ apiExampleCode() }>{ section.Example }</code>
+		</div>
+	}
+}
+
+templ ApiDocItemComponent(item ApiDocItem) {
+	if item.Category == "event" {
+		<div class={ apiDocItem() }>
+			<div class={ apiDocItemHeader() }>
+				<span class={ apiDocItemName(), apiDocItemNameEvent() }>{ item.Name }</span>
+				<span class={ apiDocItemType() }>{ item.Type }</span>
+			</div>
+			<p class={ apiDocItemDescription() }>{ item.Description }</p>
+		</div>
+	} else if item.Category == "module" {
+		<div class={ apiDocItem() }>
+			<div class={ apiDocItemHeader() }>
+				<span class={ apiDocItemName(), apiDocItemNameModule() }>{ item.Name }</span>
+				<span class={ apiDocItemType() }>{ item.Type }</span>
+			</div>
+			<p class={ apiDocItemDescription() }>{ item.Description }</p>
+		</div>
+	} else {
+		<div class={ apiDocItem() }>
+			<div class={ apiDocItemHeader() }>
+				<span class={ apiDocItemName(), apiDocItemNameCtx() }>{ item.Name }</span>
+				<span class={ apiDocItemType() }>{ item.Type }</span>
+			</div>
+			<p class={ apiDocItemDescription() }>{ item.Description }</p>
+		</div>
+	}
+}

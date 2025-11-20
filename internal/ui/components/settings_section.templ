@@ -1,0 +1,65 @@
+package components
+
+css settingsSectionDanger() {
+	background-color: rgba(239, 68, 68, 0.05);
+	border-color: rgba(239, 68, 68, 0.3);
+}
+
+css settingsHeaderDanger() {
+	border-bottom-color: rgba(239, 68, 68, 0.2);
+}
+
+css settingsTitleDanger() {
+	color: var(--color-danger);
+}
+
+css settingsSectionContent() {
+	padding: 1.5rem;
+	text-align: left;
+}
+
+css linkButton() {
+	background: none;
+	border: none;
+	color: var(--color-accent);
+	cursor: pointer;
+	font-size: var(--text-xs);
+	padding: 0;
+}
+
+templ SettingsSection(title string, isDanger bool) {
+	if isDanger {
+		<div class={ card(), settingsSectionDanger() }>
+			<div class={ cardHeader(), settingsHeaderDanger() }>
+				<h3 class={ cardTitle(), settingsTitleDanger() }>{ title }</h3>
+			</div>
+			{ children... }
+		</div>
+	} else {
+		@Card() {
+			@CardHeader(title)
+			{ children... }
+		}
+	}
+}
+
+templ SettingsSectionWithAction(title string, actionText string) {
+	@Card() {
+		@CardHeaderWithAction(title) {
+			<button class={ linkButton() }>{ actionText }</button>
+		}
+		{ children... }
+	}
+}
+
+templ SettingsSectionContent() {
+	<div class={ settingsSectionContent() }>
+		{ children... }
+	</div>
+}
+
+templ SettingsSectionFooter() {
+	@CardFooter() {
+		{ children... }
+	}
+}

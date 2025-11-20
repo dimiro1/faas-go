@@ -1,0 +1,77 @@
+package components
+
+type CodeExample struct {
+	ID     string
+	Label  string
+	Code   string
+	Active bool
+}
+
+
+css codeExamplesTabs() {
+	display: flex;
+	gap: 0.25rem;
+}
+
+css codeExampleTab() {
+	padding: 0.25rem 0.75rem;
+	border: none;
+	border-radius: 4px;
+	background: none;
+	color: var(--color-text-muted);
+	font-size: var(--text-xs);
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+css codeExampleTabActive() {
+	background-color: var(--color-surface);
+	color: var(--color-text);
+}
+
+css copyButtonExample() {
+	padding: 0.375rem;
+	border: 1px solid var(--color-border);
+	border-radius: 4px;
+	background-color: var(--color-surface);
+	color: var(--color-text-muted);
+	cursor: pointer;
+	font-size: var(--text-xs);
+}
+
+css codeExampleCode() {
+	font-family: var(--font-mono);
+	font-size: var(--text-sm);
+	color: var(--color-text);
+	white-space: pre-wrap;
+	word-break: break-all;
+	line-height: 1.6;
+}
+
+templ CodeExamples(examples []CodeExample) {
+	@Card() {
+		@CardHeaderWithAction("Code Examples") {
+			<div class={ codeExamplesTabs() }>
+				for _, ex := range examples {
+					if ex.Active {
+						<button class={ codeExampleTab(), codeExampleTabActive() }>{ ex.Label }</button>
+					} else {
+						<button class={ codeExampleTab() }>{ ex.Label }</button>
+					}
+				}
+			</div>
+		}
+		@CardContentDark() {
+			<button class={ copyButtonExample() } style="position: absolute; top: 0.75rem; right: 0.75rem;">
+				<i class="fas fa-copy"></i>
+			</button>
+			for _, ex := range examples {
+				if ex.Active {
+					<div class={ codeExampleCode() }>
+						@templ.Raw(ex.Code)
+					</div>
+				}
+			}
+		}
+	}
+}

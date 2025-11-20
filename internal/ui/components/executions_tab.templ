@@ -1,0 +1,111 @@
+package components
+
+type ExecutionsData struct {
+	Executions []Execution
+	Pagination PaginationInfo
+	BaseURL    string
+}
+
+css executionsTabContainer() {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+css executionsToolbar() {
+	display: flex;
+	gap: 0.5rem;
+}
+
+
+css executionDetailsContainer() {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+css executionDetailsHeader() {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+css executionDetailsInfo() {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+css executionDetailsTitle() {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--color-text);
+	margin: 0;
+	font-family: var(--font-mono);
+}
+
+css executionDetailsDuration() {
+	font-size: 0.875rem;
+	color: var(--color-text-muted);
+	font-family: var(--font-mono);
+}
+
+css executionDetailsPanels() {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1.5rem;
+}
+
+css codePanelLogs() {
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+templ ExecutionsTab(data ExecutionsData) {
+	<div class={ executionsTabContainer() }>
+		<!-- Search and Refresh -->
+		<div class={ executionsToolbar() }>
+			@SearchInputFull("Search execution ID...")
+			@IconButton("fa-sync-alt")
+		</div>
+		<!-- Executions Table -->
+		@Table() {
+			@TableElement() {
+				@TableHead([]string{"Execution ID", "Status", "Duration", "Time"})
+				@TableBody() {
+					for _, exec := range data.Executions {
+						@ExecutionRow(exec, data.BaseURL)
+					}
+				}
+			}
+			@Pagination(data.Pagination)
+		}
+	</div>
+}
+
+type ExecutionDetailsData struct {
+	ID       string
+	Status   string
+	Duration string
+	Logs     []LogEntry
+	Input    string
+}
+
+templ ExecutionDetails(data ExecutionDetailsData) {
+	<div class={ executionDetailsContainer() }>
+		<div class={ executionDetailsHeader() }>
+			@BackButton("/functions/hello")
+			<div class={ executionDetailsInfo() }>
+				<h3 class={ executionDetailsTitle() }>{ data.ID }</h3>
+				@ExecutionStatus(data.Status)
+				<span class={ executionDetailsDuration() }>{ data.Duration }</span>
+			</div>
+		</div>
+		<div class={ executionDetailsPanels() }>
+			<!-- Logs Panel -->
+			@CodePanel("Execution Logs", "", false)
+			<!-- Input Event Panel -->
+			@CodePanel("Input Event (JSON)", data.Input, true)
+		</div>
+	</div>
+}

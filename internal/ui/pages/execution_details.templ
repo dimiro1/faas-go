@@ -1,0 +1,39 @@
+package pages
+
+import "github.com/dimiro1/faas-go/internal/ui/components"
+
+templ PreviewExecutionDetails() {
+	@components.Layout("FaaS Console - Execution Details") {
+		@components.Header("details", "hello")
+		@components.FunctionDetailsView(
+			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			[]components.Tab{
+				{ID: "metrics", Name: "Metrics", Active: false},
+				{ID: "code", Name: "Code", Active: false},
+				{ID: "settings", Name: "Settings", Active: false},
+				{ID: "executions", Name: "Executions", Active: true},
+				{ID: "test", Name: "Test", Active: false},
+			},
+			"executions",
+			"/functions/hello",
+			false,
+		) {
+			@components.TabContent("executions", true) {
+				@components.ExecutionDetails(components.ExecutionDetailsData{
+					ID:       "exec_12345abcde",
+					Status:   "SUCCESS",
+					Duration: "12ms",
+					Logs: []components.LogEntry{
+						{Timestamp: "10:42:05.100", Level: "INFO", Message: "Function started"},
+						{Timestamp: "10:42:05.105", Level: "INFO", Message: "Processing request"},
+						{Timestamp: "10:42:05.112", Level: "INFO", Message: "Function completed"},
+					},
+					Input: `{
+  "method": "GET",
+  "path": "/webhook"
+}`,
+				})
+			}
+		}
+	}
+}

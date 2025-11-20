@@ -1,0 +1,63 @@
+package pages
+
+import "github.com/dimiro1/faas-go/internal/ui/components"
+
+css dashboardMain() {
+	padding: 2rem;
+	animation: fadeIn 0.3s ease-out;
+}
+
+css dashboardHeader() {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: 1.5rem;
+}
+
+css dashboardTitle() {
+	font-size: var(--text-2xl);
+	font-weight: 600;
+	color: var(--color-primary);
+	margin: 0 0 0.25rem 0;
+	letter-spacing: -0.025em;
+}
+
+css dashboardSubtitle() {
+	font-size: var(--text-sm);
+	color: var(--color-text-muted);
+	margin: 0;
+}
+
+css filterBar() {
+	margin-bottom: 1rem;
+}
+
+templ Dashboard(functions []components.Function, pagination components.PaginationInfo) {
+	<main class={ dashboardMain() }>
+		<div class={ dashboardHeader() }>
+			<div>
+				<h1 class={ dashboardTitle() }>Functions</h1>
+				<p class={ dashboardSubtitle() }>Manage your Lua serverless functions.</p>
+			</div>
+			@components.ButtonLink("/functions/new", components.ButtonPrimary, "fa-plus") {
+				New Function
+			}
+		</div>
+		<!-- Filter Bar -->
+		<div class={ filterBar() }>
+			@components.SearchInput("Filter functions...", "250px")
+		</div>
+		<!-- Data Table -->
+		@components.Table() {
+			@components.TableElement() {
+				@components.TableHead([]string{"Name", "Status", "Invocations (24h)", "Last Updated", "Action"})
+				@components.TableBody() {
+					for _, fn := range functions {
+						@components.FunctionRow(fn)
+					}
+				}
+			}
+			@components.Pagination(pagination)
+		}
+	</main>
+}

@@ -1,0 +1,127 @@
+package components
+
+type SettingsData struct {
+	FunctionName  string
+	Description   string
+	Enabled       bool
+	InvocationURL string
+	EnvVars       []EnvVar
+}
+
+css settingsTabContainer() {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	max-width: 56rem;
+}
+
+css settingsDangerContent() {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1.5rem;
+	text-align: left;
+}
+
+css settingsDangerInfo() {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+css settingsDangerTitle() {
+	font-size: var(--text-sm);
+	font-weight: 500;
+	color: var(--color-text);
+	margin: 0;
+}
+
+css settingsDangerDescription() {
+	font-size: var(--text-xs);
+	color: var(--color-text-muted);
+	margin: 0.25rem 0 0 0;
+}
+
+css btnDanger() {
+	padding: 0.5rem 1rem;
+	border: 1px solid rgba(239, 68, 68, 0.5);
+	border-radius: 6px;
+	background-color: transparent;
+	color: var(--color-danger);
+	font-size: var(--text-sm);
+	font-weight: 500;
+	cursor: pointer;
+}
+
+css settingsFormGroup() {
+	margin-bottom: 1rem;
+}
+
+css settingsFormLabel() {
+	display: block;
+	font-size: var(--text-xs);
+	font-weight: 500;
+	color: var(--color-text-muted);
+	margin-bottom: 0.375rem;
+}
+
+
+templ SettingsTab(data SettingsData) {
+	<div class={ settingsTabContainer() }>
+		<!-- General Settings -->
+		@SettingsSection("General Configuration", false) {
+			@SettingsSectionContent() {
+				<div class={ settingsFormGroup() }>
+					<label class={ settingsFormLabel() }>Function Name</label>
+					@TextInput("text", "", data.FunctionName)
+				</div>
+				<div class={ settingsFormGroup() }>
+					<label class={ settingsFormLabel() }>Description</label>
+					@Textarea("", data.Description)
+				</div>
+				@Toggle(data.Enabled, "Enable Function", "Disable to stop processing requests.")
+			}
+			@SettingsSectionFooter() {
+				@Button(ButtonPrimary, "") {
+					Save General Settings
+				}
+			}
+		}
+		<!-- Environment Variables -->
+		@SettingsSectionWithAction("Environment Variables", "+ Add Variable") {
+			@SettingsSectionContent() {
+				for _, env := range data.EnvVars {
+					@EnvVarRow(env)
+				}
+			}
+			@SettingsSectionFooter() {
+				@Button(ButtonPrimary, "") {
+					Save Variables
+				}
+			}
+		}
+		<!-- Network & Triggers -->
+		@SettingsSection("Network & Triggers", false) {
+			@SettingsSectionContent() {
+				<div class={ settingsFormGroup() }>
+					<label class={ settingsFormLabel() }>Full Invocation URL</label>
+					@InputWithCopy(data.InvocationURL, true)
+				</div>
+				<div class={ settingsFormGroup() }>
+					<label class={ settingsFormLabel() }>Supported Methods</label>
+					@MethodBadges([]string{"GET", "POST", "PUT", "DELETE"})
+				</div>
+			}
+		}
+		<!-- Danger Zone -->
+		@SettingsSection("Danger Zone", true) {
+			<div class={ settingsDangerContent() }>
+				<div class={ settingsDangerInfo() }>
+					<p class={ settingsDangerTitle() }>Delete Function</p>
+					<p class={ settingsDangerDescription() }>Once deleted, this function cannot be recovered.</p>
+				</div>
+				<button class={ btnDanger() }>Delete</button>
+			</div>
+		}
+	</div>
+}

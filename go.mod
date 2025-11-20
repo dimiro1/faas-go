@@ -3,6 +3,7 @@ module github.com/dimiro1/faas-go
 go 1.25.4
 
 require (
+	github.com/a-h/templ v0.3.960
 	github.com/golang-migrate/migrate/v4 v4.19.0
 	github.com/google/uuid v1.6.0
 	github.com/rs/xid v1.6.0

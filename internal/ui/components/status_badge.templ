@@ -1,0 +1,81 @@
+package components
+
+css statusBadge() {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: var(--text-xs);
+	font-weight: 500;
+}
+
+css statusBadgeDot() {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+}
+
+css statusBadgeEnabled() {
+	color: var(--color-success);
+}
+
+css statusBadgeDotEnabled() {
+	background-color: var(--color-success);
+}
+
+css statusBadgeDisabled() {
+	color: var(--color-subtle);
+}
+
+css statusBadgeDotDisabled() {
+	background-color: var(--color-border);
+}
+
+css statusBadgeGlow() {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.375rem 0.75rem;
+	border-radius: 4px;
+	border: 1px solid var(--color-border);
+	background-color: rgba(24, 24, 27, 0.5);
+}
+
+css statusBadgeDotGlow() {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background-color: var(--color-success);
+	box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+
+css statusBadgeGlowText() {
+	font-size: var(--text-xs);
+	font-weight: 500;
+	color: var(--color-subtle);
+}
+
+templ StatusBadge(enabled bool) {
+	if enabled {
+		<div class={ statusBadge(), statusBadgeEnabled() }>
+			<div class={ statusBadgeDot(), statusBadgeDotEnabled() }></div>
+			Enabled
+		</div>
+	} else {
+		<div class={ statusBadge(), statusBadgeDisabled() }>
+			<div class={ statusBadgeDot(), statusBadgeDotDisabled() }></div>
+			Disabled
+		</div>
+	}
+}
+
+templ StatusBadgeWithGlow(enabled bool) {
+	<div class={ statusBadgeGlow() }>
+		if enabled {
+			<span class={ statusBadgeDotGlow() }></span>
+			<span class={ statusBadgeGlowText() }>Enabled</span>
+		} else {
+			<span class={ statusBadgeDot(), statusBadgeDotDisabled() }></span>
+			<span class={ statusBadgeGlowText() }>Disabled</span>
+		}
+	</div>
+}

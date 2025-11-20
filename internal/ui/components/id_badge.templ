@@ -1,0 +1,47 @@
+package components
+
+css idBadge() {
+	background-color: var(--color-surface);
+	border: 1px solid var(--color-border);
+	padding: 0.125rem 0.5rem;
+	border-radius: 4px;
+	font-size: var(--text-2xs);
+	font-family: var(--font-mono);
+	color: var(--color-subtle);
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+css idBadgeIcon() {
+	color: var(--color-accent);
+}
+
+css idBadgeCopyable() {
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+css idBadgeLink() {
+	text-decoration: none;
+	color: var(--color-accent);
+	transition: all 0.2s;
+}
+
+templ IDBadge(id string, copyable bool) {
+	if copyable {
+		<span class={ idBadge(), idBadgeCopyable() } title="Copy ID">
+			<i class={ "fas fa-hashtag", idBadgeIcon() }></i>{ id }
+		</span>
+	} else {
+		<span class={ idBadge() }>
+			<i class={ "fas fa-hashtag", idBadgeIcon() }></i>{ id }
+		</span>
+	}
+}
+
+templ IDBadgeLink(id string, href string) {
+	<a href={ templ.SafeURL(href) } class={ idBadge(), idBadgeLink() }>
+		{ id }
+	</a>
+}

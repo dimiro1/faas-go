@@ -1,0 +1,32 @@
+package components
+
+type TestTabData struct {
+	Examples []CodeExample
+	URL      string
+	Methods  []string
+}
+
+css testTabContainer() {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+css testTabPanels() {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1.5rem;
+}
+
+templ TestTab(data TestTabData) {
+	<div class={ testTabContainer() }>
+		@CodeExamples(data.Examples)
+		<div class={ testTabPanels() }>
+			@RequestBuilder(RequestBuilderData{
+				URL:     data.URL,
+				Methods: data.Methods,
+			})
+			@ResponseViewer()
+		</div>
+	</div>
+}
