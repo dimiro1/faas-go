@@ -3,6 +3,7 @@ package components
 import (
 	"fmt"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
 
@@ -132,7 +133,7 @@ templ MetricsTab(stats []StatCard, bars []BarData) {
 				Title:    "Invocations",
 				Subtitle: "Last 24 Hours",
 			}) {
-				@Select([]string{"24h", "7d", "30d"})
+				@form.Select([]string{"24h", "7d", "30d"})
 			}
 			@card.LargeContent() {
 				<div class={ barChart() }>

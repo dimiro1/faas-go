@@ -2,6 +2,7 @@ package components
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
 
@@ -28,8 +29,8 @@ css envVarInputValue() {
 
 templ EnvVarRow(env EnvVar) {
 	<div class={ envVarRow() }>
-		<input type="text" value={ env.Key } class={ inputBase(), inputMono(), envVarInputKey() } placeholder="Key"/>
-		<input type="password" value={ env.Value } class={ inputBase(), inputMono(), envVarInputValue() } placeholder="Value"/>
+		@form.TextInputMonoPartial("text", "Key", env.Key)
+		@form.TextInputMonoFlex("password", "Value", env.Value)
 		@button.Button(button.Props{
 			Variant: button.Ghost,
 			Size:    button.SizeIcon,

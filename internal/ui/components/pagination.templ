@@ -1,6 +1,9 @@
 package components
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
+)
 
 type PaginationInfo struct {
 	CurrentStart int
@@ -74,7 +77,7 @@ templ Pagination(info PaginationInfo) {
 			<span class={ paginationInfoHighlight() }>{ fmt.Sprintf("%d", info.Total) }</span> results
 		</div>
 		<div class={ paginationControls() }>
-			@Select([]string{"10 per page", "20 per page", "50 per page"})
+			@form.Select([]string{"10 per page", "20 per page", "50 per page"})
 			<div class={ paginationButtons() }>
 				if info.HasPrev {
 					<button class={ paginationBtn(), paginationBtnBorder() }>Previous</button>

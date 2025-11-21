@@ -1,0 +1,810 @@
+package form
+
+import (
+	"fmt"
+	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+)
+
+// InputSize defines the size variant
+type InputSize string
+
+const (
+	SizeDefault InputSize = "default"
+	SizeSm      InputSize = "sm"
+)
+
+// InputWidth defines how the input fills space
+type InputWidth string
+
+const (
+	WidthFull    InputWidth = "full"
+	WidthGrow    InputWidth = "grow"
+	WidthPartial InputWidth = "partial"
+	WidthAuto    InputWidth = "auto"
+)
+
+// InputProps contains configuration for text inputs
+type InputProps struct {
+	ID          string
+	Name        string
+	Type        string
+	Placeholder string
+	Value       string
+	Class       string
+	Attributes  templ.Attributes
+
+	// Layout
+	Width InputWidth
+	Mono  bool
+	Icon  templ.Component
+
+	// States
+	Readonly bool
+	Disabled bool
+	Required bool
+
+	// Accessibility
+	AriaLabel       string
+	AriaDescribedBy string
+	AriaInvalid     bool
+}
+
+// TextareaProps contains configuration for textareas
+type TextareaProps struct {
+	ID          string
+	Name        string
+	Placeholder string
+	Value       string
+	Class       string
+	Attributes  templ.Attributes
+	Rows        int
+
+	// States
+	Readonly bool
+	Disabled bool
+	Required bool
+
+	// Accessibility
+	AriaLabel       string
+	AriaDescribedBy string
+	AriaInvalid     bool
+}
+
+// SelectProps contains configuration for selects
+type SelectProps struct {
+	ID         string
+	Name       string
+	Options    []string
+	Selected   string
+	Class      string
+	Attributes templ.Attributes
+
+	// States
+	Disabled bool
+	Required bool
+
+	// Accessibility
+	AriaLabel       string
+	AriaDescribedBy string
+}
+
+// SearchProps contains configuration for search inputs
+type SearchProps struct {
+	ID          string
+	Name        string
+	Placeholder string
+	Value       string
+	Width       string
+	FullWidth   bool
+	Class       string
+	Attributes  templ.Attributes
+
+	// Accessibility
+	AriaLabel       string
+	AriaDescribedBy string
+}
+
+// LabelProps contains configuration for labels
+type LabelProps struct {
+	For        string
+	Text       string
+	Required   bool
+	Disabled   bool
+	Class      string
+	Attributes templ.Attributes
+}
+
+// CheckboxProps contains configuration for checkboxes
+type CheckboxProps struct {
+	ID          string
+	Name        string
+	Value       string
+	Label       string
+	Description string
+	Checked     bool
+	Disabled    bool
+	Required    bool
+	Class       string
+	Attributes  templ.Attributes
+
+	// Accessibility
+	AriaLabel       string
+	AriaDescribedBy string
+}
+
+// RadioProps contains configuration for radio buttons
+type RadioProps struct {
+	ID         string
+	Name       string
+	Value      string
+	Label      string
+	Checked    bool
+	Disabled   bool
+	Required   bool
+	Class      string
+	Attributes templ.Attributes
+
+	// Accessibility
+	AriaLabel       string
+	AriaDescribedBy string
+}
+
+// HelpTextVariant defines the style of help text
+type HelpTextVariant string
+
+const (
+	HelpTextDefault HelpTextVariant = "default"
+	HelpTextError   HelpTextVariant = "error"
+	HelpTextSuccess HelpTextVariant = "success"
+)
+
+// HelpTextProps contains configuration for help/error text
+type HelpTextProps struct {
+	ID      string
+	Text    string
+	Variant HelpTextVariant
+	Class   string
+}
+
+// FormGroupProps contains configuration for form groups
+type FormGroupProps struct {
+	Class string
+}
+
+
+// CSS styles
+
+css inputBase() {
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	background-color: var(--color-background);
+	color: var(--color-text);
+	font-size: var(--text-sm);
+	height: 2.5rem;
+	outline: none;
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+css inputMono() {
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+}
+
+css inputFull() {
+	width: 100%;
+}
+
+css inputGrow() {
+	flex: 1;
+}
+
+css inputPartial() {
+	width: 33.333%;
+}
+
+css inputDisabled() {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+css inputWrapper() {
+	position: relative;
+	display: inline-flex;
+	width: 100%;
+}
+
+css inputWrapperGrow() {
+	flex: 1;
+}
+
+css inputWithIcon() {
+	padding-left: 2.25rem;
+}
+
+css inputIcon() {
+	position: absolute;
+	left: 0.75rem;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--color-text-muted);
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 1rem;
+	height: 1rem;
+}
+
+css searchInputWrapper() {
+	position: relative;
+	display: inline-flex;
+	width: 100%;
+}
+
+css searchInputWrapperFull() {
+	flex: 1;
+}
+
+css labelBase() {
+	font-size: var(--text-sm);
+	font-weight: 500;
+	color: var(--color-text);
+	display: block;
+	margin-bottom: 0.5rem;
+}
+
+css labelDisabled() {
+	color: var(--color-text-muted);
+}
+
+css labelRequired() {
+	color: var(--color-danger);
+	margin-left: 0.25rem;
+}
+
+// Checkbox styles
+css checkboxWrapper() {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	cursor: pointer;
+}
+
+css checkboxInput() {
+	width: 1rem;
+	height: 1rem;
+	border: 1px solid var(--color-border);
+	border-radius: 4px;
+	background-color: var(--color-background);
+	cursor: pointer;
+	accent-color: var(--color-primary);
+}
+
+css checkboxLabel() {
+	font-size: var(--text-sm);
+	color: var(--color-text);
+	cursor: pointer;
+}
+
+css checkboxDescription() {
+	font-size: var(--text-xs);
+	color: var(--color-text-muted);
+	margin-left: 0.25rem;
+}
+
+css checkboxDisabled() {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+// Radio styles
+css radioWrapper() {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	cursor: pointer;
+}
+
+css radioInput() {
+	width: 1rem;
+	height: 1rem;
+	border: 1px solid var(--color-border);
+	border-radius: 50%;
+	background-color: var(--color-background);
+	cursor: pointer;
+	accent-color: var(--color-primary);
+}
+
+css radioLabel() {
+	font-size: var(--text-sm);
+	color: var(--color-text);
+	cursor: pointer;
+}
+
+css radioDisabled() {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+// Help text styles
+css helpText() {
+	font-size: var(--text-xs);
+	color: var(--color-text-muted);
+	margin-top: 0.25rem;
+}
+
+css helpTextError() {
+	color: var(--color-danger);
+}
+
+css helpTextSuccess() {
+	color: var(--color-success);
+}
+
+// Form group styles
+css formGroup() {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	margin-bottom: 1rem;
+}
+
+
+css textareaBase() {
+	width: 100%;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	background-color: var(--color-background);
+	color: var(--color-text);
+	font-size: var(--text-sm);
+	outline: none;
+	resize: none;
+	min-height: 80px;
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+css selectBase() {
+	padding: 0.25rem 0.5rem;
+	border: 1px solid var(--color-border);
+	border-radius: 4px;
+	background-color: var(--color-surface);
+	color: var(--color-subtle);
+	font-size: var(--text-xs);
+	height: 2.5rem;
+	outline: none;
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+// Helper functions
+
+func getWidthClass(width InputWidth) templ.CSSClass {
+	switch width {
+	case WidthGrow:
+		return inputGrow()
+	case WidthPartial:
+		return inputPartial()
+	case WidthAuto:
+		return inputFull() // fallback to full for auto
+	default:
+		return inputFull()
+	}
+}
+
+func inputClasses(props InputProps) templ.CSSClasses {
+	return templ.CSSClasses{
+		inputBase(),
+		getWidthClass(props.Width),
+		templ.KV(inputMono(), props.Mono),
+		templ.KV(inputDisabled(), props.Disabled),
+		templ.KV(inputWithIcon(), props.Icon != nil),
+		templ.KV(props.Class, props.Class != ""),
+	}
+}
+
+func getInputType(t string) string {
+	if t == "" {
+		return "text"
+	}
+	return t
+}
+
+// Label component
+templ Label(props LabelProps) {
+	<label
+		if props.For != "" {
+			for={ props.For }
+		}
+		class={ labelBase(), templ.KV(labelDisabled(), props.Disabled), templ.KV(props.Class, props.Class != "") }
+		{ props.Attributes... }
+	>
+		{ props.Text }
+		if props.Required {
+			<span class={ labelRequired() } aria-hidden="true">*</span>
+		}
+	</label>
+}
+
+// Checkbox component
+templ Checkbox(props CheckboxProps) {
+	<label class={ checkboxWrapper(), templ.KV(checkboxDisabled(), props.Disabled), templ.KV(props.Class, props.Class != "") }>
+		<input
+			type="checkbox"
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			if props.Name != "" {
+				name={ props.Name }
+			}
+			if props.Value != "" {
+				value={ props.Value }
+			}
+			class={ checkboxInput() }
+			checked?={ props.Checked }
+			disabled?={ props.Disabled }
+			required?={ props.Required }
+			if props.AriaLabel != "" {
+				aria-label={ props.AriaLabel }
+			}
+			if props.AriaDescribedBy != "" {
+				aria-describedby={ props.AriaDescribedBy }
+			}
+			{ props.Attributes... }
+		/>
+		if props.Label != "" {
+			<span class={ checkboxLabel() }>{ props.Label }</span>
+		}
+		if props.Description != "" {
+			<span class={ checkboxDescription() }>{ props.Description }</span>
+		}
+	</label>
+}
+
+// Radio component
+templ Radio(props RadioProps) {
+	<label class={ radioWrapper(), templ.KV(radioDisabled(), props.Disabled), templ.KV(props.Class, props.Class != "") }>
+		<input
+			type="radio"
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			if props.Name != "" {
+				name={ props.Name }
+			}
+			if props.Value != "" {
+				value={ props.Value }
+			}
+			class={ radioInput() }
+			checked?={ props.Checked }
+			disabled?={ props.Disabled }
+			required?={ props.Required }
+			if props.AriaLabel != "" {
+				aria-label={ props.AriaLabel }
+			}
+			if props.AriaDescribedBy != "" {
+				aria-describedby={ props.AriaDescribedBy }
+			}
+			{ props.Attributes... }
+		/>
+		if props.Label != "" {
+			<span class={ radioLabel() }>{ props.Label }</span>
+		}
+	</label>
+}
+
+// HelpText component
+templ HelpText(props HelpTextProps) {
+	<p
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={
+			helpText(),
+			templ.KV(helpTextError(), props.Variant == HelpTextError),
+			templ.KV(helpTextSuccess(), props.Variant == HelpTextSuccess),
+			templ.KV(props.Class, props.Class != ""),
+		}
+	>
+		{ props.Text }
+	</p>
+}
+
+// FormGroup component - wrapper for label + input + help text
+templ FormGroup(props FormGroupProps) {
+	<div class={ formGroup(), templ.KV(props.Class, props.Class != "") }>
+		{ children... }
+	</div>
+}
+
+
+// Input component with Props
+templ Input(props InputProps) {
+	if props.Icon != nil {
+		<div class={ inputWrapper(), templ.KV(inputWrapperGrow(), props.Width == WidthGrow) }>
+			<span class={ inputIcon() } aria-hidden="true">
+				@props.Icon
+			</span>
+			<input
+				if props.ID != "" {
+					id={ props.ID }
+				}
+				if props.Name != "" {
+					name={ props.Name }
+				}
+				type={ getInputType(props.Type) }
+				if props.Placeholder != "" {
+					placeholder={ props.Placeholder }
+				}
+				if props.Value != "" {
+					value={ props.Value }
+				}
+				class={ inputClasses(props) }
+				disabled?={ props.Disabled }
+				readonly?={ props.Readonly }
+				required?={ props.Required }
+				if props.AriaLabel != "" {
+					aria-label={ props.AriaLabel }
+				}
+				if props.AriaDescribedBy != "" {
+					aria-describedby={ props.AriaDescribedBy }
+				}
+				if props.AriaInvalid {
+					aria-invalid="true"
+				}
+				{ props.Attributes... }
+			/>
+		</div>
+	} else {
+		<input
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			if props.Name != "" {
+				name={ props.Name }
+			}
+			type={ getInputType(props.Type) }
+			if props.Placeholder != "" {
+				placeholder={ props.Placeholder }
+			}
+			if props.Value != "" {
+				value={ props.Value }
+			}
+			class={ inputClasses(props) }
+			disabled?={ props.Disabled }
+			readonly?={ props.Readonly }
+			required?={ props.Required }
+			if props.AriaLabel != "" {
+				aria-label={ props.AriaLabel }
+			}
+			if props.AriaDescribedBy != "" {
+				aria-describedby={ props.AriaDescribedBy }
+			}
+			if props.AriaInvalid {
+				aria-invalid="true"
+			}
+			{ props.Attributes... }
+		/>
+	}
+}
+
+// Legacy convenience functions for backward compatibility
+
+templ TextInput(inputType string, placeholder string, value string) {
+	@Input(InputProps{
+		Type:        inputType,
+		Placeholder: placeholder,
+		Value:       value,
+		Width:       WidthFull,
+	})
+}
+
+templ TextInputMono(inputType string, placeholder string, value string) {
+	@Input(InputProps{
+		Type:        inputType,
+		Placeholder: placeholder,
+		Value:       value,
+		Width:       WidthFull,
+		Mono:        true,
+	})
+}
+
+templ TextInputReadonly(value string) {
+	@Input(InputProps{
+		Type:     "text",
+		Value:    value,
+		Width:    WidthFull,
+		Mono:     true,
+		Readonly: true,
+	})
+}
+
+templ TextInputMonoGrow(inputType string, placeholder string, value string, readonly bool) {
+	@Input(InputProps{
+		Type:        inputType,
+		Placeholder: placeholder,
+		Value:       value,
+		Width:       WidthGrow,
+		Mono:        true,
+		Readonly:    readonly,
+	})
+}
+
+templ TextInputMonoPartial(inputType string, placeholder string, value string) {
+	@Input(InputProps{
+		Type:        inputType,
+		Placeholder: placeholder,
+		Value:       value,
+		Width:       WidthPartial,
+		Mono:        true,
+	})
+}
+
+templ TextInputMonoFlex(inputType string, placeholder string, value string) {
+	@Input(InputProps{
+		Type:        inputType,
+		Placeholder: placeholder,
+		Value:       value,
+		Width:       WidthGrow,
+		Mono:        true,
+	})
+}
+
+// Search component with Props
+templ Search(props SearchProps) {
+	if props.FullWidth {
+		<div class={ searchInputWrapper(), searchInputWrapperFull() }>
+			<span class={ inputIcon() } aria-hidden="true">
+				@icons.Search()
+			</span>
+			<input
+				if props.ID != "" {
+					id={ props.ID }
+				}
+				if props.Name != "" {
+					name={ props.Name }
+				}
+				type="search"
+				if props.Placeholder != "" {
+					placeholder={ props.Placeholder }
+				}
+				if props.Value != "" {
+					value={ props.Value }
+				}
+				class={ inputBase(), inputFull(), inputWithIcon(), templ.KV(props.Class, props.Class != "") }
+				if props.AriaLabel != "" {
+					aria-label={ props.AriaLabel }
+				} else if props.Placeholder != "" {
+					aria-label={ props.Placeholder }
+				}
+				if props.AriaDescribedBy != "" {
+					aria-describedby={ props.AriaDescribedBy }
+				}
+				{ props.Attributes... }
+			/>
+		</div>
+	} else {
+		<div class={ searchInputWrapper() } style={ "width: " + props.Width }>
+			<span class={ inputIcon() } aria-hidden="true">
+				@icons.Search()
+			</span>
+			<input
+				if props.ID != "" {
+					id={ props.ID }
+				}
+				if props.Name != "" {
+					name={ props.Name }
+				}
+				type="search"
+				if props.Placeholder != "" {
+					placeholder={ props.Placeholder }
+				}
+				if props.Value != "" {
+					value={ props.Value }
+				}
+				class={ inputBase(), inputFull(), inputWithIcon(), templ.KV(props.Class, props.Class != "") }
+				if props.AriaLabel != "" {
+					aria-label={ props.AriaLabel }
+				} else if props.Placeholder != "" {
+					aria-label={ props.Placeholder }
+				}
+				if props.AriaDescribedBy != "" {
+					aria-describedby={ props.AriaDescribedBy }
+				}
+				{ props.Attributes... }
+			/>
+		</div>
+	}
+}
+
+// Legacy convenience functions
+templ SearchInput(placeholder string, width string) {
+	@Search(SearchProps{
+		Placeholder: placeholder,
+		Width:       width,
+	})
+}
+
+templ SearchInputFull(placeholder string) {
+	@Search(SearchProps{
+		Placeholder: placeholder,
+		FullWidth:   true,
+	})
+}
+
+// Textarea component with Props
+templ TextareaInput(props TextareaProps) {
+	<textarea
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		if props.Name != "" {
+			name={ props.Name }
+		}
+		if props.Placeholder != "" {
+			placeholder={ props.Placeholder }
+		}
+		if props.Rows > 0 {
+			rows={ fmt.Sprintf("%d", props.Rows) }
+		}
+		class={ textareaBase(), templ.KV(props.Class, props.Class != "") }
+		disabled?={ props.Disabled }
+		readonly?={ props.Readonly }
+		required?={ props.Required }
+		if props.AriaLabel != "" {
+			aria-label={ props.AriaLabel }
+		}
+		if props.AriaDescribedBy != "" {
+			aria-describedby={ props.AriaDescribedBy }
+		}
+		if props.AriaInvalid {
+			aria-invalid="true"
+		}
+		{ props.Attributes... }
+	>{ props.Value }</textarea>
+}
+
+// Legacy convenience function
+templ Textarea(placeholder string, value string) {
+	@TextareaInput(TextareaProps{
+		Placeholder: placeholder,
+		Value:       value,
+	})
+}
+
+// Select component with Props
+templ SelectInput(props SelectProps) {
+	<select
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		if props.Name != "" {
+			name={ props.Name }
+		}
+		class={ selectBase(), templ.KV(props.Class, props.Class != "") }
+		disabled?={ props.Disabled }
+		required?={ props.Required }
+		if props.AriaLabel != "" {
+			aria-label={ props.AriaLabel }
+		}
+		if props.AriaDescribedBy != "" {
+			aria-describedby={ props.AriaDescribedBy }
+		}
+		{ props.Attributes... }
+	>
+		for _, opt := range props.Options {
+			if opt == props.Selected {
+				<option selected>{ opt }</option>
+			} else {
+				<option>{ opt }</option>
+			}
+		}
+	</select>
+}
+
+// Legacy convenience function
+templ Select(options []string) {
+	@SelectInput(SelectProps{
+		Options: options,
+	})
+}

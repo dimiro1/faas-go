@@ -1,0 +1,365 @@
+package form
+
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+	"github.com/dimiro1/faas-go/internal/ui/components/preview"
+)
+
+templ Preview() {
+	@preview.Page(preview.PreviewPageProps{
+		Title:       "Form Components",
+		Description: "Input fields, textareas, selects, and search inputs.",
+	}) {
+		<!-- Labels -->
+		@preview.Section("Labels") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Default") {
+						@Label(LabelProps{
+							Text: "Username",
+							For:  "username",
+						})
+					}
+					@preview.Item("Required") {
+						@Label(LabelProps{
+							Text:     "Email",
+							For:      "email",
+							Required: true,
+						})
+					}
+					@preview.Item("Disabled") {
+						@Label(LabelProps{
+							Text:     "Disabled Field",
+							Disabled: true,
+						})
+					}
+					@preview.Item("With Input") {
+						<div>
+							@Label(LabelProps{
+								Text:     "Password",
+								For:      "password",
+								Required: true,
+							})
+							@Input(InputProps{
+								ID:          "password",
+								Type:        "password",
+								Placeholder: "Enter password",
+								Required:    true,
+							})
+						</div>
+					}
+				}
+			}
+		}
+		<!-- Text Inputs -->
+		@preview.Section("Text Inputs") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Default") {
+						@TextInput("text", "Enter text...", "")
+					}
+					@preview.Item("With Value") {
+						@TextInput("text", "Enter text...", "Hello World")
+					}
+					@preview.Item("Password") {
+						@TextInput("password", "Enter password...", "secret")
+					}
+					@preview.Item("Email") {
+						@TextInput("email", "Enter email...", "")
+					}
+				}
+			}
+		}
+		<!-- Monospace Inputs -->
+		@preview.Section("Monospace Inputs") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Mono Input") {
+						@TextInputMono("text", "Code here...", "")
+					}
+					@preview.Item("Readonly") {
+						@TextInputReadonly("https://api.example.com/fn/hello")
+					}
+				}
+			}
+		}
+		<!-- Search Inputs -->
+		@preview.Section("Search Inputs") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Fixed Width") {
+						@SearchInput("Search...", "200px")
+					}
+					@preview.Item("Full Width") {
+						@SearchInputFull("Search everything...")
+					}
+				}
+			}
+		}
+		<!-- Textarea -->
+		@preview.Section("Textarea") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Empty") {
+						@Textarea("Enter description...", "")
+					}
+					@preview.Item("With Content") {
+						@Textarea("", "This is some example content in the textarea.")
+					}
+				}
+			}
+		}
+		<!-- Select -->
+		@preview.Section("Select") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Options") {
+						@Select([]string{"Option 1", "Option 2", "Option 3"})
+					}
+					@preview.Item("Time Range") {
+						@Select([]string{"24h", "7d", "30d"})
+					}
+					@preview.Item("Per Page") {
+						@Select([]string{"10 per page", "20 per page", "50 per page"})
+					}
+				}
+			}
+		}
+		<!-- Specialized Inputs -->
+		@preview.Section("Specialized Inputs") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Mono Grow") {
+						@TextInputMonoGrow("text", "Grows to fill...", "", false)
+					}
+					@preview.Item("Mono Grow Readonly") {
+						@TextInputMonoGrow("text", "", "https://api.example.com", true)
+					}
+					@preview.Item("Mono Partial (33%)") {
+						@TextInputMonoPartial("text", "Key", "API_KEY")
+					}
+					@preview.Item("Mono Flex") {
+						@TextInputMonoFlex("password", "Value", "secret-value")
+					}
+				}
+			}
+		}
+		<!-- Props-based Input -->
+		@preview.Section("Props-based Input") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("With ID & Name") {
+						@Input(InputProps{
+							ID:          "username",
+							Name:        "username",
+							Placeholder: "Username",
+						})
+					}
+					@preview.Item("Required") {
+						@Input(InputProps{
+							Placeholder: "Required field",
+							Required:    true,
+						})
+					}
+					@preview.Item("Disabled") {
+						@Input(InputProps{
+							Value:    "Disabled input",
+							Disabled: true,
+						})
+					}
+					@preview.Item("With Aria Label") {
+						@Input(InputProps{
+							Placeholder: "Search users...",
+							AriaLabel:   "Search for users by name",
+						})
+					}
+				}
+			}
+		}
+		<!-- Inputs with Icons -->
+		@preview.Section("Inputs with Icons") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Search Icon") {
+						@Input(InputProps{
+							Placeholder: "Search...",
+							Icon:        icons.Search(),
+						})
+					}
+					@preview.Item("Code Icon") {
+						@Input(InputProps{
+							Placeholder: "Enter code...",
+							Icon:        icons.Code(),
+							Mono:        true,
+						})
+					}
+					@preview.Item("Hashtag Icon") {
+						@Input(InputProps{
+							Placeholder: "Tag name",
+							Icon:        icons.Hashtag(),
+						})
+					}
+					@preview.Item("Cog Icon") {
+						@Input(InputProps{
+							Placeholder: "Settings...",
+							Icon:        icons.Cog(),
+						})
+					}
+				}
+			}
+		}
+		<!-- Props-based Select -->
+		@preview.Section("Props-based Select") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("With Selected") {
+						@SelectInput(SelectProps{
+							Options:  []string{"Option 1", "Option 2", "Option 3"},
+							Selected: "Option 2",
+						})
+					}
+					@preview.Item("Disabled") {
+						@SelectInput(SelectProps{
+							Options:  []string{"Can't change"},
+							Disabled: true,
+						})
+					}
+				}
+			}
+		}
+		<!-- Checkbox -->
+		@preview.Section("Checkbox") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Default") {
+						@Checkbox(CheckboxProps{
+							Label: "Accept terms",
+						})
+					}
+					@preview.Item("Checked") {
+						@Checkbox(CheckboxProps{
+							Label:   "Remember me",
+							Checked: true,
+						})
+					}
+					@preview.Item("Disabled") {
+						@Checkbox(CheckboxProps{
+							Label:    "Disabled option",
+							Disabled: true,
+						})
+					}
+					@preview.Item("Required") {
+						@Checkbox(CheckboxProps{
+							Label:    "I agree to the terms",
+							Required: true,
+						})
+					}
+				}
+			}
+		}
+		<!-- Radio -->
+		@preview.Section("Radio") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Option 1") {
+						@Radio(RadioProps{
+							Name:    "plan",
+							Value:   "free",
+							Label:   "Free plan",
+							Checked: true,
+						})
+					}
+					@preview.Item("Option 2") {
+						@Radio(RadioProps{
+							Name:  "plan",
+							Value: "pro",
+							Label: "Pro plan",
+						})
+					}
+					@preview.Item("Option 3") {
+						@Radio(RadioProps{
+							Name:  "plan",
+							Value: "enterprise",
+							Label: "Enterprise",
+						})
+					}
+					@preview.Item("Disabled") {
+						@Radio(RadioProps{
+							Name:     "other",
+							Label:    "Disabled",
+							Disabled: true,
+						})
+					}
+				}
+			}
+		}
+		<!-- Help Text -->
+		@preview.Section("Help Text") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Default") {
+						@HelpText(HelpTextProps{
+							Text: "Enter your full legal name.",
+						})
+					}
+					@preview.Item("Error") {
+						@HelpText(HelpTextProps{
+							Text:    "This field is required.",
+							Variant: HelpTextError,
+						})
+					}
+					@preview.Item("Success") {
+						@HelpText(HelpTextProps{
+							Text:    "Username is available!",
+							Variant: HelpTextSuccess,
+						})
+					}
+				}
+			}
+		}
+		<!-- Form Group -->
+		@preview.Section("Form Group") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Complete Example") {
+						@FormGroup(FormGroupProps{}) {
+							@Label(LabelProps{
+								Text:     "Email",
+								For:      "email-example",
+								Required: true,
+							})
+							@Input(InputProps{
+								ID:          "email-example",
+								Type:        "email",
+								Placeholder: "you@example.com",
+								Required:    true,
+							})
+							@HelpText(HelpTextProps{
+								Text: "We'll never share your email.",
+							})
+						}
+					}
+					@preview.Item("With Error") {
+						@FormGroup(FormGroupProps{}) {
+							@Label(LabelProps{
+								Text:     "Password",
+								For:      "password-example",
+								Required: true,
+							})
+							@Input(InputProps{
+								ID:          "password-example",
+								Type:        "password",
+								Placeholder: "••••••••",
+								AriaInvalid: true,
+							})
+							@HelpText(HelpTextProps{
+								Text:    "Password must be at least 8 characters.",
+								Variant: HelpTextError,
+							})
+						}
+					}
+				}
+			}
+		}
+	}
+}

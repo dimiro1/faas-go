@@ -2,6 +2,7 @@ package components
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
 
@@ -10,25 +11,14 @@ css inputWithCopyWrapper() {
 	gap: 0.5rem;
 }
 
-css inputWithCopyInput() {
-	padding: 0.5rem 0.75rem;
-	border: 1px solid var(--color-border);
-	border-radius: 6px;
-	background-color: var(--color-background);
-	color: var(--color-text);
-	font-size: var(--text-sm);
-	font-family: var(--font-mono);
-	flex: 1;
-	outline: none;
-}
-
 templ InputWithCopy(value string, readonly bool) {
 	<div class={ inputWithCopyWrapper() }>
-		if readonly {
-			<input type="text" readonly value={ value } class={ inputWithCopyInput() }/>
-		} else {
-			<input type="text" value={ value } class={ inputWithCopyInput() }/>
-		}
+		@form.Input(form.InputProps{
+			Value:    value,
+			Readonly: readonly,
+			Width:    form.WidthGrow,
+			Mono:     true,
+		})
 		@button.Button(button.Props{
 			Variant: button.Ghost,
 			Size:    button.SizeIcon,

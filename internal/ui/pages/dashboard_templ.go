@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
 
@@ -235,7 +236,7 @@ func Dashboard(functions []components.Function, pagination components.Pagination
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.SearchInput("Filter functions...", "250px").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = form.SearchInput("Filter functions...", "250px").Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

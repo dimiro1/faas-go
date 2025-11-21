@@ -8,7 +8,10 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
+)
 
 type PaginationInfo struct {
 	CurrentStart int
@@ -211,7 +214,7 @@ func Pagination(info PaginationInfo) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", info.CurrentStart))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/pagination.templ`, Line: 72, Col: 91}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/pagination.templ`, Line: 75, Col: 91}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -246,7 +249,7 @@ func Pagination(info PaginationInfo) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", info.CurrentEnd))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/pagination.templ`, Line: 73, Col: 81}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/pagination.templ`, Line: 76, Col: 81}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -281,7 +284,7 @@ func Pagination(info PaginationInfo) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", info.Total))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/pagination.templ`, Line: 74, Col: 76}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/pagination.templ`, Line: 77, Col: 76}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -313,7 +316,7 @@ func Pagination(info PaginationInfo) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Select([]string{"10 per page", "20 per page", "50 per page"}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = form.Select([]string{"10 per page", "20 per page", "50 per page"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

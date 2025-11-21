@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
 
@@ -303,7 +304,7 @@ func MetricsTab(stats []StatCard, bars []BarData) templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = Select([]string{"24h", "7d", "30d"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = form.Select([]string{"24h", "7d", "30d"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -380,7 +381,7 @@ func MetricsTab(stats []StatCard, bars []BarData) templ.Component {
 					var templ_7745c5c3_Var13 string
 					templ_7745c5c3_Var13, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(fmt.Sprintf("height: %d%%", barItem.Height))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 140, Col: 78}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 141, Col: 78}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 					if templ_7745c5c3_Err != nil {
@@ -415,7 +416,7 @@ func MetricsTab(stats []StatCard, bars []BarData) templ.Component {
 					var templ_7745c5c3_Var16 string
 					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(barItem.Tooltip)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 141, Col: 52}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 142, Col: 52}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 					if templ_7745c5c3_Err != nil {
@@ -542,7 +543,7 @@ func StatCardComponent(stat StatCard) templ.Component {
 				var templ_7745c5c3_Var24 string
 				templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(stat.Label)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 160, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 161, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 				if templ_7745c5c3_Err != nil {
@@ -578,7 +579,7 @@ func StatCardComponent(stat StatCard) templ.Component {
 					var templ_7745c5c3_Var27 string
 					templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(stat.Value)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 163, Col: 17}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 164, Col: 17}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 					if templ_7745c5c3_Err != nil {
@@ -614,7 +615,7 @@ func StatCardComponent(stat StatCard) templ.Component {
 						var templ_7745c5c3_Var30 string
 						templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(stat.Unit)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 165, Col: 48}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 166, Col: 48}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 						if templ_7745c5c3_Err != nil {
@@ -655,7 +656,7 @@ func StatCardComponent(stat StatCard) templ.Component {
 					var templ_7745c5c3_Var33 string
 					templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(stat.Value)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 170, Col: 17}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 171, Col: 17}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 					if templ_7745c5c3_Err != nil {
@@ -691,7 +692,7 @@ func StatCardComponent(stat StatCard) templ.Component {
 						var templ_7745c5c3_Var36 string
 						templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(stat.Unit)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 172, Col: 48}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 173, Col: 48}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 						if templ_7745c5c3_Err != nil {
@@ -741,7 +742,7 @@ func StatCardComponent(stat StatCard) templ.Component {
 					var templ_7745c5c3_Var39 string
 					templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(stat.Change)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 179, Col: 18}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 180, Col: 18}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 					if templ_7745c5c3_Err != nil {
@@ -777,7 +778,7 @@ func StatCardComponent(stat StatCard) templ.Component {
 					var templ_7745c5c3_Var42 string
 					templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(stat.Change)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 183, Col: 18}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/metrics_tab.templ`, Line: 184, Col: 18}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 					if templ_7745c5c3_Err != nil {

@@ -8,6 +8,8 @@ import (
 	"github.com/a-h/templ"
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
+	"github.com/dimiro1/faas-go/internal/ui/components/preview"
 	"github.com/dimiro1/faas-go/internal/ui/pages"
 )
 
@@ -63,6 +65,14 @@ func main() {
 		_ = card.Preview().Render(r.Context(), w)
 	})
 
+	mux.HandleFunc("/preview/component/form", func(w http.ResponseWriter, r *http.Request) {
+		_ = form.Preview().Render(r.Context(), w)
+	})
+
+	mux.HandleFunc("/preview", func(w http.ResponseWriter, r *http.Request) {
+		_ = preview.Index().Render(r.Context(), w)
+	})
+
 	// Wrap with CSS middleware - this serves /styles/templ.css automatically
 	handler := templ.NewCSSMiddleware(mux)
 
@@ -76,8 +86,10 @@ func main() {
 	fmt.Println("  - http://localhost:8080/functions/hello/executions (Executions Tab)")
 	fmt.Println("  - http://localhost:8080/functions/hello/test    (Test Tab)")
 	fmt.Println("  - http://localhost:8080/functions/hello/executions/exec_12345abcde (Execution Details)")
+	fmt.Println("  - http://localhost:8080/preview                   (Component Index)")
 	fmt.Println("  - http://localhost:8080/preview/component/button (Button Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/card   (Card Component)")
+	fmt.Println("  - http://localhost:8080/preview/component/form   (Form Component)")
 
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }

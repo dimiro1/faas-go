@@ -3,6 +3,7 @@ package components
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
 
@@ -23,35 +24,24 @@ css requestBuilderFields() {
 	gap: 1rem;
 }
 
-css reqBuilderGroup() {
-	display: flex;
-	flex-direction: column;
-	gap: 0.5rem;
-}
-
-css reqBuilderLabel() {
-	font-size: var(--text-xs);
-	font-weight: 500;
-	color: var(--color-text-muted);
-}
 
 templ RequestBuilder(data RequestBuilderData) {
 	@card.Simple() {
 		@card.SimpleHeader("Manually Run Request")
 		@card.LargeContent() {
 			<div class={ requestBuilderUrl() }>
-				@Select(data.Methods)
-				<input type="text" value={ data.URL } readonly class={ inputBase(), inputGrow(), inputMono() }/>
+				@form.Select(data.Methods)
+				@form.TextInputMonoGrow("text", "", data.URL, true)
 			</div>
 			<div class={ requestBuilderFields() }>
-				<div class={ reqBuilderGroup() }>
-					<label class={ reqBuilderLabel() }>Query Params</label>
-					@TextInput("text", "key=value", "")
-				</div>
-				<div class={ reqBuilderGroup() }>
-					<label class={ reqBuilderLabel() }>Body</label>
-					@Textarea("", "")
-				</div>
+				@form.FormGroup(form.FormGroupProps{}) {
+					@form.Label(form.LabelProps{Text: "Query Params", For: "query-params"})
+					@form.Input(form.InputProps{ID: "query-params", Placeholder: "key=value"})
+				}
+				@form.FormGroup(form.FormGroupProps{}) {
+					@form.Label(form.LabelProps{Text: "Body", For: "body"})
+					@form.TextareaInput(form.TextareaProps{ID: "body"})
+				}
 				@button.Button(button.Props{
 					Variant:   button.Default,
 					Icon:      icons.PaperAirplane(),

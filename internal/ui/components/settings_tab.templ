@@ -3,6 +3,7 @@ package components
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
 )
 
 type SettingsData struct {
@@ -45,17 +46,6 @@ css settingsDangerDescription() {
 	margin: 0.25rem 0 0 0;
 }
 
-css settingsFormGroup() {
-	margin-bottom: 1rem;
-}
-
-css settingsFormLabel() {
-	display: block;
-	font-size: var(--text-xs);
-	font-weight: 500;
-	color: var(--color-text-muted);
-	margin-bottom: 0.375rem;
-}
 
 templ SettingsTab(data SettingsData) {
 	<div class={ settingsTabContainer() }>
@@ -63,15 +53,14 @@ templ SettingsTab(data SettingsData) {
 		@card.Simple() {
 			@card.SimpleHeader("General Configuration")
 			@card.LargeContent() {
-				<div class={ settingsFormGroup() }>
-					<label class={ settingsFormLabel() }>Function Name</label>
-					@TextInput("text", "", data.FunctionName)
-				</div>
-				<div class={ settingsFormGroup() }>
-					<label class={ settingsFormLabel() }>Description</label>
-					@Textarea("", data.Description)
-				</div>
-				@Toggle(data.Enabled, "Enable Function", "Disable to stop processing requests.")
+				@form.FormGroup(form.FormGroupProps{}) {
+					@form.Label(form.LabelProps{Text: "Function Name", For: "function-name"})
+					@form.Input(form.InputProps{ID: "function-name", Value: data.FunctionName})
+				}
+				@form.FormGroup(form.FormGroupProps{}) {
+					@form.Label(form.LabelProps{Text: "Description", For: "description"})
+					@form.TextareaInput(form.TextareaProps{ID: "description", Value: data.Description})
+				}
 			}
 			@card.Footer() {
 				@button.Button(button.Props{
@@ -103,14 +92,26 @@ templ SettingsTab(data SettingsData) {
 		@card.Simple() {
 			@card.SimpleHeader("Network & Triggers")
 			@card.LargeContent() {
-				<div class={ settingsFormGroup() }>
-					<label class={ settingsFormLabel() }>Full Invocation URL</label>
+				@form.FormGroup(form.FormGroupProps{}) {
+					@form.Label(form.LabelProps{Text: "Full Invocation URL"})
 					@InputWithCopy(data.InvocationURL, true)
-				</div>
-				<div class={ settingsFormGroup() }>
-					<label class={ settingsFormLabel() }>Supported Methods</label>
+				}
+				@form.FormGroup(form.FormGroupProps{}) {
+					@form.Label(form.LabelProps{Text: "Supported Methods"})
 					@MethodBadges([]string{"GET", "POST", "PUT", "DELETE"})
-				</div>
+				}
+			}
+		}
+		<!-- Warning Zone -->
+		@card.Card(card.Props{Variant: card.Warning}) {
+			@card.Header(card.HeaderProps{Title: "Function Status", Variant: card.Warning})
+			@card.LargeContent() {
+				@form.Checkbox(form.CheckboxProps{
+					ID:          "enable-function",
+					Label:       "Enable Function",
+					Description: "Disabling will stop all incoming requests to this function.",
+					Checked:     data.Enabled,
+				})
 			}
 		}
 		<!-- Danger Zone -->

@@ -2,6 +2,7 @@ package components
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
 
@@ -69,7 +70,7 @@ templ ExecutionsTab(data ExecutionsData) {
 	<div class={ executionsTabContainer() }>
 		<!-- Search and Refresh -->
 		<div class={ executionsToolbar() }>
-			@SearchInputFull("Search execution ID...")
+			@form.SearchInputFull("Search execution ID...")
 			@button.Button(button.Props{
 				Variant: button.Ghost,
 				Size:    button.SizeIcon,

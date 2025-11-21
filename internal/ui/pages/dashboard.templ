@@ -3,6 +3,7 @@ package pages
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
 
@@ -53,7 +54,7 @@ templ Dashboard(functions []components.Function, pagination components.Paginatio
 		</div>
 		<!-- Filter Bar -->
 		<div class={ filterBar() }>
-			@components.SearchInput("Filter functions...", "250px")
+			@form.SearchInput("Filter functions...", "250px")
 		</div>
 		<!-- Data Table -->
 		@components.Table() {
