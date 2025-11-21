@@ -1,5 +1,7 @@
 package components
 
+import "github.com/dimiro1/faas-go/internal/ui/components/badge"
+
 type Execution struct {
 	ID       string
 	Status   string
@@ -41,7 +43,7 @@ css statusPillPending() {
 templ ExecutionRow(exec Execution, baseURL string) {
 	@TableRow() {
 		@TableCell() {
-			@IDBadgeLink(exec.ID, baseURL+"/"+exec.ID)
+			@badge.IDBadgeLink(exec.ID, baseURL+"/"+exec.ID)
 		}
 		@TableCell() {
 			@ExecutionStatus(exec.Status)

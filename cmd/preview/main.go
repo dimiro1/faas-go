@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
+	"github.com/dimiro1/faas-go/internal/ui/components/badge"
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
@@ -59,6 +60,10 @@ func main() {
 		_ = pages.PreviewExecutionDetails().Render(r.Context(), w)
 	})
 
+	mux.HandleFunc("/preview/component/badge", func(w http.ResponseWriter, r *http.Request) {
+		_ = badge.Preview().Render(r.Context(), w)
+	})
+
 	mux.HandleFunc("/preview/component/button", func(w http.ResponseWriter, r *http.Request) {
 		_ = button.Preview().Render(r.Context(), w)
 	})
@@ -97,6 +102,7 @@ func main() {
 	fmt.Println("  - http://localhost:8080/functions/hello/test    (Test Tab)")
 	fmt.Println("  - http://localhost:8080/functions/hello/executions/exec_12345abcde (Execution Details)")
 	fmt.Println("  - http://localhost:8080/preview                   (Component Index)")
+	fmt.Println("  - http://localhost:8080/preview/component/badge  (Badge Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/button (Button Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/card   (Card Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/form   (Form Component)")

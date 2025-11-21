@@ -1,6 +1,9 @@
 package components
 
-import "github.com/dimiro1/faas-go/internal/ui/components/icons"
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/badge"
+	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+)
 
 type Function struct {
 	ID          string
@@ -62,7 +65,7 @@ templ FunctionRow(fn Function) {
 			</a>
 		}
 		@TableCell() {
-			@StatusBadge(fn.Enabled)
+			@badge.StatusBadge(fn.Enabled)
 		}
 		@TableCell() {
 			<span class={ functionInvocations() }>{ fn.Invocations }</span>

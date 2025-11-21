@@ -1,0 +1,322 @@
+package badge
+
+import "github.com/dimiro1/faas-go/internal/ui/components/icons"
+
+// Variant defines the visual style of the badge
+type Variant string
+
+const (
+	Default     Variant = "default"
+	Secondary   Variant = "secondary"
+	Destructive Variant = "destructive"
+	Outline     Variant = "outline"
+	Success     Variant = "success"
+	Warning     Variant = "warning"
+)
+
+// Size defines the size of the badge
+type Size string
+
+const (
+	SizeSm      Size = "sm"
+	SizeDefault Size = "default"
+	SizeLg      Size = "lg"
+)
+
+// Props contains all configuration options for a badge
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Variant    Variant
+	Size       Size
+	Href       string
+	Icon       templ.Component
+	IconRight  templ.Component
+	Dot        bool
+	DotGlow    bool
+	Uppercase  bool
+	Mono       bool
+}
+
+// Base badge styles
+
+css badgeBase() {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	border-radius: 4px;
+	font-weight: 500;
+	white-space: nowrap;
+	text-decoration: none;
+	transition: all 0.2s;
+}
+
+// Size variants
+
+css badgeSizeSm() {
+	padding: 0.125rem 0.375rem;
+	font-size: var(--text-2xs);
+}
+
+css badgeSizeDefault() {
+	padding: 0.25rem 0.5rem;
+	font-size: var(--text-xs);
+}
+
+css badgeSizeLg() {
+	padding: 0.375rem 0.75rem;
+	font-size: var(--text-sm);
+}
+
+// Style variants
+
+css badgeDefault() {
+	background-color: var(--color-primary);
+	color: var(--color-background);
+}
+
+css badgeSecondary() {
+	background-color: var(--color-surface);
+	color: var(--color-text);
+	border: 1px solid var(--color-border);
+}
+
+css badgeDestructive() {
+	background-color: var(--color-danger);
+	color: white;
+}
+
+css badgeOutline() {
+	background-color: transparent;
+	color: var(--color-text);
+	border: 1px solid var(--color-border);
+}
+
+css badgeSuccess() {
+	background-color: rgba(16, 185, 129, 0.1);
+	color: var(--color-success);
+	border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+css badgeWarning() {
+	background-color: rgba(245, 158, 11, 0.1);
+	color: var(--color-warning);
+	border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+// Modifier styles
+
+css badgeUppercase() {
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+css badgeMono() {
+	font-family: var(--font-mono);
+}
+
+css badgeLink() {
+	cursor: pointer;
+}
+
+// Dot styles
+
+css badgeDot() {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+css badgeDotDefault() {
+	background-color: currentColor;
+}
+
+css badgeDotGlow() {
+	box-shadow: 0 0 6px currentColor;
+}
+
+// Icon wrapper
+
+css badgeIcon() {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 0.75rem;
+	height: 0.75rem;
+}
+
+// Helper functions
+
+func getSizeClass(size Size) templ.CSSClass {
+	switch size {
+	case SizeSm:
+		return badgeSizeSm()
+	case SizeLg:
+		return badgeSizeLg()
+	default:
+		return badgeSizeDefault()
+	}
+}
+
+func getVariantClass(variant Variant) templ.CSSClass {
+	switch variant {
+	case Secondary:
+		return badgeSecondary()
+	case Destructive:
+		return badgeDestructive()
+	case Outline:
+		return badgeOutline()
+	case Success:
+		return badgeSuccess()
+	case Warning:
+		return badgeWarning()
+	default:
+		return badgeDefault()
+	}
+}
+
+func badgeClasses(props Props) templ.CSSClasses {
+	return templ.CSSClasses{
+		badgeBase(),
+		getSizeClass(props.Size),
+		getVariantClass(props.Variant),
+		templ.KV(badgeUppercase(), props.Uppercase),
+		templ.KV(badgeMono(), props.Mono),
+		templ.KV(badgeLink(), props.Href != ""),
+		templ.KV(props.Class, props.Class != ""),
+	}
+}
+
+// Badge renders a badge element
+templ Badge(props Props) {
+	<style>
+		[data-badge]:hover {
+			opacity: 0.8;
+		}
+	</style>
+	if props.Href != "" {
+		<a
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			href={ templ.SafeURL(props.Href) }
+			class={ badgeClasses(props) }
+			data-badge="true"
+			{ props.Attributes... }
+		>
+			@badgeContent(props) {
+				{ children... }
+			}
+		</a>
+	} else {
+		<span
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			class={ badgeClasses(props) }
+			data-badge="true"
+			{ props.Attributes... }
+		>
+			@badgeContent(props) {
+				{ children... }
+			}
+		</span>
+	}
+}
+
+templ badgeContent(props Props) {
+	if props.Dot {
+		<span class={ badgeDot(), badgeDotDefault(), templ.KV(badgeDotGlow(), props.DotGlow) }></span>
+	}
+	if props.Icon != nil {
+		<span class={ badgeIcon() }>
+			@props.Icon
+		</span>
+	}
+	{ children... }
+	if props.IconRight != nil {
+		<span class={ badgeIcon() }>
+			@props.IconRight
+		</span>
+	}
+}
+
+// Convenience components for common badge patterns
+
+// IDBadge displays an ID with a hashtag icon
+templ IDBadge(id string) {
+	@Badge(Props{
+		Variant: Secondary,
+		Size:    SizeSm,
+		Icon:    icons.Hashtag(),
+		Mono:    true,
+	}) {
+		{ id }
+	}
+}
+
+// IDBadgeLink displays a clickable ID badge
+templ IDBadgeLink(id string, href string) {
+	@Badge(Props{
+		Variant: Outline,
+		Size:    SizeSm,
+		Href:    href,
+		Mono:    true,
+	}) {
+		{ id }
+	}
+}
+
+// StatusBadge displays an enabled/disabled status
+templ StatusBadge(enabled bool) {
+	if enabled {
+		@Badge(Props{
+			Variant:   Success,
+			Size:      SizeSm,
+			Dot:       true,
+			Uppercase: true,
+			Mono:      true,
+		}) {
+			Enabled
+		}
+	} else {
+		@Badge(Props{
+			Variant:   Warning,
+			Size:      SizeSm,
+			Dot:       true,
+			Uppercase: true,
+			Mono:      true,
+		}) {
+			Disabled
+		}
+	}
+}
+
+// StatusBadgeWithGlow displays a status with a glowing dot
+templ StatusBadgeWithGlow(enabled bool) {
+	if enabled {
+		@Badge(Props{
+			Variant:   Success,
+			Size:      SizeDefault,
+			Dot:       true,
+			DotGlow:   true,
+			Uppercase: true,
+			Mono:      true,
+		}) {
+			Enabled
+		}
+	} else {
+		@Badge(Props{
+			Variant:   Warning,
+			Size:      SizeDefault,
+			Dot:       true,
+			Uppercase: true,
+			Mono:      true,
+		}) {
+			Disabled
+		}
+	}
+}
