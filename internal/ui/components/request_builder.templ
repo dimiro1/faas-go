@@ -2,19 +2,13 @@ package components
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/card"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
 
 type RequestBuilderData struct {
 	URL     string
 	Methods []string
-}
-
-css requestBuilderTitle() {
-	font-size: var(--text-sm);
-	font-weight: 600;
-	color: var(--color-text);
-	margin: 0 0 1rem 0;
 }
 
 css requestBuilderUrl() {
@@ -41,28 +35,23 @@ css reqBuilderLabel() {
 	color: var(--color-text-muted);
 }
 
-css reqBuilderBtnWrapper() {
-	width: 100%;
-	display: flex;
-}
-
 templ RequestBuilder(data RequestBuilderData) {
-	@CardPadded() {
-		<h3 class={ requestBuilderTitle() }>Manually Run Request</h3>
-		<div class={ requestBuilderUrl() }>
-			@Select(data.Methods)
-			<input type="text" value={ data.URL } readonly class={ inputBase(), inputGrow(), inputMono() }/>
-		</div>
-		<div class={ requestBuilderFields() }>
-			<div class={ reqBuilderGroup() }>
-				<label class={ reqBuilderLabel() }>Query Params</label>
-				@TextInput("text", "key=value", "")
+	@card.Simple() {
+		@card.SimpleHeader("Manually Run Request")
+		@card.LargeContent() {
+			<div class={ requestBuilderUrl() }>
+				@Select(data.Methods)
+				<input type="text" value={ data.URL } readonly class={ inputBase(), inputGrow(), inputMono() }/>
 			</div>
-			<div class={ reqBuilderGroup() }>
-				<label class={ reqBuilderLabel() }>Body</label>
-				@Textarea("", "")
-			</div>
-			<div class={ reqBuilderBtnWrapper() } style="display: flex;">
+			<div class={ requestBuilderFields() }>
+				<div class={ reqBuilderGroup() }>
+					<label class={ reqBuilderLabel() }>Query Params</label>
+					@TextInput("text", "key=value", "")
+				</div>
+				<div class={ reqBuilderGroup() }>
+					<label class={ reqBuilderLabel() }>Body</label>
+					@Textarea("", "")
+				</div>
 				@button.Button(button.Props{
 					Variant:   button.Default,
 					Icon:      icons.PaperAirplane(),
@@ -71,6 +60,6 @@ templ RequestBuilder(data RequestBuilderData) {
 					Send Request
 				}
 			</div>
-		</div>
+		}
 	}
 }

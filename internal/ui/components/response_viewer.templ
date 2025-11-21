@@ -1,11 +1,6 @@
 package components
 
-css responseViewerTitle() {
-	font-size: var(--text-sm);
-	font-weight: 600;
-	color: var(--color-text);
-	margin: 0 0 1rem 0;
-}
+import "github.com/dimiro1/faas-go/internal/ui/components/card"
 
 css responseViewerContent() {
 	padding: 3rem 2rem;
@@ -25,10 +20,12 @@ css responsePlaceholder() {
 }
 
 templ ResponseViewer() {
-	@CardPadded() {
-		<h3 class={ responseViewerTitle() }>Response</h3>
-		<div class={ responseViewerContent() }>
-			<span class={ responsePlaceholder() }>Send a request to see the response</span>
-		</div>
+	@card.Simple() {
+		@card.SimpleHeader("Response")
+		@card.LargeContent() {
+			<div class={ responseViewerContent() }>
+				<span class={ responsePlaceholder() }>Send a request to see the response</span>
+			</div>
+		}
 	}
 }

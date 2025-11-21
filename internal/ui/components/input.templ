@@ -1,5 +1,7 @@
 package components
 
+import "github.com/dimiro1/faas-go/internal/ui/components/icons"
+
 css inputBase() {
 	padding: 0.5rem 0.75rem;
 	border: 1px solid var(--color-border);
@@ -96,7 +98,6 @@ css selectBase() {
 }
 
 // Input components
-
 templ TextInput(inputType string, placeholder string, value string) {
 	<input type={ inputType } placeholder={ placeholder } value={ value } class={ inputBase(), inputFull() }/>
 }
@@ -111,22 +112,20 @@ templ TextInputReadonly(value string) {
 
 templ SearchInput(placeholder string, width string) {
 	<div class={ searchInputWrapper() } style={ "width: " + width }>
-		<i class={ "fas fa-search", searchInputIcon() }></i>
+		<span class={ searchInputIcon() }>
+			@icons.Search()
+		</span>
 		<input type="text" placeholder={ placeholder } class={ searchInput() }/>
 	</div>
 }
 
 templ SearchInputFull(placeholder string) {
 	<div class={ searchInputWrapper(), searchInputWrapperFull() }>
-		<i class={ "fas fa-search", searchInputIcon() }></i>
+		<span class={ searchInputIcon() }>
+			@icons.Search()
+		</span>
 		<input type="text" placeholder={ placeholder } class={ searchInput() }/>
 	</div>
-}
-
-templ IconButton(icon string) {
-	<button class={ iconBtn() }>
-		<i class={ "fas " + icon }></i>
-	</button>
 }
 
 templ Textarea(placeholder string, value string) {

@@ -20,7 +20,7 @@ func renderAndParse(t *testing.T, component interface {
 	pr, pw := io.Pipe()
 	go func() {
 		_ = component.Render(context.Background(), pw)
-		pw.Close()
+		_ = pw.Close()
 	}()
 
 	doc, err := goquery.NewDocumentFromReader(pr)

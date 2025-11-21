@@ -1,0 +1,384 @@
+package card
+
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+	"github.com/dimiro1/faas-go/internal/ui/components/preview"
+)
+
+templ Preview() {
+	@preview.Page(preview.PreviewPageProps{
+		Title:       "Card Component",
+		Description: "Card containers with variants, headers, content, and footers.",
+	}) {
+		<!-- Basic Cards -->
+		@preview.Section("Basic Cards") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Simple") {
+						@Simple() {
+							@SimpleContent() {
+								Simple card without header
+							}
+						}
+					}
+					@preview.Item("Padded") {
+						@Padded() {
+							Padded card without header
+						}
+					}
+					@preview.Item("With Elevation") {
+						@Card(Props{Elevation: ElevationMd}) {
+							@SimpleContent() {
+								Card with shadow, no header
+							}
+						}
+					}
+				}
+			}
+		}
+		<!-- Variants -->
+		@preview.Section("Variants") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Default") {
+						@Card(Props{}) {
+							@Header(HeaderProps{Title: "Default"})
+							@SimpleContent() {
+								Default variant
+							}
+						}
+					}
+					@preview.Item("Danger") {
+						@Card(Props{Variant: Danger}) {
+							@Header(HeaderProps{Title: "Danger", Variant: Danger})
+							@SimpleContent() {
+								Danger variant
+							}
+						}
+					}
+					@preview.Item("Success") {
+						@Card(Props{Variant: Success}) {
+							@Header(HeaderProps{Title: "Success", Variant: Success})
+							@SimpleContent() {
+								Success variant
+							}
+						}
+					}
+					@preview.Item("Warning") {
+						@Card(Props{Variant: Warning}) {
+							@Header(HeaderProps{Title: "Warning", Variant: Warning})
+							@SimpleContent() {
+								Warning variant
+							}
+						}
+					}
+					@preview.Item("Info") {
+						@Card(Props{Variant: Info}) {
+							@Header(HeaderProps{Title: "Info", Variant: Info})
+							@SimpleContent() {
+								Info variant
+							}
+						}
+					}
+				}
+			}
+		}
+		<!-- Elevation -->
+		@preview.Section("Elevation") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("None") {
+						@Card(Props{Elevation: ElevationNone}) {
+							@SimpleHeader("No Shadow")
+							@SimpleContent() {
+								No elevation
+							}
+						}
+					}
+					@preview.Item("Small") {
+						@Card(Props{Elevation: ElevationSm}) {
+							@SimpleHeader("Small")
+							@SimpleContent() {
+								Small shadow
+							}
+						}
+					}
+					@preview.Item("Medium") {
+						@Card(Props{Elevation: ElevationMd}) {
+							@SimpleHeader("Medium")
+							@SimpleContent() {
+								Medium shadow
+							}
+						}
+					}
+					@preview.Item("Large") {
+						@Card(Props{Elevation: ElevationLg}) {
+							@SimpleHeader("Large")
+							@SimpleContent() {
+								Large shadow
+							}
+						}
+					}
+				}
+			}
+		}
+		<!-- Border Radius -->
+		@preview.Section("Border Radius") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("None") {
+						@Card(Props{Radius: RadiusNone}) {
+							@SimpleHeader("None")
+							@SimpleContent() {
+								No radius
+							}
+						}
+					}
+					@preview.Item("Small") {
+						@Card(Props{Radius: RadiusSm}) {
+							@SimpleHeader("Small")
+							@SimpleContent() {
+								4px radius
+							}
+						}
+					}
+					@preview.Item("Default") {
+						@Card(Props{Radius: RadiusDefault}) {
+							@SimpleHeader("Default")
+							@SimpleContent() {
+								8px radius
+							}
+						}
+					}
+					@preview.Item("Large") {
+						@Card(Props{Radius: RadiusLg}) {
+							@SimpleHeader("Large")
+							@SimpleContent() {
+								12px radius
+							}
+						}
+					}
+				}
+			}
+		}
+		<!-- Header with Icon -->
+		@preview.Section("Header with Icon") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Default with Icon") {
+						@Simple() {
+							@Header(HeaderProps{
+								Title: "Settings",
+								Icon:  icons.Cog(),
+							})
+							@SimpleContent() {
+								Card with icon
+							}
+						}
+					}
+					@preview.Item("Danger with Icon") {
+						@Card(Props{Variant: Danger}) {
+							@Header(HeaderProps{
+								Title:   "Delete",
+								Icon:    icons.Trash(),
+								Variant: Danger,
+							})
+							@SimpleContent() {
+								Danger with icon
+							}
+						}
+					}
+					@preview.Item("Success with Icon") {
+						@Card(Props{Variant: Success}) {
+							@Header(HeaderProps{
+								Title:   "Completed",
+								Icon:    icons.Plus(),
+								Variant: Success,
+							})
+							@SimpleContent() {
+								Success with icon
+							}
+						}
+					}
+				}
+			}
+		}
+		<!-- Header with Subtitle -->
+		@preview.Section("Header with Subtitle") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("With Subtitle") {
+						@Simple() {
+							@Header(HeaderProps{
+								Title:    "Function Name",
+								Subtitle: "Last updated 2 hours ago",
+							})
+							@SimpleContent() {
+								Content with subtitle header
+							}
+						}
+					}
+					@preview.Item("Icon + Subtitle") {
+						@Simple() {
+							@Header(HeaderProps{
+								Title:    "API Endpoint",
+								Subtitle: "https://api.example.com/v1",
+								Icon:     icons.ExternalLink(),
+							})
+							@SimpleContent() {
+								Full featured header
+							}
+						}
+					}
+				}
+			}
+		}
+		<!-- Content Variations -->
+		@preview.Section("Content Variations") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Simple") {
+						@Simple() {
+							@SimpleHeader("Simple")
+							@SimpleContent() {
+								Default padding
+							}
+						}
+					}
+					@preview.Item("Large") {
+						@Simple() {
+							@SimpleHeader("Large")
+							@LargeContent() {
+								Larger padding
+							}
+						}
+					}
+					@preview.Item("Dark") {
+						@Simple() {
+							@SimpleHeader("Dark")
+							@DarkContent() {
+								Dark background
+							}
+						}
+					}
+				}
+			}
+		}
+		<!-- Dividers -->
+		@preview.Section("Dividers") {
+			@preview.Card() {
+				@Simple() {
+					@SimpleHeader("Card with Dividers")
+					@SimpleContent() {
+						<p style="margin: 0;">First section content</p>
+					}
+					@Divider()
+					@SimpleContent() {
+						<p style="margin: 0;">Second section content</p>
+					}
+					@Divider()
+					@SimpleContent() {
+						<p style="margin: 0;">Third section content</p>
+					}
+				}
+			}
+		}
+		<!-- With Footer -->
+		@preview.Section("With Footer") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Card with Footer") {
+						@Simple() {
+							@SimpleHeader("Settings")
+							@LargeContent() {
+								<p style="margin: 0; color: var(--color-text-muted); font-size: var(--text-sm);">
+									Configure your preferences here.
+								</p>
+							}
+							@Footer() {
+								@button.Button(button.Props{Variant: button.Outline}) {
+									Cancel
+								}
+								@button.Button(button.Props{Variant: button.Default}) {
+									Save
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		<!-- Tabs -->
+		@preview.Section("Tabs") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("Card with Tabs") {
+						@Simple() {
+							@HeaderTabs() {
+								@Tab("Overview", true)
+								@Tab("Settings", false)
+								@Tab("Logs", false)
+							}
+							@SimpleContent() {
+								Tab content goes here
+							}
+						}
+					}
+				}
+			}
+		}
+		<!-- Combined Features -->
+		@preview.Section("Combined Features") {
+			@preview.Card() {
+				@Card(Props{
+					Variant:   Danger,
+					Elevation: ElevationMd,
+					Radius:    RadiusLg,
+				}) {
+					@Header(HeaderProps{
+						Title:    "Danger Zone",
+						Subtitle: "Irreversible actions",
+						Icon:     icons.Trash(),
+						Variant:  Danger,
+					}) {
+						<span style="font-size: var(--text-xs); color: var(--color-text-muted);">Caution</span>
+					}
+					@LargeContent() {
+						<p style="margin: 0 0 1rem 0; color: var(--color-text-muted); font-size: var(--text-sm);">
+							This action cannot be undone. This will permanently delete your function and all associated data.
+						</p>
+					}
+					@Footer() {
+						@button.Button(button.Props{Variant: button.Destructive}) {
+							Delete Function
+						}
+					}
+				}
+			}
+		}
+		<!-- Accessibility -->
+		@preview.Section("Accessibility") {
+			@preview.Card() {
+				@preview.Grid() {
+					@preview.Item("With ARIA") {
+						@Card(Props{
+							AriaLabel:       "User settings card",
+							AriaDescribedBy: "settings-desc",
+						}) {
+							@Header(HeaderProps{
+								Title: "Accessible Card",
+								Icon:  icons.Cog(),
+							})
+							@SimpleContent() {
+								<p id="settings-desc" style="margin: 0; color: var(--color-text-muted); font-size: var(--text-sm);">
+									This card has proper ARIA attributes for screen readers.
+								</p>
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

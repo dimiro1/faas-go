@@ -1,22 +1,6 @@
 package components
 
-css settingsSectionDanger() {
-	background-color: rgba(239, 68, 68, 0.05);
-	border-color: rgba(239, 68, 68, 0.3);
-}
-
-css settingsHeaderDanger() {
-	border-bottom-color: rgba(239, 68, 68, 0.2);
-}
-
-css settingsTitleDanger() {
-	color: var(--color-danger);
-}
-
-css settingsSectionContent() {
-	padding: 1.5rem;
-	text-align: left;
-}
+import "github.com/dimiro1/faas-go/internal/ui/components/card"
 
 css linkButton() {
 	background: none;
@@ -29,23 +13,21 @@ css linkButton() {
 
 templ SettingsSection(title string, isDanger bool) {
 	if isDanger {
-		<div class={ card(), settingsSectionDanger() }>
-			<div class={ cardHeader(), settingsHeaderDanger() }>
-				<h3 class={ cardTitle(), settingsTitleDanger() }>{ title }</h3>
-			</div>
+		@card.Card(card.Props{Variant: card.Danger}) {
+			@card.Header(card.HeaderProps{Title: title, Variant: card.Danger})
 			{ children... }
-		</div>
+		}
 	} else {
-		@Card() {
-			@CardHeader(title)
+		@card.Simple() {
+			@card.SimpleHeader(title)
 			{ children... }
 		}
 	}
 }
 
 templ SettingsSectionWithAction(title string, actionText string) {
-	@Card() {
-		@CardHeaderWithAction(title) {
+	@card.Simple() {
+		@card.Header(card.HeaderProps{Title: title}) {
 			<button class={ linkButton() }>{ actionText }</button>
 		}
 		{ children... }
@@ -53,13 +35,13 @@ templ SettingsSectionWithAction(title string, actionText string) {
 }
 
 templ SettingsSectionContent() {
-	<div class={ settingsSectionContent() }>
+	@card.LargeContent() {
 		{ children... }
-	</div>
+	}
 }
 
 templ SettingsSectionFooter() {
-	@CardFooter() {
+	@card.Footer() {
 		{ children... }
 	}
 }

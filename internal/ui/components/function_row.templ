@@ -1,5 +1,7 @@
 package components
 
+import "github.com/dimiro1/faas-go/internal/ui/components/icons"
+
 type Function struct {
 	ID          string
 	Name        string
@@ -70,7 +72,7 @@ templ FunctionRow(fn Function) {
 		}
 		@TableCell() {
 			<a href={ templ.SafeURL("/functions/" + fn.ID) } class={ functionAction() }>
-				<i class="fas fa-chevron-right"></i>
+				@icons.ChevronRight()
 			</a>
 		}
 	}

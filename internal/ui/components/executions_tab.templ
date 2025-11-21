@@ -1,6 +1,9 @@
 package components
 
-import "github.com/dimiro1/faas-go/internal/ui/components/button"
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+)
 
 type ExecutionsData struct {
 	Executions []Execution
@@ -67,7 +70,11 @@ templ ExecutionsTab(data ExecutionsData) {
 		<!-- Search and Refresh -->
 		<div class={ executionsToolbar() }>
 			@SearchInputFull("Search execution ID...")
-			@IconButton("fa-sync-alt")
+			@button.Button(button.Props{
+				Variant: button.Ghost,
+				Size:    button.SizeIcon,
+				Icon:    icons.Refresh(),
+			})
 		</div>
 		<!-- Executions Table -->
 		@Table() {

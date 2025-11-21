@@ -1,6 +1,10 @@
 package components
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+)
 
 type StatCard struct {
 	Label      string
@@ -26,10 +30,6 @@ css statsGrid() {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	gap: 1rem;
-}
-
-css statCardPadding() {
-	padding: 1rem;
 }
 
 css statCardLabel() {
@@ -75,28 +75,6 @@ css statCardChangePositive() {
 css statCardChangeNeutral() {
 	color: var(--color-text-muted);
 }
-
-
-css chartHeader() {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 1.5rem;
-}
-
-css chartTitle() {
-	font-size: var(--text-sm);
-	font-weight: 600;
-	color: var(--color-text);
-	margin: 0;
-}
-
-css chartTitleSpan() {
-	font-weight: normal;
-	color: var(--color-text-muted);
-	margin-left: 0.5rem;
-}
-
 
 css barChart() {
 	display: flex;
@@ -149,59 +127,62 @@ templ MetricsTab(stats []StatCard, bars []BarData) {
 			}
 		</div>
 		<!-- Chart -->
-		@CardPadded() {
-			<div class={ chartHeader() }>
-				<h3 class={ chartTitle() }>
-					Invocations
-					<span class={ chartTitleSpan() }>(Last 24 Hours)</span>
-				</h3>
+		@card.Card(card.Props{Elevation: card.ElevationSm}) {
+			@card.Header(card.HeaderProps{
+				Title:    "Invocations",
+				Subtitle: "Last 24 Hours",
+			}) {
 				@Select([]string{"24h", "7d", "30d"})
-			</div>
-			<div class={ barChart() }>
-				for _, barItem := range bars {
-					<div class={ bar() } style={ fmt.Sprintf("height: %d%%", barItem.Height) }>
-						<div class={ barTooltip() }>{ barItem.Tooltip }</div>
-					</div>
-				}
-			</div>
-			<div class={ chartTimeline() }>
-				<span>00:00</span>
-				<span>06:00</span>
-				<span>12:00</span>
-				<span>18:00</span>
-				<span>23:59</span>
-			</div>
+			}
+			@card.LargeContent() {
+				<div class={ barChart() }>
+					for _, barItem := range bars {
+						<div class={ bar() } style={ fmt.Sprintf("height: %d%%", barItem.Height) }>
+							<div class={ barTooltip() }>{ barItem.Tooltip }</div>
+						</div>
+					}
+				</div>
+				<div class={ chartTimeline() }>
+					<span>00:00</span>
+					<span>06:00</span>
+					<span>12:00</span>
+					<span>18:00</span>
+					<span>23:59</span>
+				</div>
+			}
 		}
 	</div>
 }
 
 templ StatCardComponent(stat StatCard) {
-	<div class={ card(), statCardPadding() }>
-		<p class={ statCardLabel() }>{ stat.Label }</p>
-		if stat.IsSuccess {
-			<p class={ statCardValue(), statCardValueSuccess() }>
-				{ stat.Value }
-				if stat.Unit != "" {
-					<span class={ statCardUnit() }>{ stat.Unit }</span>
-				}
-			</p>
-		} else {
-			<p class={ statCardValue() }>
-				{ stat.Value }
-				if stat.Unit != "" {
-					<span class={ statCardUnit() }>{ stat.Unit }</span>
-				}
-			</p>
+	@card.Card(card.Props{Elevation: card.ElevationSm}) {
+		@card.SimpleContent() {
+			<p class={ statCardLabel() }>{ stat.Label }</p>
+			if stat.IsSuccess {
+				<p class={ statCardValue(), statCardValueSuccess() }>
+					{ stat.Value }
+					if stat.Unit != "" {
+						<span class={ statCardUnit() }>{ stat.Unit }</span>
+					}
+				</p>
+			} else {
+				<p class={ statCardValue() }>
+					{ stat.Value }
+					if stat.Unit != "" {
+						<span class={ statCardUnit() }>{ stat.Unit }</span>
+					}
+				</p>
+			}
+			if stat.IsPositive {
+				<div class={ statCardChange(), statCardChangePositive() }>
+					@icons.ChevronUp()
+					{ stat.Change }
+				</div>
+			} else {
+				<div class={ statCardChange(), statCardChangeNeutral() }>
+					{ stat.Change }
+				</div>
+			}
 		}
-		if stat.IsPositive {
-			<div class={ statCardChange(), statCardChangePositive() }>
-				<i class="fas fa-arrow-up"></i>
-				{ stat.Change }
-			</div>
-		} else {
-			<div class={ statCardChange(), statCardChangeNeutral() }>
-				{ stat.Change }
-			</div>
-		}
-	</div>
+	}
 }

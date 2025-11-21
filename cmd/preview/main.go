@@ -7,6 +7,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/card"
 	"github.com/dimiro1/faas-go/internal/ui/pages"
 )
 
@@ -23,39 +24,43 @@ func main() {
 			http.NotFound(w, r)
 			return
 		}
-		pages.PreviewDashboard().Render(r.Context(), w)
+		_ = pages.PreviewDashboard().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/new", func(w http.ResponseWriter, r *http.Request) {
-		pages.PreviewCreateFunction().Render(r.Context(), w)
+		_ = pages.PreviewCreateFunction().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello", func(w http.ResponseWriter, r *http.Request) {
-		pages.PreviewFunctionDetails().Render(r.Context(), w)
+		_ = pages.PreviewFunctionDetails().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello/code", func(w http.ResponseWriter, r *http.Request) {
-		pages.PreviewCodeTab().Render(r.Context(), w)
+		_ = pages.PreviewCodeTab().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello/settings", func(w http.ResponseWriter, r *http.Request) {
-		pages.PreviewSettingsTab().Render(r.Context(), w)
+		_ = pages.PreviewSettingsTab().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello/executions", func(w http.ResponseWriter, r *http.Request) {
-		pages.PreviewExecutionsTab().Render(r.Context(), w)
+		_ = pages.PreviewExecutionsTab().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello/test", func(w http.ResponseWriter, r *http.Request) {
-		pages.PreviewTestTab().Render(r.Context(), w)
+		_ = pages.PreviewTestTab().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello/executions/exec_12345abcde", func(w http.ResponseWriter, r *http.Request) {
-		pages.PreviewExecutionDetails().Render(r.Context(), w)
+		_ = pages.PreviewExecutionDetails().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/preview/component/button", func(w http.ResponseWriter, r *http.Request) {
-		button.Preview().Render(r.Context(), w)
+		_ = button.Preview().Render(r.Context(), w)
+	})
+
+	mux.HandleFunc("/preview/component/card", func(w http.ResponseWriter, r *http.Request) {
+		_ = card.Preview().Render(r.Context(), w)
 	})
 
 	// Wrap with CSS middleware - this serves /styles/templ.css automatically
@@ -72,6 +77,7 @@ func main() {
 	fmt.Println("  - http://localhost:8080/functions/hello/test    (Test Tab)")
 	fmt.Println("  - http://localhost:8080/functions/hello/executions/exec_12345abcde (Execution Details)")
 	fmt.Println("  - http://localhost:8080/preview/component/button (Button Component)")
+	fmt.Println("  - http://localhost:8080/preview/component/card   (Card Component)")
 
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }

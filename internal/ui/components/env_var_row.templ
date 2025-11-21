@@ -1,5 +1,10 @@
 package components
 
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+)
+
 type EnvVar struct {
 	Key   string
 	Value string
@@ -21,28 +26,14 @@ css envVarInputValue() {
 	color: var(--color-text-muted);
 }
 
-css iconButton() {
-	padding: 0.5rem;
-	border: none;
-	border-radius: 6px;
-	background: none;
-	color: var(--color-text-muted);
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-css iconButtonDanger() {
-	color: var(--color-text-muted);
-}
-
 templ EnvVarRow(env EnvVar) {
 	<div class={ envVarRow() }>
 		<input type="text" value={ env.Key } class={ inputBase(), inputMono(), envVarInputKey() } placeholder="Key"/>
 		<input type="password" value={ env.Value } class={ inputBase(), inputMono(), envVarInputValue() } placeholder="Value"/>
-		<button class={ iconButton(), iconButtonDanger() }>
-			<i class="fas fa-trash"></i>
-		</button>
+		@button.Button(button.Props{
+			Variant: button.Ghost,
+			Size:    button.SizeIcon,
+			Icon:    icons.Trash(),
+		})
 	</div>
 }

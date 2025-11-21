@@ -1,6 +1,9 @@
 package components
 
-import "github.com/dimiro1/faas-go/internal/ui/components/button"
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+)
 
 type FunctionDetails struct {
 	ID          string
@@ -62,21 +65,6 @@ css functionDetailsActions() {
 	gap: 0.75rem;
 }
 
-css saveChangesBtn() {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.5rem;
-	padding: 0.375rem 0.75rem;
-	border-radius: 4px;
-	border: 1px solid var(--color-border);
-	background-color: white;
-	color: black;
-	font-size: var(--text-xs);
-	font-weight: 600;
-	cursor: pointer;
-	box-shadow: 0 10px 15px -3px rgba(255, 255, 255, 0.05);
-}
-
 templ FunctionDetailsView(fn FunctionDetails, tabs []Tab, activeTab string, baseURL string, showSaveButton bool) {
 	<main class={ functionDetailsMain() }>
 		<!-- Header -->
@@ -95,9 +83,13 @@ templ FunctionDetailsView(fn FunctionDetails, tabs []Tab, activeTab string, base
 			<div class={ functionDetailsActions() }>
 				@StatusBadgeWithGlow(fn.Enabled)
 				if showSaveButton {
-					<button class={ saveChangesBtn() }>
-						<i class="fas fa-save"></i> Save Changes
-					</button>
+					@button.Button(button.Props{
+						Variant: button.Default,
+						Size:    button.SizeSm,
+						Icon:    icons.Save(),
+					}) {
+						Save Changes
+					}
 				}
 			</div>
 		</div>

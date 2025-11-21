@@ -1,5 +1,7 @@
 package components
 
+import "github.com/dimiro1/faas-go/internal/ui/components/icons"
+
 css idBadge() {
 	background-color: var(--color-surface);
 	border: 1px solid var(--color-border);
@@ -31,11 +33,17 @@ css idBadgeLink() {
 templ IDBadge(id string, copyable bool) {
 	if copyable {
 		<span class={ idBadge(), idBadgeCopyable() } title="Copy ID">
-			<i class={ "fas fa-hashtag", idBadgeIcon() }></i>{ id }
+			<span class={ idBadgeIcon() }>
+				@icons.Hashtag()
+			</span>
+			{ id }
 		</span>
 	} else {
 		<span class={ idBadge() }>
-			<i class={ "fas fa-hashtag", idBadgeIcon() }></i>{ id }
+			<span class={ idBadgeIcon() }>
+				@icons.Hashtag()
+			</span>
+			{ id }
 		</span>
 	}
 }

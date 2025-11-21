@@ -1,5 +1,7 @@
 package components
 
+import "github.com/dimiro1/faas-go/internal/ui/components/card"
+
 type ApiDocItem struct {
 	Name        string
 	Type        string
@@ -14,12 +16,6 @@ type ApiSection struct {
 	Items       []ApiDocItem
 	Example     string
 	Active      bool
-}
-
-css apiContent() {
-	padding: 1rem;
-	overflow-y: auto;
-	flex-grow: 1;
 }
 
 css apiDescription() {
@@ -37,7 +33,6 @@ css apiDocItem() {
 	transition: border-color 0.2s;
 	cursor: help;
 }
-
 
 css apiDocItemHeader() {
 	display: flex;
@@ -103,15 +98,19 @@ css apiExampleCode() {
 }
 
 templ ApiReference(sections []ApiSection) {
-	@Card() {
-		@ApiTabs(sections)
-		<div class={ apiContent() }>
+	@card.Simple() {
+		@card.HeaderTabs() {
+			for _, section := range sections {
+				@card.Tab(section.Name, section.Active)
+			}
+		}
+		@card.SimpleContent() {
 			for _, section := range sections {
 				if section.Active {
 					@ApiSectionContent(section)
 				}
 			}
-		</div>
+		}
 	}
 }
 

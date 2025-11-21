@@ -1,6 +1,9 @@
 package components
 
-import "github.com/dimiro1/faas-go/internal/ui/components/button"
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/card"
+)
 
 type SettingsData struct {
 	FunctionName  string
@@ -21,8 +24,6 @@ css settingsDangerContent() {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 1.5rem;
-	text-align: left;
 }
 
 css settingsDangerInfo() {
@@ -44,17 +45,6 @@ css settingsDangerDescription() {
 	margin: 0.25rem 0 0 0;
 }
 
-css btnDanger() {
-	padding: 0.5rem 1rem;
-	border: 1px solid rgba(239, 68, 68, 0.5);
-	border-radius: 6px;
-	background-color: transparent;
-	color: var(--color-danger);
-	font-size: var(--text-sm);
-	font-weight: 500;
-	cursor: pointer;
-}
-
 css settingsFormGroup() {
 	margin-bottom: 1rem;
 }
@@ -70,8 +60,9 @@ css settingsFormLabel() {
 templ SettingsTab(data SettingsData) {
 	<div class={ settingsTabContainer() }>
 		<!-- General Settings -->
-		@SettingsSection("General Configuration", false) {
-			@SettingsSectionContent() {
+		@card.Simple() {
+			@card.SimpleHeader("General Configuration")
+			@card.LargeContent() {
 				<div class={ settingsFormGroup() }>
 					<label class={ settingsFormLabel() }>Function Name</label>
 					@TextInput("text", "", data.FunctionName)
@@ -82,7 +73,7 @@ templ SettingsTab(data SettingsData) {
 				</div>
 				@Toggle(data.Enabled, "Enable Function", "Disable to stop processing requests.")
 			}
-			@SettingsSectionFooter() {
+			@card.Footer() {
 				@button.Button(button.Props{
 					Variant: button.Default,
 				}) {
@@ -91,13 +82,16 @@ templ SettingsTab(data SettingsData) {
 			}
 		}
 		<!-- Environment Variables -->
-		@SettingsSectionWithAction("Environment Variables", "+ Add Variable") {
-			@SettingsSectionContent() {
+		@card.Simple() {
+			@card.Header(card.HeaderProps{Title: "Environment Variables"}) {
+				<button class={ linkButton() }>+ Add Variable</button>
+			}
+			@card.LargeContent() {
 				for _, env := range data.EnvVars {
 					@EnvVarRow(env)
 				}
 			}
-			@SettingsSectionFooter() {
+			@card.Footer() {
 				@button.Button(button.Props{
 					Variant: button.Default,
 				}) {
@@ -106,8 +100,9 @@ templ SettingsTab(data SettingsData) {
 			}
 		}
 		<!-- Network & Triggers -->
-		@SettingsSection("Network & Triggers", false) {
-			@SettingsSectionContent() {
+		@card.Simple() {
+			@card.SimpleHeader("Network & Triggers")
+			@card.LargeContent() {
 				<div class={ settingsFormGroup() }>
 					<label class={ settingsFormLabel() }>Full Invocation URL</label>
 					@InputWithCopy(data.InvocationURL, true)
@@ -119,14 +114,21 @@ templ SettingsTab(data SettingsData) {
 			}
 		}
 		<!-- Danger Zone -->
-		@SettingsSection("Danger Zone", true) {
-			<div class={ settingsDangerContent() }>
-				<div class={ settingsDangerInfo() }>
-					<p class={ settingsDangerTitle() }>Delete Function</p>
-					<p class={ settingsDangerDescription() }>Once deleted, this function cannot be recovered.</p>
+		@card.Card(card.Props{Variant: card.Danger}) {
+			@card.Header(card.HeaderProps{Title: "Danger Zone", Variant: card.Danger})
+			@card.LargeContent() {
+				<div class={ settingsDangerContent() }>
+					<div class={ settingsDangerInfo() }>
+						<p class={ settingsDangerTitle() }>Delete Function</p>
+						<p class={ settingsDangerDescription() }>Once deleted, this function cannot be recovered.</p>
+					</div>
+					@button.Button(button.Props{
+						Variant: button.Destructive,
+					}) {
+						Delete
+					}
 				</div>
-				<button class={ btnDanger() }>Delete</button>
-			</div>
+			}
 		}
 	</div>
 }

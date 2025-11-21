@@ -3,6 +3,7 @@ module github.com/dimiro1/faas-go
 go 1.25.4
 
 require (
+	github.com/PuerkitoBio/goquery v1.11.0
 	github.com/a-h/templ v0.3.960
 	github.com/golang-migrate/migrate/v4 v4.19.0
 	github.com/google/uuid v1.6.0
@@ -13,7 +14,6 @@ require (
 )
 
 require (
-	github.com/PuerkitoBio/goquery v1.11.0 // indirect
 	github.com/andybalholm/cascadia v1.3.3 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect

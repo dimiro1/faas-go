@@ -1,12 +1,17 @@
 package components
 
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+)
+
 type CodeExample struct {
 	ID     string
 	Label  string
 	Code   string
 	Active bool
 }
-
 
 css codeExamplesTabs() {
 	display: flex;
@@ -29,16 +34,6 @@ css codeExampleTabActive() {
 	color: var(--color-text);
 }
 
-css copyButtonExample() {
-	padding: 0.375rem;
-	border: 1px solid var(--color-border);
-	border-radius: 4px;
-	background-color: var(--color-surface);
-	color: var(--color-text-muted);
-	cursor: pointer;
-	font-size: var(--text-xs);
-}
-
 css codeExampleCode() {
 	font-family: var(--font-mono);
 	font-size: var(--text-sm);
@@ -48,9 +43,15 @@ css codeExampleCode() {
 	line-height: 1.6;
 }
 
+css copyButtonWrapper() {
+	position: absolute;
+	top: 0.75rem;
+	right: 0.75rem;
+}
+
 templ CodeExamples(examples []CodeExample) {
-	@Card() {
-		@CardHeaderWithAction("Code Examples") {
+	@card.Card(card.Props{Elevation: card.ElevationSm}) {
+		@card.Header(card.HeaderProps{Title: "Code Examples"}) {
 			<div class={ codeExamplesTabs() }>
 				for _, ex := range examples {
 					if ex.Active {
@@ -61,10 +62,14 @@ templ CodeExamples(examples []CodeExample) {
 				}
 			</div>
 		}
-		@CardContentDark() {
-			<button class={ copyButtonExample() } style="position: absolute; top: 0.75rem; right: 0.75rem;">
-				<i class="fas fa-copy"></i>
-			</button>
+		@card.DarkContent() {
+			<div class={ copyButtonWrapper() }>
+				@button.Button(button.Props{
+					Variant: button.Ghost,
+					Size:    button.SizeIcon,
+					Icon:    icons.Copy(),
+				})
+			</div>
 			for _, ex := range examples {
 				if ex.Active {
 					<div class={ codeExampleCode() }>

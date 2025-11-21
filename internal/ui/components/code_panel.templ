@@ -1,16 +1,10 @@
 package components
 
-css codePanelTitle() {
-	font-size: var(--text-xs);
-	font-weight: 700;
-	color: var(--color-text);
-}
-
-css codePanelContentDark() {
-	padding: 1rem;
-	overflow-x: auto;
-	background-color: var(--color-panel);
-}
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+)
 
 css codePanelPre() {
 	margin: 0;
@@ -21,27 +15,19 @@ css codePanelPre() {
 	word-break: break-all;
 }
 
-css iconButtonSm() {
-	padding: 0.25rem;
-	border: none;
-	border-radius: 4px;
-	background: none;
-	color: var(--color-text-muted);
-	cursor: pointer;
-}
-
 templ CodePanel(title string, content string, showCopy bool) {
-	@Card() {
-		<div class={ cardHeader() }>
-			<span class={ codePanelTitle() }>{ title }</span>
+	@card.Card(card.Props{Elevation: card.ElevationSm}) {
+		@card.Header(card.HeaderProps{Title: title}) {
 			if showCopy {
-				<button class={ iconButtonSm() }>
-					<i class="fas fa-copy"></i>
-				</button>
+				@button.Button(button.Props{
+					Variant: button.Ghost,
+					Size:    button.SizeIcon,
+					Icon:    icons.Copy(),
+				})
 			}
-		</div>
-		<div class={ codePanelContentDark() }>
+		}
+		@card.DarkContent() {
 			<pre class={ codePanelPre() }>{ content }</pre>
-		</div>
+		}
 	}
 }
