@@ -12,37 +12,6 @@ type Execution struct {
 	Time     string
 }
 
-css executionDuration() {
-	font-family: var(--font-mono);
-	color: var(--color-text-muted);
-}
-
-css executionTime() {
-	color: var(--color-text-muted);
-}
-
-css statusPill() {
-	padding: 0.25rem 0.5rem;
-	border-radius: 4px;
-	font-size: var(--text-xs);
-	font-weight: 600;
-}
-
-css statusPillSuccess() {
-	background-color: rgba(34, 197, 94, 0.1);
-	color: var(--color-success);
-}
-
-css statusPillError() {
-	background-color: rgba(239, 68, 68, 0.1);
-	color: var(--color-danger);
-}
-
-css statusPillPending() {
-	background-color: rgba(156, 163, 175, 0.1);
-	color: var(--color-text-muted);
-}
-
 templ ExecutionRow(exec Execution, baseURL string) {
 	@table.Row(table.RowProps{}) {
 		@table.Cell(table.CellProps{}) {
@@ -62,10 +31,16 @@ templ ExecutionRow(exec Execution, baseURL string) {
 
 templ ExecutionStatus(status string) {
 	if status == "SUCCESS" {
-		<span class={ statusPill(), statusPillSuccess() }>SUCCESS</span>
+		@badge.Badge(badge.Props{Variant: badge.Success}) {
+			SUCCESS
+		}
 	} else if status == "ERROR" {
-		<span class={ statusPill(), statusPillError() }>ERROR</span>
+		@badge.Badge(badge.Props{Variant: badge.Destructive}) {
+			ERROR
+		}
 	} else {
-		<span class={ statusPill(), statusPillPending() }>{ status }</span>
+		@badge.Badge(badge.Props{Variant: badge.Secondary}) {
+			{ status }
+		}
 	}
 }
