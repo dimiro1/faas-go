@@ -55,8 +55,9 @@ type HeaderProps struct {
 
 // ContentProps contains configuration for card content
 type ContentProps struct {
-	Dark  bool
-	Large bool
+	Dark      bool
+	Large     bool
+	NoPadding bool
 }
 
 // Base card styles
@@ -377,6 +378,11 @@ func cardClasses(props Props) templ.CSSClasses {
 }
 
 func contentClasses(props ContentProps) templ.CSSClasses {
+	if props.NoPadding {
+		return templ.CSSClasses{
+			templ.KV(contentDark(), props.Dark),
+		}
+	}
 	if props.Large {
 		return templ.CSSClasses{
 			contentLarge(),

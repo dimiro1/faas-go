@@ -9,6 +9,7 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/badge"
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/code"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 	"github.com/dimiro1/faas-go/internal/ui/components/kbd"
@@ -86,6 +87,10 @@ func main() {
 		_ = card.Preview().Render(r.Context(), w)
 	})
 
+	mux.HandleFunc("/preview/component/code", func(w http.ResponseWriter, r *http.Request) {
+		_ = code.Preview().Render(r.Context(), w)
+	})
+
 	mux.HandleFunc("/preview/component/form", func(w http.ResponseWriter, r *http.Request) {
 		_ = form.Preview().Render(r.Context(), w)
 	})
@@ -141,6 +146,7 @@ func main() {
 	fmt.Println("  - http://localhost:8080/preview/component/badge  (Badge Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/button (Button Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/card   (Card Component)")
+	fmt.Println("  - http://localhost:8080/preview/component/code   (Code Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/form   (Form Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/pagination (Pagination Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/table  (Table Component)")

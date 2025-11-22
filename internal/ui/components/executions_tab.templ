@@ -2,6 +2,8 @@ package components
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/code"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 	"github.com/dimiro1/faas-go/internal/ui/components/log"
@@ -116,12 +118,19 @@ templ ExecutionDetails(data ExecutionDetailsData) {
 		</div>
 		<div class={ executionDetailsPanels() }>
 			<!-- Input Event Panel -->
-			@CodePanel("Input Event (JSON)", data.Input, true)
+			@card.Card(card.Props{}) {
+				@card.Header(card.HeaderProps{Title: "Input Event (JSON)"})
+				@card.Content(card.ContentProps{NoPadding: true}) {
+					@code.Simple(code.Props{Language: "json", Code: data.Input, MaxHeight: "200px", NoBorder: true, Padded: true})
+				}
+			}
 			<!-- Logs Panel -->
-			<div role="region" aria-label="Execution logs">
-				<h4 style="font-size: var(--text-sm); font-weight: 600; color: var(--color-text); margin: 0 0 0.75rem 0;">Execution Logs</h4>
-				@log.Viewer(log.Props{MaxHeight: "300px"}, data.Logs)
-			</div>
+			@card.Card(card.Props{}) {
+				@card.Header(card.HeaderProps{Title: "Execution Logs"})
+				@card.Content(card.ContentProps{NoPadding: true}) {
+					@log.Viewer(log.Props{MaxHeight: "300px", NoBorder: true}, data.Logs)
+				}
+			}
 		</div>
 	</div>
 }

@@ -23,6 +23,7 @@ type Props struct {
 	Class      string
 	Attributes templ.Attributes
 	MaxHeight  string
+	NoBorder   bool
 }
 
 css logContainer() {
@@ -90,13 +91,18 @@ css logEmpty() {
 	color: var(--color-text-muted);
 }
 
+css logNoBorder() {
+	border: none;
+	border-radius: 0;
+}
+
 // Viewer renders a list of log entries
 templ Viewer(props Props, entries []Entry) {
 	<div
 		if props.ID != "" {
 			id={ props.ID }
 		}
-		class={ logContainer(), templ.KV(props.Class, props.Class != "") }
+		class={ logContainer(), templ.KV(logNoBorder(), props.NoBorder), templ.KV(props.Class, props.Class != "") }
 		role="log"
 		aria-label="Log entries"
 		aria-live="polite"
