@@ -1,6 +1,9 @@
 package components
 
-import "github.com/dimiro1/faas-go/internal/ui/components/badge"
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/badge"
+	"github.com/dimiro1/faas-go/internal/ui/components/table"
+)
 
 type Execution struct {
 	ID       string
@@ -41,18 +44,18 @@ css statusPillPending() {
 }
 
 templ ExecutionRow(exec Execution, baseURL string) {
-	@TableRow() {
-		@TableCell() {
+	@table.Row(table.RowProps{}) {
+		@table.Cell(table.CellProps{}) {
 			@badge.IDBadgeLink(exec.ID, baseURL+"/"+exec.ID)
 		}
-		@TableCell() {
+		@table.Cell(table.CellProps{}) {
 			@ExecutionStatus(exec.Status)
 		}
-		@TableCell() {
-			<span class={ executionDuration() }>{ exec.Duration }</span>
+		@table.Cell(table.CellProps{Mono: true}) {
+			{ exec.Duration }
 		}
-		@TableCell() {
-			<span class={ executionTime() }>{ exec.Time }</span>
+		@table.Cell(table.CellProps{}) {
+			{ exec.Time }
 		}
 	}
 }

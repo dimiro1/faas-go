@@ -1,0 +1,405 @@
+package table
+
+// TableProps contains configuration for the table container
+type TableProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Striped    bool
+	Hoverable  bool
+	Dense      bool
+}
+
+// HeaderProps contains configuration for the table header
+type HeaderProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}
+
+// BodyProps contains configuration for the table body
+type BodyProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}
+
+// FooterProps contains configuration for the table footer
+type FooterProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}
+
+// RowProps contains configuration for a table row
+type RowProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Selected   bool
+}
+
+// HeadProps contains configuration for a header cell
+type HeadProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Width      string // e.g., "100px", "20%", "auto"
+}
+
+// EmptyProps contains configuration for the empty state
+type EmptyProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Colspan    int
+	Message    string
+	Icon       templ.Component
+}
+
+// CellProps contains configuration for a data cell
+type CellProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Mono       bool
+	Align      string // "left", "center", "right"
+}
+
+// CaptionProps contains configuration for a table caption
+type CaptionProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}
+
+// Base styles
+
+css tableWrapper() {
+	background-color: var(--color-surface-50);
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+css tableResponsive() {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+css tableBase() {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+
+// Header styles
+
+css tableHeader() {
+	background-color: var(--color-surface);
+}
+
+// Body styles
+
+css tableBody() {
+	font-size: var(--text-sm);
+}
+
+// Footer styles
+
+css tableFooter() {
+	background-color: var(--color-surface);
+	font-size: var(--text-sm);
+}
+
+// Row styles
+
+css tableRow() {
+	border-bottom: 1px solid var(--color-border);
+	transition: background-color 0.15s ease;
+}
+
+css tableRowSelected() {
+	background-color: rgba(59, 130, 246, 0.1);
+}
+
+// Head cell styles
+
+css tableHead() {
+	padding: 0.75rem 1rem;
+	text-align: left;
+	font-size: var(--text-xs);
+	font-weight: 500;
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	border-bottom: 1px solid var(--color-border);
+}
+
+css tableHeadDense() {
+	padding: 0.5rem 0.75rem;
+}
+
+// Cell styles
+
+css tableCell() {
+	padding: 0.75rem 1rem;
+}
+
+css tableCellDense() {
+	padding: 0.5rem 0.75rem;
+}
+
+css tableCellMono() {
+	font-family: var(--font-mono);
+}
+
+css tableCellAlignCenter() {
+	text-align: center;
+}
+
+css tableCellAlignRight() {
+	text-align: right;
+}
+
+// Caption styles
+
+css tableCaption() {
+	padding: 0.75rem 1rem;
+	font-size: var(--text-sm);
+	color: var(--color-text-muted);
+	text-align: left;
+}
+
+// Empty state styles
+
+css tableEmpty() {
+	padding: 3rem 1rem;
+	text-align: center;
+}
+
+css tableEmptyIcon() {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 0.75rem;
+	color: var(--color-text-muted);
+	opacity: 0.5;
+}
+
+css tableEmptyMessage() {
+	font-size: var(--text-sm);
+	color: var(--color-text-muted);
+}
+
+// Table renders the main table container
+templ Table(props TableProps) {
+	<style>
+		[data-table-hoverable] tbody tr:hover {
+			background-color: rgba(255, 255, 255, 0.02);
+		}
+		[data-table-striped] tbody tr:nth-child(even) {
+			background-color: rgba(255, 255, 255, 0.01);
+		}
+		[data-table-row-selected]:hover {
+			background-color: rgba(59, 130, 246, 0.15);
+		}
+	</style>
+	<div class={ tableWrapper(), templ.KV(props.Class, props.Class != "") }>
+		<div class={ tableResponsive() }>
+			<table
+				if props.ID != "" {
+					id={ props.ID }
+				}
+				class={ tableBase() }
+				if props.Striped {
+					data-table-striped="true"
+				}
+				if props.Hoverable {
+					data-table-hoverable="true"
+				}
+				if props.Dense {
+					data-table-dense="true"
+				}
+				{ props.Attributes... }
+			>
+				{ children... }
+			</table>
+		</div>
+	</div>
+}
+
+// Header renders the table header section
+templ Header(props HeaderProps) {
+	<thead
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ tableHeader(), templ.KV(props.Class, props.Class != "") }
+		{ props.Attributes... }
+	>
+		{ children... }
+	</thead>
+}
+
+// Body renders the table body section
+templ Body(props BodyProps) {
+	<tbody
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ tableBody(), templ.KV(props.Class, props.Class != "") }
+		{ props.Attributes... }
+	>
+		{ children... }
+	</tbody>
+}
+
+// Footer renders the table footer section
+templ Footer(props FooterProps) {
+	<tfoot
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ tableFooter(), templ.KV(props.Class, props.Class != "") }
+		{ props.Attributes... }
+	>
+		{ children... }
+	</tfoot>
+}
+
+// Row renders a table row
+templ Row(props RowProps) {
+	<tr
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ tableRow(), templ.KV(tableRowSelected(), props.Selected), templ.KV(props.Class, props.Class != "") }
+		if props.Selected {
+			data-table-row-selected="true"
+			aria-selected="true"
+		}
+		{ props.Attributes... }
+	>
+		{ children... }
+	</tr>
+}
+
+// Head renders a header cell
+templ Head(props HeadProps) {
+	<th
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ tableHead(), templ.KV(props.Class, props.Class != "") }
+		scope="col"
+		if props.Width != "" {
+			style={ "width: " + props.Width }
+		}
+		{ props.Attributes... }
+	>
+		{ children... }
+	</th>
+}
+
+// Cell renders a data cell
+templ Cell(props CellProps) {
+	<td
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={
+			tableCell(),
+			templ.KV(tableCellMono(), props.Mono),
+			templ.KV(tableCellAlignCenter(), props.Align == "center"),
+			templ.KV(tableCellAlignRight(), props.Align == "right"),
+			templ.KV(props.Class, props.Class != ""),
+		}
+		{ props.Attributes... }
+	>
+		{ children... }
+	</td>
+}
+
+// Caption renders a table caption
+templ Caption(props CaptionProps) {
+	<caption
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ tableCaption(), templ.KV(props.Class, props.Class != "") }
+		{ props.Attributes... }
+	>
+		{ children... }
+	</caption>
+}
+
+// Convenience function to create header row from column names
+templ HeaderRow(columns []string) {
+	@Row(RowProps{}) {
+		for _, col := range columns {
+			@Head(HeadProps{}) {
+				{ col }
+			}
+		}
+	}
+}
+
+// Column represents a column definition with name and width
+type Column struct {
+	Name  string
+	Width string
+}
+
+// HeaderRowWithWidths creates a header row with column widths
+templ HeaderRowWithWidths(columns []Column) {
+	@Row(RowProps{}) {
+		for _, col := range columns {
+			@Head(HeadProps{Width: col.Width}) {
+				{ col.Name }
+			}
+		}
+	}
+}
+
+// Empty renders an empty state message
+templ Empty(props EmptyProps) {
+	<tr>
+		<td
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			class={ tableEmpty(), templ.KV(props.Class, props.Class != "") }
+			if props.Colspan > 0 {
+				colspan={ intToString(props.Colspan) }
+			}
+			{ props.Attributes... }
+		>
+			if props.Icon != nil {
+				<div class={ tableEmptyIcon() }>
+					@props.Icon
+				</div>
+			}
+			<p class={ tableEmptyMessage() }>
+				if props.Message != "" {
+					{ props.Message }
+				} else {
+					No data available
+				}
+			</p>
+		</td>
+	</tr>
+}
+
+// Helper to convert int to string
+func intToString(n int) string {
+	if n <= 0 {
+		return "1"
+	}
+	result := ""
+	for n > 0 {
+		result = string(rune('0'+n%10)) + result
+		n /= 10
+	}
+	return result
+}
+

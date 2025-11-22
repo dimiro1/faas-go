@@ -12,6 +12,7 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 	"github.com/dimiro1/faas-go/internal/ui/components/preview"
+	"github.com/dimiro1/faas-go/internal/ui/components/table"
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
 	"github.com/dimiro1/faas-go/internal/ui/pages"
 )
@@ -76,6 +77,10 @@ func main() {
 		_ = form.Preview().Render(r.Context(), w)
 	})
 
+	mux.HandleFunc("/preview/component/table", func(w http.ResponseWriter, r *http.Request) {
+		_ = table.Preview().Render(r.Context(), w)
+	})
+
 	mux.HandleFunc("/preview/component/tabs", func(w http.ResponseWriter, r *http.Request) {
 		_ = tabs.Preview().Render(r.Context(), w)
 	})
@@ -106,6 +111,7 @@ func main() {
 	fmt.Println("  - http://localhost:8080/preview/component/button (Button Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/card   (Card Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/form   (Form Component)")
+	fmt.Println("  - http://localhost:8080/preview/component/table  (Table Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/tabs   (Tabs Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/icons  (Icons Component)")
 

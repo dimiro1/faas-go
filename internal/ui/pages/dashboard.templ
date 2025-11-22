@@ -5,6 +5,7 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+	"github.com/dimiro1/faas-go/internal/ui/components/table"
 )
 
 css dashboardMain() {
@@ -57,16 +58,16 @@ templ Dashboard(functions []components.Function, pagination components.Paginatio
 			@form.SearchInput("Filter functions...", "250px")
 		</div>
 		<!-- Data Table -->
-		@components.Table() {
-			@components.TableElement() {
-				@components.TableHead([]string{"Name", "Status", "Invocations (24h)", "Last Updated", "Action"})
-				@components.TableBody() {
-					for _, fn := range functions {
-						@components.FunctionRow(fn)
-					}
+		@table.Table(table.TableProps{Hoverable: true}) {
+			@table.Header(table.HeaderProps{}) {
+				@table.HeaderRow([]string{"Name", "Status", "Invocations (24h)", "Last Updated", "Action"})
+			}
+			@table.Body(table.BodyProps{}) {
+				for _, fn := range functions {
+					@components.FunctionRow(fn)
 				}
 			}
-			@components.Pagination(pagination)
 		}
+		@components.Pagination(pagination)
 	</main>
 }

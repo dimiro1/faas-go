@@ -3,6 +3,7 @@ package components
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/badge"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+	"github.com/dimiro1/faas-go/internal/ui/components/table"
 )
 
 type Function struct {
@@ -57,23 +58,23 @@ css functionAction() {
 }
 
 templ FunctionRow(fn Function) {
-	@TableRow() {
-		@TableCell() {
+	@table.Row(table.RowProps{}) {
+		@table.Cell(table.CellProps{}) {
 			<a href={ templ.SafeURL("/functions/" + fn.ID) } class={ functionLink() }>
 				<span class={ functionName() }>{ fn.Name }</span>
 				<span class={ functionDescription() }>{ fn.Description }</span>
 			</a>
 		}
-		@TableCell() {
+		@table.Cell(table.CellProps{}) {
 			@badge.StatusBadge(fn.Enabled)
 		}
-		@TableCell() {
-			<span class={ functionInvocations() }>{ fn.Invocations }</span>
+		@table.Cell(table.CellProps{Mono: true}) {
+			{ fn.Invocations }
 		}
-		@TableCell() {
-			<span class={ functionUpdated() }>{ fn.LastUpdated }</span>
+		@table.Cell(table.CellProps{Mono: true}) {
+			{ fn.LastUpdated }
 		}
-		@TableCell() {
+		@table.Cell(table.CellProps{}) {
 			<a href={ templ.SafeURL("/functions/" + fn.ID) } class={ functionAction() }>
 				@icons.ChevronRight()
 			</a>
