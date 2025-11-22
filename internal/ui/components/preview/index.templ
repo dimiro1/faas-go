@@ -21,36 +21,32 @@ css indexSubtitle() {
 
 css indexGrid() {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-	gap: 1rem;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 0.5rem;
 }
 
 css indexCard() {
 	background: var(--color-surface);
 	border: 1px solid var(--color-border);
-	border-radius: 8px;
-	padding: 1.5rem;
+	border-radius: 6px;
+	padding: 0.75rem 1rem;
 	text-decoration: none;
-	transition: border-color 0.2s, transform 0.2s;
+	transition: border-color 0.2s;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 }
 
 css indexCardTitle() {
-	font-size: var(--text-lg);
-	font-weight: 600;
-	color: var(--color-text);
-	margin: 0 0 0.5rem 0;
-}
-
-css indexCardDescription() {
 	font-size: var(--text-sm);
-	color: var(--color-text-muted);
+	font-weight: 500;
+	color: var(--color-text);
 	margin: 0;
 }
 
 type ComponentInfo struct {
-	Name        string
-	Description string
-	Href        string
+	Name string
+	Href string
 }
 
 templ Index() {
@@ -68,56 +64,16 @@ templ Index() {
 				<h1 class={ indexTitle() }>Component Library</h1>
 				<p class={ indexSubtitle() }>Browse and preview all available UI components.</p>
 				<div class={ indexGrid() }>
-					@IndexCard(ComponentInfo{
-						Name:        "Badge",
-						Description: "Badges for status, labels, and small pieces of information.",
-						Href:        "/preview/component/badge",
-					})
-					@IndexCard(ComponentInfo{
-						Name:        "Button",
-						Description: "Buttons, variants, sizes, states, and icons.",
-						Href:        "/preview/component/button",
-					})
-					@IndexCard(ComponentInfo{
-						Name:        "Card",
-						Description: "Card containers with headers, content, and footers.",
-						Href:        "/preview/component/card",
-					})
-					@IndexCard(ComponentInfo{
-						Name:        "Form",
-						Description: "Inputs, labels, checkboxes, radios, selects, and more.",
-						Href:        "/preview/component/form",
-					})
-					@IndexCard(ComponentInfo{
-						Name:        "Icons",
-						Description: "SVG icons from Heroicons for UI elements.",
-						Href:        "/preview/component/icons",
-					})
-					@IndexCard(ComponentInfo{
-						Name:        "Kbd",
-						Description: "Keyboard key indicators for shortcuts and combinations.",
-						Href:        "/preview/component/kbd",
-					})
-					@IndexCard(ComponentInfo{
-						Name:        "Navbar",
-						Description: "Top navigation with brand, breadcrumbs, search, and actions.",
-						Href:        "/preview/component/navbar",
-					})
-					@IndexCard(ComponentInfo{
-						Name:        "Pagination",
-						Description: "Navigation controls for paginated data sets.",
-						Href:        "/preview/component/pagination",
-					})
-					@IndexCard(ComponentInfo{
-						Name:        "Table",
-						Description: "Tables for displaying tabular data with styling options.",
-						Href:        "/preview/component/table",
-					})
-					@IndexCard(ComponentInfo{
-						Name:        "Tabs",
-						Description: "Tabbed navigation for switching between views.",
-						Href:        "/preview/component/tabs",
-					})
+					@IndexCard(ComponentInfo{Name: "Badge", Href: "/preview/component/badge"})
+					@IndexCard(ComponentInfo{Name: "Button", Href: "/preview/component/button"})
+					@IndexCard(ComponentInfo{Name: "Card", Href: "/preview/component/card"})
+					@IndexCard(ComponentInfo{Name: "Form", Href: "/preview/component/form"})
+					@IndexCard(ComponentInfo{Name: "Icons", Href: "/preview/component/icons"})
+					@IndexCard(ComponentInfo{Name: "Kbd", Href: "/preview/component/kbd"})
+					@IndexCard(ComponentInfo{Name: "Navbar", Href: "/preview/component/navbar"})
+					@IndexCard(ComponentInfo{Name: "Pagination", Href: "/preview/component/pagination"})
+					@IndexCard(ComponentInfo{Name: "Table", Href: "/preview/component/table"})
+					@IndexCard(ComponentInfo{Name: "Tabs", Href: "/preview/component/tabs"})
 				</div>
 			</div>
 		</body>
@@ -126,7 +82,6 @@ templ Index() {
 
 templ IndexCard(info ComponentInfo) {
 	<a href={ templ.SafeURL(info.Href) } class={ indexCard() }>
-		<h2 class={ indexCardTitle() }>{ info.Name }</h2>
-		<p class={ indexCardDescription() }>{ info.Description }</p>
+		<span class={ indexCardTitle() }>{ info.Name }</span>
 	</a>
 }

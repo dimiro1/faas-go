@@ -22,7 +22,22 @@ css previewTitle() {
 css previewSubtitle() {
 	font-size: var(--text-sm);
 	color: var(--color-text-muted);
-	margin: 0 0 2rem 0;
+	margin: 0;
+}
+
+css previewBackLink() {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--color-subtle);
+	text-decoration: none;
+	font-size: var(--text-sm);
+	margin-bottom: 1.5rem;
+	transition: color 0.2s;
+}
+
+css previewHeader() {
+	margin-bottom: 2rem;
 }
 
 css previewSection() {
@@ -68,12 +83,26 @@ templ Page(props PreviewPageProps) {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>{ props.Title }</title>
 			<link rel="stylesheet" href="/static/css/base.css"/>
+			<link rel="stylesheet" href="/styles/templ.css"/>
 			<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+			<style>
+				[data-back-link]:hover {
+					color: var(--color-text);
+				}
+			</style>
 		</head>
 		<body>
 			<main class={ previewContainer() }>
-				<h1 class={ previewTitle() }>{ props.Title }</h1>
-				<p class={ previewSubtitle() }>{ props.Description }</p>
+				<div class={ previewHeader() }>
+					<a href="/preview" class={ previewBackLink() } data-back-link="true">
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M19 12H5M12 19l-7-7 7-7"></path>
+						</svg>
+						Back to Components
+					</a>
+					<h1 class={ previewTitle() }>{ props.Title }</h1>
+					<p class={ previewSubtitle() }>{ props.Description }</p>
+				</div>
 				{ children... }
 			</main>
 		</body>

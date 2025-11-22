@@ -48,8 +48,8 @@ func indexSubtitle() templ.CSSClass {
 func indexGrid() templ.CSSClass {
 	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
 	templ_7745c5c3_CSSBuilder.WriteString(`display:grid;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));`)
-	templ_7745c5c3_CSSBuilder.WriteString(`gap:1rem;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));`)
+	templ_7745c5c3_CSSBuilder.WriteString(`gap:0.5rem;`)
 	templ_7745c5c3_CSSID := templ.CSSID(`indexGrid`, templ_7745c5c3_CSSBuilder.String())
 	return templ.ComponentCSSClass{
 		ID:    templ_7745c5c3_CSSID,
@@ -61,10 +61,13 @@ func indexCard() templ.CSSClass {
 	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
 	templ_7745c5c3_CSSBuilder.WriteString(`background:var(--color-surface);`)
 	templ_7745c5c3_CSSBuilder.WriteString(`border:1px solid var(--color-border);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`border-radius:8px;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`padding:1.5rem;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`border-radius:6px;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`padding:0.75rem 1rem;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`text-decoration:none;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`transition:border-color 0.2s, transform 0.2s;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`transition:border-color 0.2s;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`display:flex;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`align-items:center;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`gap:0.5rem;`)
 	templ_7745c5c3_CSSID := templ.CSSID(`indexCard`, templ_7745c5c3_CSSBuilder.String())
 	return templ.ComponentCSSClass{
 		ID:    templ_7745c5c3_CSSID,
@@ -74,10 +77,10 @@ func indexCard() templ.CSSClass {
 
 func indexCardTitle() templ.CSSClass {
 	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
-	templ_7745c5c3_CSSBuilder.WriteString(`font-size:var(--text-lg);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`font-weight:600;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`font-size:var(--text-sm);`)
+	templ_7745c5c3_CSSBuilder.WriteString(`font-weight:500;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`color:var(--color-text);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`margin:0 0 0.5rem 0;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`margin:0;`)
 	templ_7745c5c3_CSSID := templ.CSSID(`indexCardTitle`, templ_7745c5c3_CSSBuilder.String())
 	return templ.ComponentCSSClass{
 		ID:    templ_7745c5c3_CSSID,
@@ -85,22 +88,9 @@ func indexCardTitle() templ.CSSClass {
 	}
 }
 
-func indexCardDescription() templ.CSSClass {
-	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
-	templ_7745c5c3_CSSBuilder.WriteString(`font-size:var(--text-sm);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`color:var(--color-text-muted);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`margin:0;`)
-	templ_7745c5c3_CSSID := templ.CSSID(`indexCardDescription`, templ_7745c5c3_CSSBuilder.String())
-	return templ.ComponentCSSClass{
-		ID:    templ_7745c5c3_CSSID,
-		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
-	}
-}
-
 type ComponentInfo struct {
-	Name        string
-	Description string
-	Href        string
+	Name string
+	Href string
 }
 
 func Index() templ.Component {
@@ -216,83 +206,43 @@ func Index() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IndexCard(ComponentInfo{
-			Name:        "Badge",
-			Description: "Badges for status, labels, and small pieces of information.",
-			Href:        "/preview/component/badge",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IndexCard(ComponentInfo{Name: "Badge", Href: "/preview/component/badge"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IndexCard(ComponentInfo{
-			Name:        "Button",
-			Description: "Buttons, variants, sizes, states, and icons.",
-			Href:        "/preview/component/button",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IndexCard(ComponentInfo{Name: "Button", Href: "/preview/component/button"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IndexCard(ComponentInfo{
-			Name:        "Card",
-			Description: "Card containers with headers, content, and footers.",
-			Href:        "/preview/component/card",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IndexCard(ComponentInfo{Name: "Card", Href: "/preview/component/card"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IndexCard(ComponentInfo{
-			Name:        "Form",
-			Description: "Inputs, labels, checkboxes, radios, selects, and more.",
-			Href:        "/preview/component/form",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IndexCard(ComponentInfo{Name: "Form", Href: "/preview/component/form"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IndexCard(ComponentInfo{
-			Name:        "Icons",
-			Description: "SVG icons from Heroicons for UI elements.",
-			Href:        "/preview/component/icons",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IndexCard(ComponentInfo{Name: "Icons", Href: "/preview/component/icons"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IndexCard(ComponentInfo{
-			Name:        "Kbd",
-			Description: "Keyboard key indicators for shortcuts and combinations.",
-			Href:        "/preview/component/kbd",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IndexCard(ComponentInfo{Name: "Kbd", Href: "/preview/component/kbd"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IndexCard(ComponentInfo{
-			Name:        "Navbar",
-			Description: "Top navigation with brand, breadcrumbs, search, and actions.",
-			Href:        "/preview/component/navbar",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IndexCard(ComponentInfo{Name: "Navbar", Href: "/preview/component/navbar"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IndexCard(ComponentInfo{
-			Name:        "Pagination",
-			Description: "Navigation controls for paginated data sets.",
-			Href:        "/preview/component/pagination",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IndexCard(ComponentInfo{Name: "Pagination", Href: "/preview/component/pagination"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IndexCard(ComponentInfo{
-			Name:        "Table",
-			Description: "Tables for displaying tabular data with styling options.",
-			Href:        "/preview/component/table",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IndexCard(ComponentInfo{Name: "Table", Href: "/preview/component/table"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IndexCard(ComponentInfo{
-			Name:        "Tabs",
-			Description: "Tabbed navigation for switching between views.",
-			Href:        "/preview/component/tabs",
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IndexCard(ComponentInfo{Name: "Tabs", Href: "/preview/component/tabs"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -337,7 +287,7 @@ func IndexCard(info ComponentInfo) templ.Component {
 		var templ_7745c5c3_Var12 templ.SafeURL
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(info.Href))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/preview/index.templ`, Line: 128, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/preview/index.templ`, Line: 84, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -365,7 +315,7 @@ func IndexCard(info ComponentInfo) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<h2 class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -385,48 +335,13 @@ func IndexCard(info ComponentInfo) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(info.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/preview/index.templ`, Line: 129, Col: 44}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/preview/index.templ`, Line: 85, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</h2>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var17 = []any{indexCardDescription()}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var17...)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<p class=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var18 string
-		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var17).String())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/preview/index.templ`, Line: 1, Col: 0}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var19 string
-		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(info.Description)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/preview/index.templ`, Line: 130, Col: 56}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</p></a>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span></a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
