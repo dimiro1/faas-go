@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
+	"github.com/dimiro1/faas-go/internal/ui/components/code_example"
 	"github.com/dimiro1/faas-go/internal/ui/components/navbar"
 	"github.com/dimiro1/faas-go/internal/ui/components/pagination"
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
@@ -702,7 +703,7 @@ func PreviewTestTab() templ.Component {
 					}
 					ctx = templ.InitializeContext(ctx)
 					templ_7745c5c3_Err = components.TestTab(components.TestTabData{
-						Examples: []components.CodeExample{
+						Examples: []code_example.Example{
 							{
 								ID:       "curl",
 								Label:    "cURL",

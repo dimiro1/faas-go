@@ -2,6 +2,7 @@ package pages
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
+	"github.com/dimiro1/faas-go/internal/ui/components/code_example"
 	"github.com/dimiro1/faas-go/internal/ui/components/navbar"
 	"github.com/dimiro1/faas-go/internal/ui/components/pagination"
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
@@ -228,7 +229,7 @@ templ PreviewTestTab() {
 		) {
 			@tabs.TabContent(tabs.TabContentProps{ID: "test", Active: true}) {
 				@components.TestTab(components.TestTabData{
-					Examples: []components.CodeExample{
+					Examples: []code_example.Example{
 						{
 							ID:       "curl",
 							Label:    "cURL",

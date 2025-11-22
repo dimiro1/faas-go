@@ -1,0 +1,84 @@
+package code_example
+
+import "github.com/dimiro1/faas-go/internal/ui/components/preview"
+
+templ Preview() {
+	@preview.Page(preview.PreviewPageProps{
+		Title:       "Code Example",
+		Description: "Tabbed code examples with syntax highlighting.",
+	}) {
+		@preview.Section("Basic Usage") {
+			@CodeExamples([]Example{
+				{
+					ID:       "curl",
+					Label:    "cURL",
+					Language: "bash",
+					Code: `curl -X POST https://api.example.com/v1/endpoint \
+  -H "Content-Type: application/json" \
+  -d '{"key":"value"}'`,
+					Active: true,
+				},
+				{
+					ID:       "node",
+					Label:    "Node.js",
+					Language: "javascript",
+					Code: `fetch('https://api.example.com/v1/endpoint', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({key: 'value'})
+});`,
+					Active: false,
+				},
+				{
+					ID:       "python",
+					Label:    "Python",
+					Language: "python",
+					Code: `import requests
+
+requests.post('https://api.example.com/v1/endpoint', json={'key':'value'})`,
+					Active: false,
+				},
+			})
+		}
+
+		@preview.Section("Go and Rust") {
+			@CodeExamples([]Example{
+				{
+					ID:       "go",
+					Label:    "Go",
+					Language: "go",
+					Code: `package main
+
+import (
+	"bytes"
+	"net/http"
+)
+
+func main() {
+	body := []byte(` + "`" + `{"key":"value"}` + "`" + `)
+	http.Post("https://api.example.com/v1/endpoint",
+		"application/json", bytes.NewBuffer(body))
+}`,
+					Active: true,
+				},
+				{
+					ID:       "rust",
+					Label:    "Rust",
+					Language: "rust",
+					Code: `use reqwest;
+
+#[tokio::main]
+async fn main() -> Result<(), reqwest::Error> {
+    let client = reqwest::Client::new();
+    client.post("https://api.example.com/v1/endpoint")
+        .json(&serde_json::json!({"key": "value"}))
+        .send()
+        .await?;
+    Ok(())
+}`,
+					Active: false,
+				},
+			})
+		}
+	}
+}

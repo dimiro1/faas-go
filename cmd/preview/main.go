@@ -10,6 +10,7 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
 	"github.com/dimiro1/faas-go/internal/ui/components/code"
+	"github.com/dimiro1/faas-go/internal/ui/components/code_example"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 	"github.com/dimiro1/faas-go/internal/ui/components/kbd"
@@ -123,6 +124,10 @@ func main() {
 		_ = navbar.Preview().Render(r.Context(), w)
 	})
 
+	mux.HandleFunc("/preview/component/code-example", func(w http.ResponseWriter, r *http.Request) {
+		_ = code_example.Preview().Render(r.Context(), w)
+	})
+
 	mux.HandleFunc("/preview", func(w http.ResponseWriter, r *http.Request) {
 		_ = preview.Index().Render(r.Context(), w)
 	})
@@ -155,6 +160,7 @@ func main() {
 	fmt.Println("  - http://localhost:8080/preview/component/kbd    (Kbd Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/log    (Log Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/navbar (Navbar Component)")
+	fmt.Println("  - http://localhost:8080/preview/component/code-example (Code Example Component)")
 
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }

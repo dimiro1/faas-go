@@ -8,8 +8,10 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "github.com/dimiro1/faas-go/internal/ui/components/code_example"
+
 type TestTabData struct {
-	Examples []CodeExample
+	Examples []code_example.Example
 	URL      string
 	Methods  []string
 	Response string
@@ -82,7 +84,7 @@ func TestTab(data TestTabData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = CodeExamples(data.Examples).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = code_example.CodeExamples(data.Examples).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
