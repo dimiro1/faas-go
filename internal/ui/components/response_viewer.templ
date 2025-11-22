@@ -1,6 +1,9 @@
 package components
 
-import "github.com/dimiro1/faas-go/internal/ui/components/card"
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/code"
+)
 
 css responseViewerContent() {
 	padding: 3rem 2rem;
@@ -19,13 +22,24 @@ css responsePlaceholder() {
 	font-size: var(--text-sm);
 }
 
-templ ResponseViewer() {
+templ ResponseViewer(response string) {
 	@card.Simple() {
 		@card.SimpleHeader("Response")
-		@card.LargeContent() {
-			<div class={ responseViewerContent() }>
-				<span class={ responsePlaceholder() }>Send a request to see the response</span>
-			</div>
+		if response == "" {
+			@card.LargeContent() {
+				<div class={ responseViewerContent() }>
+					<span class={ responsePlaceholder() }>Send a request to see the response</span>
+				</div>
+			}
+		} else {
+			@card.Content(card.ContentProps{NoPadding: true}) {
+				@code.Simple(code.Props{
+					Language: "html",
+					Code:     response,
+					NoBorder: true,
+					MaxHeight: "400px",
+				})
+			}
 		}
 	}
 }

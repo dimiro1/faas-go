@@ -94,7 +94,9 @@ templ ExecutionsTab(data ExecutionsData) {
 				}
 			}
 		}
-		@pagination.Pagination(data.Pagination)
+		@card.Card(card.Props{}) {
+			@pagination.Pagination(data.Pagination)
+		}
 	</div>
 }
 

@@ -11,14 +11,16 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/code"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
 
 type CodeExample struct {
-	ID     string
-	Label  string
-	Code   string
-	Active bool
+	ID       string
+	Label    string
+	Code     string
+	Language string
+	Active   bool
 }
 
 func codeExamplesTabs() templ.CSSClass {
@@ -54,21 +56,6 @@ func codeExampleTabActive() templ.CSSClass {
 	templ_7745c5c3_CSSBuilder.WriteString(`background-color:var(--color-surface);`)
 	templ_7745c5c3_CSSBuilder.WriteString(`color:var(--color-text);`)
 	templ_7745c5c3_CSSID := templ.CSSID(`codeExampleTabActive`, templ_7745c5c3_CSSBuilder.String())
-	return templ.ComponentCSSClass{
-		ID:    templ_7745c5c3_CSSID,
-		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
-	}
-}
-
-func codeExampleCode() templ.CSSClass {
-	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
-	templ_7745c5c3_CSSBuilder.WriteString(`font-family:var(--font-mono);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`font-size:var(--text-sm);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`color:var(--color-text);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`white-space:pre-wrap;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`word-break:break-all;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`line-height:1.6;`)
-	templ_7745c5c3_CSSID := templ.CSSID(`codeExampleCode`, templ_7745c5c3_CSSBuilder.String())
 	return templ.ComponentCSSClass{
 		ID:    templ_7745c5c3_CSSID,
 		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
@@ -181,7 +168,7 @@ func CodeExamples(examples []CodeExample) templ.Component {
 						var templ_7745c5c3_Var8 string
 						templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(ex.Label)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/code_example.templ`, Line: 58, Col: 75}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/code_example.templ`, Line: 51, Col: 75}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 						if templ_7745c5c3_Err != nil {
@@ -217,7 +204,7 @@ func CodeExamples(examples []CodeExample) templ.Component {
 						var templ_7745c5c3_Var11 string
 						templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(ex.Label)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/code_example.templ`, Line: 60, Col: 51}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/code_example.templ`, Line: 53, Col: 51}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 						if templ_7745c5c3_Err != nil {
@@ -291,33 +278,12 @@ func CodeExamples(examples []CodeExample) templ.Component {
 				}
 				for _, ex := range examples {
 					if ex.Active {
-						var templ_7745c5c3_Var15 = []any{codeExampleCode()}
-						templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div class=\"")
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						var templ_7745c5c3_Var16 string
-						templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var15).String())
-						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/code_example.templ`, Line: 1, Col: 0}
-						}
-						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\">")
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						templ_7745c5c3_Err = templ.Raw(ex.Code).Render(ctx, templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
+						templ_7745c5c3_Err = code.Simple(code.Props{
+							Language: ex.Language,
+							Code:     ex.Code,
+							NoBorder: true,
+							Padded:   true,
+						}).Render(ctx, templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -325,7 +291,7 @@ func CodeExamples(examples []CodeExample) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = card.DarkContent().Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = card.Content(card.ContentProps{NoPadding: true}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var12), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

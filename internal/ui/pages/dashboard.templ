@@ -63,7 +63,7 @@ templ Dashboard(functions []components.Function, paginationInfo pagination.Props
 		<!-- Data Table -->
 		@table.Table(table.TableProps{Hoverable: true}) {
 			@table.Header(table.HeaderProps{}) {
-				@table.HeaderRow([]string{"Name", "Status", "Invocations (24h)", "Last Updated", "Action"})
+				@table.HeaderRow([]string{"Name", "Status", "Invocations (24h)", "Last Updated"})
 			}
 			@table.Body(table.BodyProps{}) {
 				for _, fn := range functions {

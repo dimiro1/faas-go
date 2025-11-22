@@ -272,7 +272,7 @@ func Dashboard(functions []components.Function, paginationInfo pagination.Props)
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = table.HeaderRow([]string{"Name", "Status", "Invocations (24h)", "Last Updated", "Action"}).Render(ctx, templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = table.HeaderRow([]string{"Name", "Status", "Invocations (24h)", "Last Updated"}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

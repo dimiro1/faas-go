@@ -12,6 +12,7 @@ type TestTabData struct {
 	Examples []CodeExample
 	URL      string
 	Methods  []string
+	Response string
 }
 
 func testTabContainer() templ.CSSClass {
@@ -114,7 +115,7 @@ func TestTab(data TestTabData) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = ResponseViewer().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = ResponseViewer(data.Response).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

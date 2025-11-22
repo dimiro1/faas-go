@@ -12,6 +12,7 @@ func TestHighlightCode(t *testing.T) {
 		language  string
 		showLines bool
 		padded    bool
+		wrap      bool
 		contains  []string
 	}{
 		{
@@ -47,6 +48,13 @@ func TestHighlightCode(t *testing.T) {
 			padded:   false,
 		},
 		{
+			name:     "with wrap",
+			code:     `{"test": true}`,
+			language: "json",
+			wrap:     true,
+			contains: []string{"white-space: pre-wrap"},
+		},
+		{
 			name:     "unknown language falls back",
 			code:     "some text",
 			language: "unknown-lang",
@@ -56,7 +64,7 @@ func TestHighlightCode(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := highlightCode(tt.code, tt.language, tt.showLines, tt.padded)
+			result := highlightCode(tt.code, tt.language, tt.showLines, tt.padded, tt.wrap)
 
 			for _, expected := range tt.contains {
 				if !strings.Contains(result, expected) {

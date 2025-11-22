@@ -3,14 +3,16 @@ package components
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/code"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
 
 type CodeExample struct {
-	ID     string
-	Label  string
-	Code   string
-	Active bool
+	ID       string
+	Label    string
+	Code     string
+	Language string
+	Active   bool
 }
 
 css codeExamplesTabs() {
@@ -34,15 +36,6 @@ css codeExampleTabActive() {
 	color: var(--color-text);
 }
 
-css codeExampleCode() {
-	font-family: var(--font-mono);
-	font-size: var(--text-sm);
-	color: var(--color-text);
-	white-space: pre-wrap;
-	word-break: break-all;
-	line-height: 1.6;
-}
-
 css copyButtonWrapper() {
 	position: absolute;
 	top: 0.75rem;
@@ -62,7 +55,7 @@ templ CodeExamples(examples []CodeExample) {
 				}
 			</div>
 		}
-		@card.DarkContent() {
+		@card.Content(card.ContentProps{NoPadding: true}) {
 			<div class={ copyButtonWrapper() }>
 				@button.Button(button.Props{
 					Variant: button.Ghost,
@@ -72,9 +65,12 @@ templ CodeExamples(examples []CodeExample) {
 			</div>
 			for _, ex := range examples {
 				if ex.Active {
-					<div class={ codeExampleCode() }>
-						@templ.Raw(ex.Code)
-					</div>
+					@code.Simple(code.Props{
+						Language: ex.Language,
+						Code:     ex.Code,
+						NoBorder: true,
+						Padded:   true,
+					})
 				}
 			}
 		}

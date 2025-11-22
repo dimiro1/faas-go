@@ -229,9 +229,35 @@ templ PreviewTestTab() {
 			@tabs.TabContent(tabs.TabContentProps{ID: "test", Active: true}) {
 				@components.TestTab(components.TestTabData{
 					Examples: []components.CodeExample{
-						{ID: "curl", Label: "cURL", Code: `curl -X POST https://api.faas.com/v1/fn_8s7d6f87 \<br/>-H "Content-Type: application/json" \<br/>-d '{"key":"value"}'`, Active: true},
-						{ID: "node", Label: "Node.js", Code: `fetch('https://api.faas.com/v1/fn_8s7d6f87', {<br/>method: 'POST',<br/>headers: {'Content-Type': 'application/json'},<br/>body: JSON.stringify({key: 'value'})<br/>});`, Active: false},
-						{ID: "python", Label: "Python", Code: `import requests<br/><br/>requests.post('https://api.faas.com/v1/fn_8s7d6f87', json={'key':'value'})`, Active: false},
+						{
+							ID:       "curl",
+							Label:    "cURL",
+							Language: "bash",
+							Code: `curl -X POST https://api.faas.com/v1/fn_8s7d6f87 \
+  -H "Content-Type: application/json" \
+  -d '{"key":"value"}'`,
+							Active: true,
+						},
+						{
+							ID:       "node",
+							Label:    "Node.js",
+							Language: "javascript",
+							Code: `fetch('https://api.faas.com/v1/fn_8s7d6f87', {
+  method: 'POST',
+  headers: {'Content-Type': 'application/json'},
+  body: JSON.stringify({key: 'value'})
+});`,
+							Active: false,
+						},
+						{
+							ID:       "python",
+							Label:    "Python",
+							Language: "python",
+							Code: `import requests
+
+requests.post('https://api.faas.com/v1/fn_8s7d6f87', json={'key':'value'})`,
+							Active: false,
+						},
 					},
 					URL:     "https://api.faas.com/v1/fn_8s7d6f87",
 					Methods: []string{"GET", "POST"},

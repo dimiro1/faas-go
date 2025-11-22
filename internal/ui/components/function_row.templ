@@ -2,7 +2,6 @@ package components
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/badge"
-	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 	"github.com/dimiro1/faas-go/internal/ui/components/table"
 )
 
@@ -44,19 +43,6 @@ css functionUpdated() {
 	font-family: var(--font-mono);
 }
 
-css functionAction() {
-	background: none;
-	border: none;
-	color: var(--color-subtle);
-	padding: 0.5rem;
-	cursor: pointer;
-	transition: color 0.2s;
-	text-decoration: none;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-}
-
 templ FunctionRow(fn Function) {
 	@table.Row(table.RowProps{}) {
 		@table.Cell(table.CellProps{}) {
@@ -73,11 +59,6 @@ templ FunctionRow(fn Function) {
 		}
 		@table.Cell(table.CellProps{Mono: true}) {
 			{ fn.LastUpdated }
-		}
-		@table.Cell(table.CellProps{}) {
-			<a href={ templ.SafeURL("/functions/" + fn.ID) } class={ functionAction() }>
-				@icons.ChevronRight()
-			</a>
 		}
 	}
 }

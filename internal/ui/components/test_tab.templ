@@ -4,6 +4,7 @@ type TestTabData struct {
 	Examples []CodeExample
 	URL      string
 	Methods  []string
+	Response string
 }
 
 css testTabContainer() {
@@ -26,7 +27,7 @@ templ TestTab(data TestTabData) {
 				URL:     data.URL,
 				Methods: data.Methods,
 			})
-			@ResponseViewer()
+			@ResponseViewer(data.Response)
 		</div>
 	</div>
 }
