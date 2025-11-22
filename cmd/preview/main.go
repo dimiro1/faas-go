@@ -11,6 +11,7 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
 	"github.com/dimiro1/faas-go/internal/ui/components/code"
 	"github.com/dimiro1/faas-go/internal/ui/components/code_example"
+	"github.com/dimiro1/faas-go/internal/ui/components/diff"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 	"github.com/dimiro1/faas-go/internal/ui/components/kbd"
@@ -128,6 +129,10 @@ func main() {
 		_ = code_example.Preview().Render(r.Context(), w)
 	})
 
+	mux.HandleFunc("/preview/component/diff", func(w http.ResponseWriter, r *http.Request) {
+		_ = diff.Preview().Render(r.Context(), w)
+	})
+
 	mux.HandleFunc("/preview", func(w http.ResponseWriter, r *http.Request) {
 		_ = preview.Index().Render(r.Context(), w)
 	})
@@ -161,6 +166,7 @@ func main() {
 	fmt.Println("  - http://localhost:8080/preview/component/log    (Log Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/navbar (Navbar Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/code-example (Code Example Component)")
+	fmt.Println("  - http://localhost:8080/preview/component/diff (Diff Component)")
 
 	log.Fatal(http.ListenAndServe(":8080", handler))
 }

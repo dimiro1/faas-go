@@ -1,0 +1,227 @@
+package diff
+
+import "fmt"
+
+// LineType represents the type of diff line
+type LineType string
+
+const (
+	LineAdded    LineType = "added"
+	LineRemoved  LineType = "removed"
+	LineUnchanged LineType = "unchanged"
+)
+
+// Line represents a single line in a diff
+type Line struct {
+	OldLine  int
+	NewLine  int
+	Type     LineType
+	Content  string
+}
+
+// Props contains configuration for the diff viewer
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	MaxHeight  string
+	OldVersion string
+	NewVersion string
+	NoBorder   bool
+}
+
+css diffContainer() {
+	font-family: var(--font-mono);
+	font-size: var(--text-xs);
+	background-color: #0d1117;
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	overflow: hidden;
+}
+
+css diffTable() {
+	margin: 0;
+	width: 100%;
+	border-collapse: collapse;
+}
+
+css diffScroll() {
+	overflow-y: auto;
+	max-height: 400px;
+}
+
+css diffNoBorder() {
+	border: none;
+	border-radius: 0;
+}
+
+css diffLineNumber() {
+	width: 40px;
+	padding: 2px 8px;
+	text-align: right;
+	color: #6e7681;
+	border-right: 1px solid #30363d;
+	user-select: none;
+	background: #161b22;
+}
+
+css diffLineType() {
+	width: 20px;
+	padding: 2px 8px;
+	text-align: center;
+	border-right: 1px solid #30363d;
+	user-select: none;
+	font-weight: bold;
+}
+
+css diffContent() {
+	padding: 2px 12px;
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+css diffLineAdded() {
+	background: #14532d40;
+}
+
+css diffLineRemoved() {
+	background: #7f1d1d40;
+}
+
+css diffTypeAdded() {
+	color: #86efac;
+}
+
+css diffTypeRemoved() {
+	color: #ef4444;
+}
+
+css diffTypeUnchanged() {
+	color: #666;
+}
+
+css diffContentAdded() {
+	color: #86efac;
+}
+
+css diffContentRemoved() {
+	color: #fca5a5;
+}
+
+css diffContentUnchanged() {
+	color: #e5e5e5;
+}
+
+css versionLabels() {
+	display: flex;
+	gap: 12px;
+	font-size: var(--text-xs);
+}
+
+css versionOld() {
+	color: #ef4444;
+}
+
+css versionNew() {
+	color: #86efac;
+}
+
+// VersionLabels renders the version comparison labels
+templ VersionLabels(oldVersion, newVersion string) {
+	<div class={ versionLabels() }>
+		<span class={ versionOld() }>- Version { oldVersion }</span>
+		<span class={ versionNew() }>+ Version { newVersion }</span>
+	</div>
+}
+
+// Viewer renders a diff view
+templ Viewer(props Props, lines []Line) {
+	<div
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ diffContainer(), templ.KV(diffNoBorder(), props.NoBorder), templ.KV(props.Class, props.Class != "") }
+		role="region"
+		aria-label="Code diff"
+		{ props.Attributes... }
+	>
+		<div
+			class={ diffScroll() }
+			if props.MaxHeight != "" {
+				style={ "max-height: " + props.MaxHeight }
+			}
+			tabindex="0"
+		>
+			<table class={ diffTable() }>
+				<tbody>
+					for _, line := range lines {
+						@DiffLine(line)
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+}
+
+// DiffLine renders a single diff line
+templ DiffLine(line Line) {
+	<tr class={ templ.KV(diffLineAdded(), line.Type == LineAdded), templ.KV(diffLineRemoved(), line.Type == LineRemoved) }>
+		<td class={ diffLineNumber() }>
+			if line.OldLine > 0 {
+				{ intToString(line.OldLine) }
+			}
+		</td>
+		<td class={ diffLineNumber() }>
+			if line.NewLine > 0 {
+				{ intToString(line.NewLine) }
+			}
+		</td>
+		<td class={ diffLineType(), getTypeColor(line.Type) }>
+			{ getTypeSymbol(line.Type) }
+		</td>
+		<td class={ diffContent(), getContentColor(line.Type) }>
+			if line.Content != "" {
+				{ line.Content }
+			} else {
+				{ " " }
+			}
+		</td>
+	</tr>
+}
+
+func getTypeColor(lineType LineType) templ.CSSClass {
+	switch lineType {
+	case LineAdded:
+		return diffTypeAdded()
+	case LineRemoved:
+		return diffTypeRemoved()
+	default:
+		return diffTypeUnchanged()
+	}
+}
+
+func getContentColor(lineType LineType) templ.CSSClass {
+	switch lineType {
+	case LineAdded:
+		return diffContentAdded()
+	case LineRemoved:
+		return diffContentRemoved()
+	default:
+		return diffContentUnchanged()
+	}
+}
+
+func getTypeSymbol(lineType LineType) string {
+	switch lineType {
+	case LineAdded:
+		return "+"
+	case LineRemoved:
+		return "-"
+	default:
+		return " "
+	}
+}
+
+func intToString(n int) string {
+	return fmt.Sprintf("%d", n)
+}
