@@ -4,12 +4,13 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+	"github.com/dimiro1/faas-go/internal/ui/components/pagination"
 	"github.com/dimiro1/faas-go/internal/ui/components/table"
 )
 
 type ExecutionsData struct {
 	Executions []Execution
-	Pagination PaginationInfo
+	Pagination pagination.Props
 	BaseURL    string
 }
 
@@ -89,7 +90,7 @@ templ ExecutionsTab(data ExecutionsData) {
 				}
 			}
 		}
-		@Pagination(data.Pagination)
+		@pagination.Pagination(data.Pagination)
 	</div>
 }
 

@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
+	"github.com/dimiro1/faas-go/internal/ui/components/pagination"
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
 )
 
@@ -60,7 +61,7 @@ func PreviewDashboard() templ.Component {
 					{ID: "hello", Name: "hello", Description: "This is just a hello function", Enabled: true, Invocations: "1,203", LastUpdated: "2m ago"},
 					{ID: "image-resize", Name: "image-resize", Description: "Resizes uploaded images", Enabled: false, Invocations: "0", LastUpdated: "5d ago"},
 				},
-				components.PaginationInfo{CurrentStart: 1, CurrentEnd: 2, Total: 2, PerPage: 10, HasPrev: false, HasNext: false},
+				pagination.Props{CurrentStart: 1, CurrentEnd: 2, Total: 2, PerPage: 10, HasPrev: false, HasNext: false},
 			).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -596,7 +597,7 @@ func PreviewExecutionsTab() templ.Component {
 						Executions: []components.Execution{
 							{ID: "exec_12345abcde", Status: "SUCCESS", Duration: "12ms", Time: "10:42:05 PM"},
 						},
-						Pagination: components.PaginationInfo{CurrentStart: 1, CurrentEnd: 10, Total: 1203, PerPage: 10, HasPrev: false, HasNext: true},
+						Pagination: pagination.Props{CurrentStart: 1, CurrentEnd: 10, Total: 1203, PerPage: 10, HasPrev: false, HasNext: true},
 						BaseURL:    "/functions/hello/executions",
 					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
