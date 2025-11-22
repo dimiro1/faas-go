@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/dimiro1/faas-go/internal/ui/components/badge"
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
@@ -507,7 +508,7 @@ func SettingsTab(data SettingsData) templ.Component {
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
-					templ_7745c5c3_Err = MethodBadges([]string{"GET", "POST", "PUT", "DELETE"}).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = badge.MethodBadges([]string{"GET", "POST", "PUT", "DELETE"}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

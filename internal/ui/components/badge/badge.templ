@@ -320,3 +320,24 @@ templ StatusBadgeWithGlow(enabled bool) {
 		}
 	}
 }
+
+// MethodBadges displays a list of HTTP method badges
+css methodBadgesContainer() {
+	display: flex;
+	gap: 0.25rem;
+	flex-wrap: wrap;
+}
+
+templ MethodBadges(methods []string) {
+	<div class={ methodBadgesContainer() }>
+		for _, method := range methods {
+			@Badge(Props{
+				Variant: Secondary,
+				Size:    SizeSm,
+				Mono:    true,
+			}) {
+				{ method }
+			}
+		}
+	</div>
+}

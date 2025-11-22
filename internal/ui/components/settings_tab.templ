@@ -1,6 +1,7 @@
 package components
 
 import (
+	"github.com/dimiro1/faas-go/internal/ui/components/badge"
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
@@ -98,7 +99,7 @@ templ SettingsTab(data SettingsData) {
 				}
 				@form.FormGroup(form.FormGroupProps{}) {
 					@form.Label(form.LabelProps{Text: "Supported Methods"})
-					@MethodBadges([]string{"GET", "POST", "PUT", "DELETE"})
+					@badge.MethodBadges([]string{"GET", "POST", "PUT", "DELETE"})
 				}
 			}
 		}
