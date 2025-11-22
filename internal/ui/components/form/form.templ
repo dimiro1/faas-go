@@ -42,6 +42,7 @@ type InputProps struct {
 	Readonly bool
 	Disabled bool
 	Required bool
+	Error    bool
 
 	// Accessibility
 	AriaLabel       string
@@ -63,6 +64,7 @@ type TextareaProps struct {
 	Readonly bool
 	Disabled bool
 	Required bool
+	Error    bool
 
 	// Accessibility
 	AriaLabel       string
@@ -208,6 +210,11 @@ css inputDisabled() {
 	cursor: not-allowed;
 }
 
+css inputError() {
+	border-color: var(--color-danger);
+	background-color: var(--color-danger-bg);
+}
+
 css inputWrapper() {
 	position: relative;
 	display: inline-flex;
@@ -331,7 +338,7 @@ css radioDisabled() {
 css helpText() {
 	font-size: var(--text-xs);
 	color: var(--color-text-muted);
-	margin-top: 0.25rem;
+	margin: 0.25rem 0 0.5rem 0;
 }
 
 css helpTextError() {
@@ -398,6 +405,7 @@ func inputClasses(props InputProps) templ.CSSClasses {
 		getWidthClass(props.Width),
 		templ.KV(inputMono(), props.Mono),
 		templ.KV(inputDisabled(), props.Disabled),
+		templ.KV(inputError(), props.Error),
 		templ.KV(inputWithIcon(), props.Icon != nil),
 		templ.KV(props.Class, props.Class != ""),
 	}
@@ -747,7 +755,7 @@ templ TextareaInput(props TextareaProps) {
 		if props.Rows > 0 {
 			rows={ fmt.Sprintf("%d", props.Rows) }
 		}
-		class={ textareaBase(), templ.KV(props.Class, props.Class != "") }
+		class={ textareaBase(), templ.KV(inputError(), props.Error), templ.KV(props.Class, props.Class != "") }
 		disabled?={ props.Disabled }
 		readonly?={ props.Readonly }
 		required?={ props.Required }

@@ -1,0 +1,105 @@
+package login
+
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components"
+	"github.com/dimiro1/faas-go/internal/ui/components/button"
+	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/form"
+)
+
+type LoginPageData struct {
+	Error string
+}
+
+css loginContainer() {
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+}
+
+css loginCard() {
+	width: 100%;
+	max-width: 400px;
+}
+
+css loginHeader() {
+	text-align: center;
+	margin-bottom: 1.5rem;
+}
+
+css loginTitle() {
+	font-size: var(--text-2xl);
+	font-weight: 700;
+	color: var(--color-text);
+	margin: 0 0 0.5rem 0;
+}
+
+css loginSubtitle() {
+	font-size: var(--text-sm);
+	color: var(--color-text-muted);
+	margin: 0;
+}
+
+css loginFooter() {
+	text-align: center;
+	margin-top: 1.5rem;
+	font-size: var(--text-xs);
+	color: var(--color-text-muted);
+}
+
+templ LoginPage(data LoginPageData) {
+	@components.Layout("FaaS Console - Login") {
+		<div class={ loginContainer() }>
+			<div class={ loginCard() }>
+				@card.Card(card.Props{}) {
+					@card.LargeContent() {
+						<div class={ loginHeader() }>
+							<h1 class={ loginTitle() }>FaaS-Go</h1>
+							<p class={ loginSubtitle() }>Enter your API key to continue</p>
+						</div>
+						<form method="POST" action="/login">
+							@form.FormGroup(form.FormGroupProps{}) {
+								@form.Label(form.LabelProps{Text: "API Key", For: "api-key", Required: true})
+								@form.Input(form.InputProps{
+									ID:          "api-key",
+									Name:        "api_key",
+									Type:        "password",
+									Placeholder: "Enter your API key",
+									Required:    true,
+								Error:       data.Error != "",
+								})
+							}
+							if data.Error != "" {
+								@form.HelpText(form.HelpTextProps{
+									Text:    data.Error,
+									Variant: form.HelpTextError,
+								})
+							}
+							@button.Button(button.Props{
+								Type:      "submit",
+								FullWidth: true,
+							}) {
+								Login
+							}
+						</form>
+						<p class={ loginFooter() }>
+							Check the server logs for your API key if this is the first run.
+						</p>
+					}
+				}
+			</div>
+		</div>
+	}
+}
+
+templ PreviewLogin() {
+	@LoginPage(LoginPageData{})
+}
+
+templ PreviewLoginWithError() {
+	@LoginPage(LoginPageData{
+		Error: "Invalid API key",
+	})
+}

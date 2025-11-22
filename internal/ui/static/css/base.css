@@ -14,6 +14,7 @@
     --color-accent: #3b82f6;
     --color-success: #10b981;
     --color-danger: #ef4444;
+    --color-danger-bg: rgba(239, 68, 68, 0.1);
     --color-warning: #f59e0b;
     --color-api-ctx: #34d399;
     --color-api-event: #60a5fa;

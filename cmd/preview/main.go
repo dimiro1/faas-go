@@ -18,6 +18,7 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/table"
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
 	"github.com/dimiro1/faas-go/internal/ui/pages"
+	"github.com/dimiro1/faas-go/internal/ui/pages/login"
 )
 
 func main() {
@@ -62,6 +63,14 @@ func main() {
 
 	mux.HandleFunc("/functions/hello/executions/exec_12345abcde", func(w http.ResponseWriter, r *http.Request) {
 		_ = pages.PreviewExecutionDetails().Render(r.Context(), w)
+	})
+
+	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
+		_ = login.PreviewLogin().Render(r.Context(), w)
+	})
+
+	mux.HandleFunc("/login-error", func(w http.ResponseWriter, r *http.Request) {
+		_ = login.PreviewLoginWithError().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/preview/component/badge", func(w http.ResponseWriter, r *http.Request) {
@@ -121,6 +130,8 @@ func main() {
 	fmt.Println("  - http://localhost:8080/functions/hello/executions (Executions Tab)")
 	fmt.Println("  - http://localhost:8080/functions/hello/test    (Test Tab)")
 	fmt.Println("  - http://localhost:8080/functions/hello/executions/exec_12345abcde (Execution Details)")
+	fmt.Println("  - http://localhost:8080/login                    (Login)")
+	fmt.Println("  - http://localhost:8080/login-error              (Login with Error)")
 	fmt.Println("  - http://localhost:8080/preview                   (Component Index)")
 	fmt.Println("  - http://localhost:8080/preview/component/badge  (Badge Component)")
 	fmt.Println("  - http://localhost:8080/preview/component/button (Button Component)")
