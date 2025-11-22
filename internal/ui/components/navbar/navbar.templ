@@ -1,0 +1,349 @@
+package navbar
+
+import (
+	"github.com/dimiro1/faas-go/internal/ui/components/icons"
+	"github.com/dimiro1/faas-go/internal/ui/components/kbd"
+)
+
+// Props contains configuration for the navbar
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}
+
+// BrandProps contains configuration for the brand section
+type BrandProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Name       string
+	Href       string
+	Icon       templ.Component
+}
+
+// BreadcrumbItem represents a single breadcrumb item
+type BreadcrumbItem struct {
+	Label  string
+	Href   string
+	Active bool
+}
+
+// BreadcrumbProps contains configuration for breadcrumbs
+type BreadcrumbProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Items      []BreadcrumbItem
+}
+
+// SearchProps contains configuration for the search button
+type SearchProps struct {
+	ID          string
+	Class       string
+	Attributes  templ.Attributes
+	Placeholder string
+	Shortcut    string
+}
+
+// ActionProps contains configuration for action buttons
+type ActionProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Label      string
+	Href       string
+	Icon       templ.Component
+}
+
+// Base navbar styles
+
+css navbarBase() {
+	height: 56px;
+	border-bottom: 1px solid var(--color-border);
+	background-color: rgba(9, 9, 11, 0.8);
+	backdrop-filter: blur(12px);
+	position: sticky;
+	top: 0;
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	padding: 0 1.5rem;
+	justify-content: space-between;
+}
+
+css navbarSection() {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+// Brand styles
+
+css navbarBrand() {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	text-decoration: none;
+	color: var(--color-text);
+	font-weight: 500;
+}
+
+css navbarBrandIcon() {
+	width: 24px;
+	height: 24px;
+	background-color: white;
+	border-radius: 6px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: black;
+}
+
+css navbarBrandName() {
+	color: var(--color-subtle);
+}
+
+// Breadcrumb styles
+
+css navbarBreadcrumb() {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+css navbarBreadcrumbLink() {
+	color: var(--color-subtle);
+	text-decoration: none;
+	transition: color 0.2s;
+}
+
+css navbarBreadcrumbSeparator() {
+	color: var(--color-border);
+}
+
+css navbarBreadcrumbCurrent() {
+	color: white;
+	font-weight: 600;
+}
+
+// Search styles
+
+css navbarSearch() {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.25rem 0.5rem;
+	border-radius: 4px;
+	border: 1px solid var(--color-border);
+	background-color: var(--color-surface);
+	color: var(--color-subtle);
+	font-size: var(--text-xs);
+	cursor: pointer;
+	transition: border-color 0.2s;
+}
+
+
+// Divider styles
+
+css navbarDivider() {
+	height: 24px;
+	width: 1px;
+	background-color: var(--color-border);
+	margin: 0 4px;
+}
+
+// Action styles
+
+css navbarAction() {
+	background: none;
+	border: none;
+	color: var(--color-subtle);
+	font-size: var(--text-xs);
+	font-weight: 500;
+	cursor: pointer;
+	transition: color 0.2s;
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+// Navbar renders the main navbar container
+templ Navbar(props Props) {
+	<style>
+		[data-navbar-link]:hover {
+			color: var(--color-text);
+		}
+		[data-navbar-search]:hover {
+			border-color: var(--color-subtle);
+		}
+		[data-navbar-action]:hover {
+			color: var(--color-text);
+		}
+	</style>
+	<header
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ navbarBase(), templ.KV(props.Class, props.Class != "") }
+		{ props.Attributes... }
+	>
+		{ children... }
+	</header>
+}
+
+// Section renders a navbar section (left/right)
+templ Section(props Props) {
+	<div
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ navbarSection(), templ.KV(props.Class, props.Class != "") }
+		{ props.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// Brand renders the brand/logo section
+templ Brand(props BrandProps) {
+	<a
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		href={ templ.SafeURL(props.Href) }
+		class={ navbarBrand(), templ.KV(props.Class, props.Class != "") }
+		data-navbar-link="true"
+		{ props.Attributes... }
+	>
+		<div class={ navbarBrandIcon() }>
+			if props.Icon != nil {
+				@props.Icon
+			} else {
+				@icons.Bolt()
+			}
+		</div>
+		<span class={ navbarBrandName() }>{ props.Name }</span>
+	</a>
+}
+
+// Breadcrumb renders navigation breadcrumbs
+templ Breadcrumb(props BreadcrumbProps) {
+	<nav
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ navbarBreadcrumb(), templ.KV(props.Class, props.Class != "") }
+		aria-label="Breadcrumb"
+		{ props.Attributes... }
+	>
+		for i, item := range props.Items {
+			if i > 0 {
+				<span class={ navbarBreadcrumbSeparator() } aria-hidden="true">/</span>
+			}
+			if item.Active {
+				<span class={ navbarBreadcrumbCurrent() } aria-current="page">{ item.Label }</span>
+			} else {
+				<a href={ templ.SafeURL(item.Href) } class={ navbarBreadcrumbLink() } data-navbar-link="true">
+					{ item.Label }
+				</a>
+			}
+		}
+	</nav>
+}
+
+// Search renders the search button
+templ Search(props SearchProps) {
+	<button
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ navbarSearch(), templ.KV(props.Class, props.Class != "") }
+		data-navbar-search="true"
+		{ props.Attributes... }
+	>
+		<span>
+			if props.Placeholder != "" {
+				{ props.Placeholder }
+			} else {
+				Search
+			}
+		</span>
+		if props.Shortcut != "" {
+			@kbd.Small() {
+				{ props.Shortcut }
+			}
+		}
+	</button>
+}
+
+// Divider renders a vertical divider
+templ Divider() {
+	<div class={ navbarDivider() } aria-hidden="true"></div>
+}
+
+// Action renders an action button or link
+templ Action(props ActionProps) {
+	if props.Href != "" {
+		<a
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			href={ templ.SafeURL(props.Href) }
+			class={ navbarAction(), templ.KV(props.Class, props.Class != "") }
+			data-navbar-action="true"
+			{ props.Attributes... }
+		>
+			if props.Icon != nil {
+				@props.Icon
+			}
+			{ props.Label }
+		</a>
+	} else {
+		<button
+			if props.ID != "" {
+				id={ props.ID }
+			}
+			class={ navbarAction(), templ.KV(props.Class, props.Class != "") }
+			data-navbar-action="true"
+			{ props.Attributes... }
+		>
+			if props.Icon != nil {
+				@props.Icon
+			}
+			{ props.Label }
+		</button>
+	}
+}
+
+// Header is a convenience component that creates a standard navbar
+// This provides backwards compatibility with the old Header component
+templ Header(currentPage string, breadcrumb string) {
+	@Navbar(Props{}) {
+		@Section(Props{}) {
+			@Brand(BrandProps{
+				Name: "Dashboard",
+				Href: "/",
+			})
+		if breadcrumb != "" {
+			<span class={ navbarBreadcrumbSeparator() } aria-hidden="true">/</span>
+			@Breadcrumb(BreadcrumbProps{
+				Items: []BreadcrumbItem{
+					{Label: breadcrumb, Active: true},
+				},
+			})
+		}
+		}
+		@Section(Props{}) {
+			@Search(SearchProps{
+				Placeholder: "Search",
+				Shortcut:    "⌘K",
+			})
+			@Divider()
+			@Action(ActionProps{
+				Label: "Logout",
+			})
+		}
+	}
+}

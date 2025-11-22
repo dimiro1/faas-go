@@ -2,12 +2,13 @@ package pages
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
+	"github.com/dimiro1/faas-go/internal/ui/components/navbar"
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
 )
 
 templ PreviewExecutionDetails() {
 	@components.Layout("FaaS Console - Execution Details") {
-		@components.Header("details", "hello")
+		@navbar.Header("details", "hello")
 		@components.FunctionDetailsView(
 			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{

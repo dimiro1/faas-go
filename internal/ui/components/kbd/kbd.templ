@@ -1,0 +1,80 @@
+package kbd
+
+type Size string
+
+const (
+	SizeSm      Size = "sm"
+	SizeDefault Size = "default"
+	SizeLg      Size = "lg"
+)
+
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Size       Size
+}
+
+css kbdBase() {
+	font-family: var(--font-mono);
+	background-color: var(--color-border);
+	border-radius: 4px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+css kbdSm() {
+	padding: 0 4px;
+	font-size: var(--text-2xs);
+	min-height: 1rem;
+}
+
+css kbdDefault() {
+	padding: 2px 6px;
+	font-size: var(--text-xs);
+	min-height: 1.25rem;
+}
+
+css kbdLg() {
+	padding: 4px 8px;
+	font-size: var(--text-sm);
+	min-height: 1.5rem;
+}
+
+templ Kbd(props Props) {
+	<kbd
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={
+			kbdBase(),
+			templ.KV(kbdSm(), props.Size == SizeSm),
+			templ.KV(kbdDefault(), props.Size == SizeDefault || props.Size == ""),
+			templ.KV(kbdLg(), props.Size == SizeLg),
+			templ.KV(props.Class, props.Class != ""),
+		}
+		{ props.Attributes... }
+	>
+		{ children... }
+	</kbd>
+}
+
+// Convenience components
+templ Small() {
+	@Kbd(Props{Size: SizeSm}) {
+		{ children... }
+	}
+}
+
+templ Default() {
+	@Kbd(Props{Size: SizeDefault}) {
+		{ children... }
+	}
+}
+
+templ Large() {
+	@Kbd(Props{Size: SizeLg}) {
+		{ children... }
+	}
+}

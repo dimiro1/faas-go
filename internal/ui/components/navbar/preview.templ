@@ -1,0 +1,103 @@
+package navbar
+
+import "github.com/dimiro1/faas-go/internal/ui/components/preview"
+
+templ Preview() {
+	@preview.Page(preview.PreviewPageProps{
+		Title:       "Navbar",
+		Description: "Top navigation bar with brand, breadcrumbs, search, and actions.",
+	}) {
+		@preview.Section("Default Navbar") {
+			@Navbar(Props{}) {
+				@Section(Props{}) {
+					@Brand(BrandProps{
+						Name: "Dashboard",
+						Href: "/",
+					})
+				}
+				@Section(Props{}) {
+					@Search(SearchProps{
+						Placeholder: "Search",
+						Shortcut:    "⌘K",
+					})
+					@Divider()
+					@Action(ActionProps{
+						Label: "Logout",
+					})
+				}
+			}
+		}
+
+		@preview.Section("With Breadcrumb") {
+			@Navbar(Props{}) {
+				@Section(Props{}) {
+					@Brand(BrandProps{
+						Name: "Dashboard",
+						Href: "/",
+					})
+					@Breadcrumb(BreadcrumbProps{
+						Items: []BreadcrumbItem{
+							{Label: "Functions", Href: "/functions"},
+							{Label: "hello-world", Active: true},
+						},
+					})
+				}
+				@Section(Props{}) {
+					@Search(SearchProps{
+						Placeholder: "Search",
+						Shortcut:    "⌘K",
+					})
+					@Divider()
+					@Action(ActionProps{
+						Label: "Logout",
+					})
+				}
+			}
+		}
+
+		@preview.Section("Multiple Breadcrumbs") {
+			@Navbar(Props{}) {
+				@Section(Props{}) {
+					@Brand(BrandProps{
+						Name: "Console",
+						Href: "/",
+					})
+					@Breadcrumb(BreadcrumbProps{
+						Items: []BreadcrumbItem{
+							{Label: "Projects", Href: "/projects"},
+							{Label: "my-app", Href: "/projects/my-app"},
+							{Label: "Settings", Active: true},
+						},
+					})
+				}
+				@Section(Props{}) {
+					@Action(ActionProps{
+						Label: "Help",
+						Href:  "/help",
+					})
+					@Divider()
+					@Action(ActionProps{
+						Label: "Sign Out",
+					})
+				}
+			}
+		}
+
+		@preview.Section("Minimal") {
+			@Navbar(Props{}) {
+				@Section(Props{}) {
+					@Brand(BrandProps{
+						Name: "App",
+						Href: "/",
+					})
+				}
+				@Section(Props{}) {
+					@Action(ActionProps{
+						Label: "Login",
+						Href:  "/login",
+					})
+				}
+			}
+		}
+	}
+}

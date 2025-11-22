@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
+	"github.com/dimiro1/faas-go/internal/ui/components/navbar"
 	"github.com/dimiro1/faas-go/internal/ui/components/pagination"
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
 )
@@ -48,7 +49,7 @@ func PreviewDashboard() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = components.Header("dashboard", "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = navbar.Header("dashboard", "").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -109,7 +110,7 @@ func PreviewCreateFunction() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = components.Header("create", "").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = navbar.Header("create", "").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -168,7 +169,7 @@ func PreviewFunctionDetails() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = components.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = navbar.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -293,7 +294,7 @@ func PreviewCodeTab() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = components.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = navbar.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -451,7 +452,7 @@ func PreviewSettingsTab() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = components.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = navbar.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -561,7 +562,7 @@ func PreviewExecutionsTab() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = components.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = navbar.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -668,7 +669,7 @@ func PreviewTestTab() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = components.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = navbar.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
+	"github.com/dimiro1/faas-go/internal/ui/components/navbar"
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
 )
 
@@ -46,7 +47,7 @@ func PreviewExecutionDetails() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = components.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = navbar.Header("details", "hello").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

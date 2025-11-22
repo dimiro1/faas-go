@@ -2,6 +2,7 @@ package pages
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
+	"github.com/dimiro1/faas-go/internal/ui/components/navbar"
 	"github.com/dimiro1/faas-go/internal/ui/components/pagination"
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
 )
@@ -9,7 +10,7 @@ import (
 // Preview page that renders all components for visual inspection
 templ PreviewDashboard() {
 	@components.Layout("FaaS Console - Dashboard") {
-		@components.Header("dashboard", "")
+		@navbar.Header("dashboard", "")
 		@Dashboard(
 			[]components.Function{
 				{ID: "hello", Name: "hello", Description: "This is just a hello function", Enabled: true, Invocations: "1,203", LastUpdated: "2m ago"},
@@ -22,7 +23,7 @@ templ PreviewDashboard() {
 
 templ PreviewCreateFunction() {
 	@components.Layout("FaaS Console - Create Function") {
-		@components.Header("create", "")
+		@navbar.Header("create", "")
 		@CreateFunction([]components.Template{
 			{ID: "hello", Name: "Hello World", Icon: "fa-code", Description: "Basic HTTP response example.", Selected: true},
 			{ID: "json", Name: "JSON API", Icon: "fa-exchange-alt", Description: "Parse JSON input and return JSON.", Selected: false},
@@ -33,7 +34,7 @@ templ PreviewCreateFunction() {
 
 templ PreviewFunctionDetails() {
 	@components.Layout("FaaS Console - hello") {
-		@components.Header("details", "hello")
+		@navbar.Header("details", "hello")
 		@components.FunctionDetailsView(
 			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
@@ -78,7 +79,7 @@ templ PreviewFunctionDetails() {
 
 templ PreviewCodeTab() {
 	@components.Layout("FaaS Console - hello - Code") {
-		@components.Header("details", "hello")
+		@navbar.Header("details", "hello")
 		@components.FunctionDetailsView(
 			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
@@ -156,7 +157,7 @@ templ PreviewCodeTab() {
 
 templ PreviewSettingsTab() {
 	@components.Layout("FaaS Console - hello - Settings") {
-		@components.Header("details", "hello")
+		@navbar.Header("details", "hello")
 		@components.FunctionDetailsView(
 			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
@@ -186,7 +187,7 @@ templ PreviewSettingsTab() {
 
 templ PreviewExecutionsTab() {
 	@components.Layout("FaaS Console - hello - Executions") {
-		@components.Header("details", "hello")
+		@navbar.Header("details", "hello")
 		@components.FunctionDetailsView(
 			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
@@ -213,7 +214,7 @@ templ PreviewExecutionsTab() {
 
 templ PreviewTestTab() {
 	@components.Layout("FaaS Console - hello - Test") {
-		@components.Header("details", "hello")
+		@navbar.Header("details", "hello")
 		@components.FunctionDetailsView(
 			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
