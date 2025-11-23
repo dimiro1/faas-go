@@ -1,0 +1,141 @@
+package tabs
+
+import (
+    "github.com/dimiro1/faas-go/internal/ui/components"
+    "github.com/dimiro1/faas-go/internal/ui/components/button"
+    "github.com/dimiro1/faas-go/internal/ui/components/card"
+    "github.com/dimiro1/faas-go/internal/ui/components/code"
+    "github.com/dimiro1/faas-go/internal/ui/components/form"
+    "github.com/dimiro1/faas-go/internal/ui/components/icons"
+    "github.com/dimiro1/faas-go/internal/ui/components/log"
+    "github.com/dimiro1/faas-go/internal/ui/components/pagination"
+    "github.com/dimiro1/faas-go/internal/ui/components/table"
+)
+
+// Source of truth moved here from components: Executions tab page
+
+type ExecutionsData struct {
+    Executions []components.Execution
+    Pagination pagination.Props
+    BaseURL    string
+}
+
+css executionsTabContainer() {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+css executionsToolbar() {
+    display: flex;
+    gap: 0.5rem;
+}
+
+css executionDetailsContainer() {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+css executionDetailsHeader() {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+css executionDetailsInfo() {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+css executionDetailsTitle() {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0;
+    font-family: var(--font-mono);
+}
+
+css executionDetailsDuration() {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+}
+
+css executionDetailsPanels() {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+css codePanelLogs() {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+templ ExecutionsTab(data ExecutionsData) {
+    <div class={ executionsTabContainer() } role="region" aria-label="Executions list">
+        <!-- Search and Refresh -->
+        <div class={ executionsToolbar() } role="search">
+            @form.SearchInputFull("Search execution ID...")
+            @button.Button(button.Props{
+                Variant:   button.Ghost,
+                Size:      button.SizeIcon,
+                Icon:      icons.Refresh(),
+                AriaLabel: "Refresh executions",
+            })
+        </div>
+        <!-- Executions Table -->
+        @table.Table(table.TableProps{Hoverable: true}) {
+            @table.Header(table.HeaderProps{}) {
+                @table.HeaderRow([]string{"Execution ID", "Status", "Duration", "Time"})
+            }
+            @table.Body(table.BodyProps{}) {
+                for _, exec := range data.Executions {
+                    @components.ExecutionRow(exec, data.BaseURL)
+                }
+            }
+        }
+        @card.Card(card.Props{}) {
+            @pagination.Pagination(data.Pagination)
+        }
+    </div>
+}
+
+type ExecutionDetailsData struct {
+    ID       string
+    Status   string
+    Duration string
+    Logs     []log.Entry
+    Input    string
+}
+
+templ ExecutionDetails(data ExecutionDetailsData) {
+    <div class={ executionDetailsContainer() } role="region" aria-label="Execution details">
+        <div class={ executionDetailsHeader() }>
+            @button.BackButton("/functions/hello")
+            <div class={ executionDetailsInfo() }>
+                <h3 class={ executionDetailsTitle() }>{ data.ID }</h3>
+                @components.ExecutionStatus(data.Status)
+                <span class={ executionDetailsDuration() } aria-label="Duration">{ data.Duration }</span>
+            </div>
+        </div>
+        <div class={ executionDetailsPanels() }>
+            <!-- Input Event Panel -->
+            @card.Card(card.Props{}) {
+                @card.Header(card.HeaderProps{Title: "Input Event (JSON)"})
+                @card.Content(card.ContentProps{NoPadding: true}) {
+                    @code.Simple(code.Props{Language: "json", Code: data.Input, MaxHeight: "200px", NoBorder: true, Padded: true})
+                }
+            }
+            <!-- Logs Panel -->
+            @card.Card(card.Props{}) {
+                @card.Header(card.HeaderProps{Title: "Execution Logs"})
+                @card.Content(card.ContentProps{NoPadding: true}) {
+                    @log.Viewer(log.Props{MaxHeight: "300px", NoBorder: true}, data.Logs)
+                }
+            }
+        </div>
+    </div>
+}

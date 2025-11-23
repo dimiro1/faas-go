@@ -1,0 +1,152 @@
+package tabs
+
+import (
+    "github.com/dimiro1/faas-go/internal/ui/components/badge"
+    "github.com/dimiro1/faas-go/internal/ui/components/button"
+    "github.com/dimiro1/faas-go/internal/ui/components/card"
+    "github.com/dimiro1/faas-go/internal/ui/components/env_editor"
+    "github.com/dimiro1/faas-go/internal/ui/components/form"
+)
+
+// Source of truth moved here from components: Settings tab page
+
+// Reuse EnvVar from env_editor as the element type
+type EnvVar = env_editor.EnvVar
+
+type SettingsData struct {
+    FunctionName  string
+    Description   string
+    Enabled       bool
+    InvocationURL string
+    EnvVars       []EnvVar
+}
+
+css settingsTabContainer() {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 56rem;
+}
+
+css settingsDangerContent() {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+css settingsDangerInfo() {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+css settingsDangerTitle() {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 0;
+}
+
+css settingsDangerDescription() {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin: 0.25rem 0 0 0;
+}
+
+templ SettingsTab(data SettingsData) {
+    <div class={ settingsTabContainer() }>
+        <!-- General Settings -->
+        @card.Simple() {
+            @card.SimpleHeader("General Configuration")
+            @card.LargeContent() {
+                @form.FormGroup(form.FormGroupProps{}) {
+                    @form.Label(form.LabelProps{Text: "Function Name", For: "function-name"})
+                    @form.Input(form.InputProps{ID: "function-name", Value: data.FunctionName})
+                }
+                @form.FormGroup(form.FormGroupProps{}) {
+                    @form.Label(form.LabelProps{Text: "Description", For: "description"})
+                    @form.TextareaInput(form.TextareaProps{ID: "description", Value: data.Description})
+                }
+            }
+            @card.Footer() {
+                @button.Button(button.Props{
+                    Variant: button.Default,
+                }) {
+                    Save General Settings
+                }
+            }
+        }
+        <!-- Environment Variables -->
+        @card.Simple() {
+            @card.SimpleHeader("Environment Variables")
+            @card.LargeContent() {
+                @env_editor.Editor(env_editor.Props{
+                    ID:      "env-vars",
+                    EnvVars: data.EnvVars,
+                })
+            }
+            @card.Footer() {
+                @button.Button(button.Props{
+                    Variant: button.Default,
+                }) {
+                    Save Variables
+                }
+            }
+        }
+        <!-- Network & Triggers -->
+        @card.Simple() {
+            @card.SimpleHeader("Network & Triggers")
+            @card.LargeContent() {
+                @form.FormGroup(form.FormGroupProps{}) {
+                    @form.Label(form.LabelProps{Text: "Full Invocation URL"})
+                    @form.CopyInput(form.InputProps{
+                        Value:     data.InvocationURL,
+                        Readonly:  true,
+                        Mono:      true,
+                        AriaLabel: "Invocation URL",
+                    })
+                }
+                @form.FormGroup(form.FormGroupProps{}) {
+                    @form.Label(form.LabelProps{Text: "Supported Methods"})
+                    @badge.MethodBadges([]string{"GET", "POST", "PUT", "DELETE"})
+                }
+            }
+        }
+        <!-- Warning Zone -->
+        @card.Card(card.Props{Variant: card.Warning}) {
+            @card.Header(card.HeaderProps{Title: "Function Status", Variant: card.Warning})
+            @card.LargeContent() {
+                @form.Checkbox(form.CheckboxProps{
+                    ID:          "enable-function",
+                    Label:       "Enable Function",
+                    Description: "Disabling will stop all incoming requests to this function.",
+                    Checked:     data.Enabled,
+                })
+            }
+            @card.Footer() {
+                @button.Button(button.Props{
+                    Variant: button.Default,
+                }) {
+                    Save Status
+                }
+            }
+        }
+        <!-- Danger Zone -->
+        @card.Card(card.Props{Variant: card.Danger}) {
+            @card.Header(card.HeaderProps{Title: "Danger Zone", Variant: card.Danger})
+            @card.LargeContent() {
+                <div class={ settingsDangerContent() }>
+                    <div class={ settingsDangerInfo() }>
+                        <p class={ settingsDangerTitle() }>Delete Function</p>
+                        <p class={ settingsDangerDescription() }>Once deleted, this function cannot be recovered.</p>
+                    </div>
+                    @button.Button(button.Props{
+                        Variant: button.Destructive,
+                    }) {
+                        Delete
+                    }
+                </div>
+            }
+        }
+    </div>
+}

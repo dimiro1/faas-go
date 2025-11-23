@@ -1,10 +1,11 @@
-package pages
+package functions
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
 	"github.com/dimiro1/faas-go/internal/ui/components/log"
 	"github.com/dimiro1/faas-go/internal/ui/components/navbar"
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
+	pagetabs "github.com/dimiro1/faas-go/internal/ui/pages/tabs"
 )
 
 templ PreviewExecutionDetails() {
@@ -22,7 +23,7 @@ templ PreviewExecutionDetails() {
 			false,
 		) {
 			@tabs.TabContent(tabs.TabContentProps{ID: "executions", Active: true}) {
-				@components.ExecutionDetails(components.ExecutionDetailsData{
+				@pagetabs.ExecutionDetails(pagetabs.ExecutionDetailsData{
 					ID:       "exec_12345abcde",
 					Status:   "SUCCESS",
 					Duration: "12ms",
