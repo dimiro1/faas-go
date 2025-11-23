@@ -1,4 +1,4 @@
-package tabs
+package code
 
 import (
 	"fmt"
@@ -57,7 +57,7 @@ css codeContentPre() {
 	margin: 0;
 }
 
-templ CodeTab(file CodeFile, apiSections []api_reference.Section) {
+templ Page(file CodeFile, apiSections []api_reference.Section) {
 	<div class={ codeTabContainer() }>
 		<!-- Code Editor -->
 		@card.Card(card.Props{Elevation: card.ElevationLg}) {

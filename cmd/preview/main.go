@@ -26,7 +26,9 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
 	"github.com/dimiro1/faas-go/internal/ui/components/template_card"
 	"github.com/dimiro1/faas-go/internal/ui/pages/dashboard"
-	"github.com/dimiro1/faas-go/internal/ui/pages/functions"
+	"github.com/dimiro1/faas-go/internal/ui/pages/create"
+	"github.com/dimiro1/faas-go/internal/ui/pages/details"
+	"github.com/dimiro1/faas-go/internal/ui/pages/execution_details"
 	"github.com/dimiro1/faas-go/internal/ui/pages/login"
 )
 
@@ -47,31 +49,31 @@ func main() {
 	})
 
 	mux.HandleFunc("/functions/new", func(w http.ResponseWriter, r *http.Request) {
-		_ = functions.PreviewCreateFunction().Render(r.Context(), w)
+		_ = create.PreviewCreateFunction().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello", func(w http.ResponseWriter, r *http.Request) {
-		_ = functions.PreviewFunctionDetails().Render(r.Context(), w)
+		_ = details.PreviewFunctionDetails().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello/code", func(w http.ResponseWriter, r *http.Request) {
-		_ = functions.PreviewCodeTab().Render(r.Context(), w)
+		_ = details.PreviewCodeTab().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello/settings", func(w http.ResponseWriter, r *http.Request) {
-		_ = functions.PreviewSettingsTab().Render(r.Context(), w)
+		_ = details.PreviewSettingsTab().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello/executions", func(w http.ResponseWriter, r *http.Request) {
-		_ = functions.PreviewExecutionsTab().Render(r.Context(), w)
+		_ = details.PreviewExecutionsTab().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello/test", func(w http.ResponseWriter, r *http.Request) {
-		_ = functions.PreviewTestTab().Render(r.Context(), w)
+		_ = details.PreviewTestTab().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/functions/hello/executions/exec_12345abcde", func(w http.ResponseWriter, r *http.Request) {
-		_ = functions.PreviewExecutionDetails().Render(r.Context(), w)
+		_ = execution_details.PreviewExecutionDetails().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {

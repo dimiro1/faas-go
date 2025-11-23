@@ -1,4 +1,4 @@
-package tabs
+package metrics
 
 import (
 	"fmt"
@@ -21,7 +21,7 @@ type BarData struct {
 	Tooltip string
 }
 
-css metricsTabContainer() {
+css metricsContainer() {
 	display: flex;
 	flex-direction: column;
 	gap: 1.5rem;
@@ -119,12 +119,12 @@ css chartTimeline() {
 	color: var(--color-text-muted);
 }
 
-templ MetricsTab(stats []StatCard, bars []BarData) {
-	<div class={ metricsTabContainer() }>
+templ Page(stats []StatCard, bars []BarData) {
+	<div class={ metricsContainer() }>
 		<!-- Stats Grid -->
 		<div class={ statsGrid() }>
 			for _, stat := range stats {
-				@StatCardComponent(stat)
+				@statCardComponent(stat)
 			}
 		</div>
 		<!-- Chart -->
@@ -155,7 +155,7 @@ templ MetricsTab(stats []StatCard, bars []BarData) {
 	</div>
 }
 
-templ StatCardComponent(stat StatCard) {
+templ statCardComponent(stat StatCard) {
 	@card.Card(card.Props{Elevation: card.ElevationSm}) {
 		@card.SimpleContent() {
 			<p class={ statCardLabel() }>{ stat.Label }</p>

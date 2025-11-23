@@ -1,4 +1,4 @@
-package tabs
+package test
 
 import (
     "github.com/dimiro1/faas-go/internal/ui/components"
@@ -8,7 +8,7 @@ import (
 
 // Source of truth moved here from components: Test tab page
 
-type TestTabData struct {
+type PageData struct {
     Examples []code_example.Example
     URL      string
     Methods  []string
@@ -27,7 +27,7 @@ css testTabPanels() {
     gap: 1.5rem;
 }
 
-templ TestTab(data TestTabData) {
+templ Page(data PageData) {
     <div class={ testTabContainer() }>
         <div id="test-code-examples">
             @code_example.CodeExamples(data.Examples)

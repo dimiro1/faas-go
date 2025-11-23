@@ -1,4 +1,4 @@
-package tabs
+package executions
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components/badge"
@@ -79,7 +79,7 @@ css codePanelLogs() {
 	overflow-y: auto;
 }
 
-templ ExecutionsTab(data ExecutionsData) {
+templ Page(data ExecutionsData) {
 	<div class={ executionsTabContainer() } role="region" aria-label="Executions list">
 		<!-- Search and Refresh -->
 		<div class={ executionsToolbar() } role="search">

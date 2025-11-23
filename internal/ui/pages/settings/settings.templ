@@ -1,4 +1,4 @@
-package tabs
+package settings
 
 import (
     "github.com/dimiro1/faas-go/internal/ui/components/badge"
@@ -53,7 +53,7 @@ css settingsDangerDescription() {
     margin: 0.25rem 0 0 0;
 }
 
-templ SettingsTab(data SettingsData) {
+templ Page(data SettingsData) {
     <div class={ settingsTabContainer() }>
         <!-- General Settings -->
         @card.Simple() {

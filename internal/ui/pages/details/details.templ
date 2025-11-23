@@ -1,4 +1,4 @@
-package functions
+package details
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
@@ -8,14 +8,19 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/navbar"
 	"github.com/dimiro1/faas-go/internal/ui/components/pagination"
 	"github.com/dimiro1/faas-go/internal/ui/components/tabs"
-	pagetabs "github.com/dimiro1/faas-go/internal/ui/pages/tabs"
+	"github.com/dimiro1/faas-go/internal/ui/pages/function_details"
+	"github.com/dimiro1/faas-go/internal/ui/pages/code"
+	"github.com/dimiro1/faas-go/internal/ui/pages/executions"
+	"github.com/dimiro1/faas-go/internal/ui/pages/metrics"
+	"github.com/dimiro1/faas-go/internal/ui/pages/settings"
+	"github.com/dimiro1/faas-go/internal/ui/pages/test"
 )
 
 templ PreviewFunctionDetails() {
 	@components.Layout("FaaS Console - hello") {
 		@navbar.Header("details", "hello")
-		@FunctionDetailsView(
-			FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+		@function_details.FunctionDetailsView(
+			function_details.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
 				{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: true},
 				{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},
@@ -26,14 +31,14 @@ templ PreviewFunctionDetails() {
 			false,
 		) {
 			@tabs.TabContent(tabs.TabContentProps{ID: "metrics", Active: true}) {
-				@pagetabs.MetricsTab(
-					[]pagetabs.StatCard{
+				@metrics.Page(
+					[]metrics.StatCard{
 						{Label: "Total Calls (24h)", Value: "14,230", Change: "12% vs yesterday", IsPositive: true},
 						{Label: "Error Count", Value: "23", Change: "0.16% Error Rate", IsPositive: false},
 						{Label: "Success Rate", Value: "99.84%", Change: "Healthy", IsPositive: false, IsSuccess: true},
 						{Label: "Avg Duration", Value: "42", Unit: "ms", Change: "P99: 120ms", IsPositive: false},
 					},
-					[]pagetabs.BarData{
+					[]metrics.BarData{
 						{Height: 40, Tooltip: "400 calls"},
 						{Height: 65, Tooltip: "650 calls"},
 						{Height: 45, Tooltip: "450 calls"},
@@ -59,8 +64,8 @@ templ PreviewFunctionDetails() {
 templ PreviewCodeTab() {
 	@components.Layout("FaaS Console - hello - Code") {
 		@navbar.Header("details", "hello")
-		@FunctionDetailsView(
-			FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+		@function_details.FunctionDetailsView(
+			function_details.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
 				{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 				{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: true},
@@ -71,8 +76,8 @@ templ PreviewCodeTab() {
 			true,
 		) {
 			@tabs.TabContent(tabs.TabContentProps{ID: "code", Active: true}) {
-				@pagetabs.CodeTab(
-					pagetabs.CodeFile{
+				@code.Page(
+					code.CodeFile{
 						Filename: "handler.lua",
 						Language: "Lua 5.4",
 						Code: `<span class="lua-kw">local</span> json <span class="lua-kw">=</span> <span class="lua-func">require</span>(<span class="lua-str">"json"</span>)
@@ -171,8 +176,8 @@ templ PreviewCodeTab() {
 templ PreviewSettingsTab() {
 	@components.Layout("FaaS Console - hello - Settings") {
 		@navbar.Header("details", "hello")
-		@FunctionDetailsView(
-			FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+		@function_details.FunctionDetailsView(
+			function_details.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
 				{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 				{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},
@@ -183,7 +188,7 @@ templ PreviewSettingsTab() {
 			false,
 		) {
 			@tabs.TabContent(tabs.TabContentProps{ID: "settings", Active: true}) {
-				@pagetabs.SettingsTab(pagetabs.SettingsData{
+				@settings.Page(settings.SettingsData{
 					FunctionName:  "hello",
 					Description:   "This is just a hello function",
 					Enabled:       true,
@@ -201,8 +206,8 @@ templ PreviewSettingsTab() {
 templ PreviewExecutionsTab() {
 	@components.Layout("FaaS Console - hello - Executions") {
 		@navbar.Header("details", "hello")
-		@FunctionDetailsView(
-			FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+		@function_details.FunctionDetailsView(
+			function_details.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
 				{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 				{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},
@@ -213,8 +218,8 @@ templ PreviewExecutionsTab() {
 			false,
 		) {
 			@tabs.TabContent(tabs.TabContentProps{ID: "executions", Active: true}) {
-				@pagetabs.ExecutionsTab(pagetabs.ExecutionsData{
-					Executions: []pagetabs.Execution{
+				@executions.Page(executions.ExecutionsData{
+					Executions: []executions.Execution{
 						{ID: "exec_12345abcde", Status: "SUCCESS", Duration: "12ms", Time: "10:42:05 PM"},
 					},
 					Pagination: pagination.Props{CurrentStart: 1, CurrentEnd: 10, Total: 1203, PerPage: 10, HasPrev: false, HasNext: true},
@@ -228,8 +233,8 @@ templ PreviewExecutionsTab() {
 templ PreviewTestTab() {
 	@components.Layout("FaaS Console - hello - Test") {
 		@navbar.Header("details", "hello")
-		@FunctionDetailsView(
-			FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+		@function_details.FunctionDetailsView(
+			function_details.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
 				{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 				{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},
@@ -240,7 +245,7 @@ templ PreviewTestTab() {
 			false,
 		) {
 			@tabs.TabContent(tabs.TabContentProps{ID: "test", Active: true}) {
-				@pagetabs.TestTab(pagetabs.TestTabData{
+				@test.Page(test.PageData{
 					Examples: []code_example.Example{
 						{
 							ID:       "curl",
