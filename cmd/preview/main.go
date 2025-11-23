@@ -13,6 +13,7 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/code_example"
 	"github.com/dimiro1/faas-go/internal/ui/components/api_reference"
 	"github.com/dimiro1/faas-go/internal/ui/components/diff"
+	"github.com/dimiro1/faas-go/internal/ui/components/env_editor"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 	"github.com/dimiro1/faas-go/internal/ui/components/kbd"
@@ -136,6 +137,10 @@ func main() {
 
 	mux.HandleFunc("/preview/component/api-reference", func(w http.ResponseWriter, r *http.Request) {
 		_ = api_reference.Preview().Render(r.Context(), w)
+	})
+
+	mux.HandleFunc("/preview/component/env-editor", func(w http.ResponseWriter, r *http.Request) {
+		_ = env_editor.Preview().Render(r.Context(), w)
 	})
 
 	mux.HandleFunc("/preview", func(w http.ResponseWriter, r *http.Request) {

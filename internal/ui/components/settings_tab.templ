@@ -4,6 +4,7 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/badge"
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
+	"github.com/dimiro1/faas-go/internal/ui/components/env_editor"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
 )
 
@@ -47,6 +48,17 @@ css settingsDangerDescription() {
 	margin: 0.25rem 0 0 0;
 }
 
+func convertEnvVars(envVars []EnvVar) []env_editor.EnvVar {
+	result := make([]env_editor.EnvVar, len(envVars))
+	for i, ev := range envVars {
+		result[i] = env_editor.EnvVar{
+			Key:   ev.Key,
+			Value: ev.Value,
+		}
+	}
+	return result
+}
+
 
 templ SettingsTab(data SettingsData) {
 	<div class={ settingsTabContainer() }>
@@ -73,13 +85,12 @@ templ SettingsTab(data SettingsData) {
 		}
 		<!-- Environment Variables -->
 		@card.Simple() {
-			@card.Header(card.HeaderProps{Title: "Environment Variables"}) {
-				<button class={ linkButton() }>+ Add Variable</button>
-			}
+			@card.SimpleHeader("Environment Variables")
 			@card.LargeContent() {
-				for _, env := range data.EnvVars {
-					@EnvVarRow(env)
-				}
+				@env_editor.Editor(env_editor.Props{
+					ID:      "env-vars",
+					EnvVars: convertEnvVars(data.EnvVars),
+				})
 			}
 			@card.Footer() {
 				@button.Button(button.Props{

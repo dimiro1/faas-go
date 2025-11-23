@@ -160,6 +160,19 @@ css btnIcon() {
 	font-size: inherit;
 }
 
+// Exported style functions for use in custom buttons
+func GhostStyle() templ.CSSClass {
+	return btnGhost()
+}
+
+func SizeIconStyle() templ.CSSClass {
+	return btnSizeIcon()
+}
+
+func BaseStyle() templ.CSSClass {
+	return btnBase()
+}
+
 // Helper function to get size class
 func getSizeClass(size ButtonSize) templ.CSSClass {
 	switch size {
