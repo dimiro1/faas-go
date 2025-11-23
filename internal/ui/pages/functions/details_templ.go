@@ -120,8 +120,8 @@ func PreviewFunctionDetails() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = components.FunctionDetailsView(
-				components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			templ_7745c5c3_Err = FunctionDetailsView(
+				FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 				[]tabs.Tab{
 					{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: true},
 					{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},
@@ -312,8 +312,8 @@ func PreviewCodeTab() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = components.FunctionDetailsView(
-				components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			templ_7745c5c3_Err = FunctionDetailsView(
+				FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 				[]tabs.Tab{
 					{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 					{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: true},
@@ -422,8 +422,8 @@ func PreviewSettingsTab() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = components.FunctionDetailsView(
-				components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			templ_7745c5c3_Err = FunctionDetailsView(
+				FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 				[]tabs.Tab{
 					{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 					{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},
@@ -512,7 +512,7 @@ func PreviewExecutionsTab() templ.Component {
 					}
 					ctx = templ.InitializeContext(ctx)
 					templ_7745c5c3_Err = pagetabs.ExecutionsTab(pagetabs.ExecutionsData{
-						Executions: []components.Execution{
+						Executions: []pagetabs.Execution{
 							{ID: "exec_12345abcde", Status: "SUCCESS", Duration: "12ms", Time: "10:42:05 PM"},
 						},
 						Pagination: pagination.Props{CurrentStart: 1, CurrentEnd: 10, Total: 1203, PerPage: 10, HasPrev: false, HasNext: true},
@@ -529,8 +529,8 @@ func PreviewExecutionsTab() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = components.FunctionDetailsView(
-				components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			templ_7745c5c3_Err = FunctionDetailsView(
+				FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 				[]tabs.Tab{
 					{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 					{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},
@@ -664,8 +664,8 @@ requests.post('https://api.faas.com/v1/fn_8s7d6f87', json={'key':'value'})`,
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = components.FunctionDetailsView(
-				components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			templ_7745c5c3_Err = FunctionDetailsView(
+				FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 				[]tabs.Tab{
 					{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 					{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},

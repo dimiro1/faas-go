@@ -57,7 +57,7 @@ func Preview() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			templ_7745c5c3_Err = Dashboard(
-				[]components.Function{
+				[]Function{
 					{ID: "hello", Name: "hello", Description: "This is just a hello function", Enabled: true, Invocations: "1,203", LastUpdated: "2m ago"},
 					{ID: "image-resize", Name: "image-resize", Description: "Resizes uploaded images", Enabled: false, Invocations: "0", LastUpdated: "5d ago"},
 				},

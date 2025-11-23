@@ -14,8 +14,8 @@ import (
 templ PreviewFunctionDetails() {
 	@components.Layout("FaaS Console - hello") {
 		@navbar.Header("details", "hello")
-		@components.FunctionDetailsView(
-			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+		@FunctionDetailsView(
+			FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
 				{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: true},
 				{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},
@@ -59,8 +59,8 @@ templ PreviewFunctionDetails() {
 templ PreviewCodeTab() {
 	@components.Layout("FaaS Console - hello - Code") {
 		@navbar.Header("details", "hello")
-		@components.FunctionDetailsView(
-			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+		@FunctionDetailsView(
+			FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
 				{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 				{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: true},
@@ -171,8 +171,8 @@ templ PreviewCodeTab() {
 templ PreviewSettingsTab() {
 	@components.Layout("FaaS Console - hello - Settings") {
 		@navbar.Header("details", "hello")
-		@components.FunctionDetailsView(
-			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+		@FunctionDetailsView(
+			FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
 				{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 				{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},
@@ -201,8 +201,8 @@ templ PreviewSettingsTab() {
 templ PreviewExecutionsTab() {
 	@components.Layout("FaaS Console - hello - Executions") {
 		@navbar.Header("details", "hello")
-		@components.FunctionDetailsView(
-			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+		@FunctionDetailsView(
+			FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
 				{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 				{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},
@@ -214,7 +214,7 @@ templ PreviewExecutionsTab() {
 		) {
 			@tabs.TabContent(tabs.TabContentProps{ID: "executions", Active: true}) {
 				@pagetabs.ExecutionsTab(pagetabs.ExecutionsData{
-					Executions: []components.Execution{
+					Executions: []pagetabs.Execution{
 						{ID: "exec_12345abcde", Status: "SUCCESS", Duration: "12ms", Time: "10:42:05 PM"},
 					},
 					Pagination: pagination.Props{CurrentStart: 1, CurrentEnd: 10, Total: 1203, PerPage: 10, HasPrev: false, HasNext: true},
@@ -228,8 +228,8 @@ templ PreviewExecutionsTab() {
 templ PreviewTestTab() {
 	@components.Layout("FaaS Console - hello - Test") {
 		@navbar.Header("details", "hello")
-		@components.FunctionDetailsView(
-			components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+		@FunctionDetailsView(
+			FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 			[]tabs.Tab{
 				{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 				{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},

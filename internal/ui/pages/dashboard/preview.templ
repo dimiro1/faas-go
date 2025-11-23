@@ -11,7 +11,7 @@ templ Preview() {
 	@components.Layout("FaaS Console - Dashboard") {
 		@navbar.Header("dashboard", "")
 		@Dashboard(
-			[]components.Function{
+			[]Function{
 				{ID: "hello", Name: "hello", Description: "This is just a hello function", Enabled: true, Invocations: "1,203", LastUpdated: "2m ago"},
 				{ID: "image-resize", Name: "image-resize", Description: "Resizes uploaded images", Enabled: false, Invocations: "0", LastUpdated: "5d ago"},
 			},

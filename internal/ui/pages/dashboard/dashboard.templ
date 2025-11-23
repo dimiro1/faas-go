@@ -1,7 +1,7 @@
 package dashboard
 
 import (
-	"github.com/dimiro1/faas-go/internal/ui/components"
+	"github.com/dimiro1/faas-go/internal/ui/components/badge"
 	"github.com/dimiro1/faas-go/internal/ui/components/button"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
 	"github.com/dimiro1/faas-go/internal/ui/components/form"
@@ -10,6 +10,15 @@ import (
 	"github.com/dimiro1/faas-go/internal/ui/components/separator"
 	"github.com/dimiro1/faas-go/internal/ui/components/table"
 )
+
+type Function struct {
+	ID          string
+	Name        string
+	Description string
+	Enabled     bool
+	Invocations string
+	LastUpdated string
+}
 
 css dashboardMain() {
 	padding: 2rem;
@@ -41,7 +50,26 @@ css filterBar() {
 	margin-bottom: 1rem;
 }
 
-templ Dashboard(functions []components.Function, paginationInfo pagination.Props) {
+css functionLink() {
+	display: flex;
+	flex-direction: column;
+	text-decoration: none;
+}
+
+css functionName() {
+	font-weight: 500;
+	color: white;
+	transition: color 0.2s;
+	font-family: var(--font-mono);
+}
+
+css functionDescription() {
+	color: var(--color-subtle);
+	font-size: var(--text-xs);
+	font-family: var(--font-mono);
+}
+
+templ Dashboard(functions []Function, paginationInfo pagination.Props) {
 	<main class={ dashboardMain() }>
 		<div class={ dashboardHeader() }>
 			<div>
@@ -67,7 +95,7 @@ templ Dashboard(functions []components.Function, paginationInfo pagination.Props
 			}
 			@table.Body(table.BodyProps{}) {
 				for _, fn := range functions {
-					@components.FunctionRow(fn)
+					@functionRow(fn)
 				}
 			}
 		}
@@ -76,4 +104,24 @@ templ Dashboard(functions []components.Function, paginationInfo pagination.Props
 			@pagination.Pagination(paginationInfo)
 		}
 	</main>
+}
+
+templ functionRow(fn Function) {
+	@table.Row(table.RowProps{}) {
+		@table.Cell(table.CellProps{}) {
+			<a href={ templ.SafeURL("/functions/" + fn.ID) } class={ functionLink() }>
+				<span class={ functionName() }>{ fn.Name }</span>
+				<span class={ functionDescription() }>{ fn.Description }</span>
+			</a>
+		}
+		@table.Cell(table.CellProps{}) {
+			@badge.StatusBadge(fn.Enabled)
+		}
+		@table.Cell(table.CellProps{Mono: true}) {
+			{ fn.Invocations }
+		}
+		@table.Cell(table.CellProps{Mono: true}) {
+			{ fn.LastUpdated }
+		}
+	}
 }

@@ -106,8 +106,8 @@ func PreviewExecutionDetails() templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = components.FunctionDetailsView(
-				components.FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
+			templ_7745c5c3_Err = FunctionDetailsView(
+				FunctionDetails{ID: "fn_8s7d6f87", Name: "hello", Description: "This is just a hello function", Enabled: true},
 				[]tabs.Tab{
 					{ID: "metrics", Name: "Metrics", Href: "/functions/hello", Active: false},
 					{ID: "code", Name: "Code", Href: "/functions/hello/code", Active: false},
