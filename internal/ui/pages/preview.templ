@@ -2,6 +2,7 @@ package pages
 
 import (
 	"github.com/dimiro1/faas-go/internal/ui/components"
+	"github.com/dimiro1/faas-go/internal/ui/components/api_reference"
 	"github.com/dimiro1/faas-go/internal/ui/components/code_example"
 	"github.com/dimiro1/faas-go/internal/ui/components/navbar"
 	"github.com/dimiro1/faas-go/internal/ui/components/pagination"
@@ -116,28 +117,33 @@ templ PreviewCodeTab() {
 <span class="lua-kw">end</span>`,
 						Lines: 17,
 					},
-					[]components.ApiSection{
+					[]api_reference.Section{
 						{
 							ID:          "ctx",
 							Name:        "Context",
 							Description: "Runtime information about the current execution.",
 							Active:      true,
-							Items: []components.ApiDocItem{
-								{Name: "ctx.executionId", Type: "string", Description: "Unique ID for the current request.", Category: "ctx"},
-								{Name: "ctx.functionId", Type: "string", Description: "The unique identifier of the function.", Category: "ctx"},
-								{Name: "ctx.env", Type: "table", Description: "Access environment variables.", Category: "ctx"},
+							Items: []api_reference.DocItem{
+								{Name: "ctx.executionId", Type: "string", Description: "Unique identifier for this execution"},
+								{Name: "ctx.functionId", Type: "string", Description: "Function identifier"},
+								{Name: "ctx.functionName", Type: "string", Description: "Function name"},
+								{Name: "ctx.version", Type: "string", Description: "Function version"},
+								{Name: "ctx.requestId", Type: "string", Description: "HTTP request identifier"},
+								{Name: "ctx.startedAt", Type: "number", Description: "Execution start timestamp (Unix seconds)"},
+								{Name: "ctx.baseUrl", Type: "string", Description: "Base URL of the server deployment"},
 							},
-							Example: `print("Exec ID: " .. ctx.executionId)`,
 						},
 						{
 							ID:          "event",
 							Name:        "Event",
 							Description: "Incoming HTTP request data.",
 							Active:      false,
-							Items: []components.ApiDocItem{
-								{Name: "event.method", Type: "string", Description: "HTTP method (GET, POST, etc).", Category: "event"},
-								{Name: "event.body", Type: "string", Description: "Raw request body content.", Category: "event"},
-								{Name: "event.query", Type: "table", Description: "Key-value table of query params.", Category: "event"},
+							Items: []api_reference.DocItem{
+								{Name: "event.method", Type: "string", Description: "HTTP method (GET, POST, PUT, DELETE, etc.)"},
+								{Name: "event.path", Type: "string", Description: "Request path"},
+								{Name: "event.body", Type: "string", Description: "Request body as string"},
+								{Name: "event.headers", Type: "table", Description: "Request headers (table with header name as key)"},
+								{Name: "event.query", Type: "table", Description: "Query parameters (table with param name as key)"},
 							},
 						},
 						{
@@ -145,8 +151,37 @@ templ PreviewCodeTab() {
 							Name:        "Modules",
 							Description: "Built-in utility modules.",
 							Active:      false,
-							Items: []components.ApiDocItem{
-								{Name: "json", Type: "module", Description: "JSON encode/decode functions.", Category: "module"},
+							Items: []api_reference.DocItem{
+								{Name: "json.encode", Type: "function", Description: "Encode a Lua table to JSON string"},
+								{Name: "json.decode", Type: "function", Description: "Decode a JSON string to Lua table"},
+								{Name: "log.info", Type: "function", Description: "Log an informational message"},
+								{Name: "log.debug", Type: "function", Description: "Log a debug message"},
+								{Name: "log.warn", Type: "function", Description: "Log a warning message"},
+								{Name: "log.error", Type: "function", Description: "Log an error message"},
+								{Name: "kv.get", Type: "function", Description: "Get a value from the key-value store"},
+								{Name: "kv.set", Type: "function", Description: "Set a key-value pair in the store"},
+								{Name: "kv.delete", Type: "function", Description: "Delete a key from the store"},
+								{Name: "env.get", Type: "function", Description: "Get an environment variable"},
+								{Name: "http.get", Type: "function", Description: "Make a GET request"},
+								{Name: "http.post", Type: "function", Description: "Make a POST request"},
+								{Name: "http.put", Type: "function", Description: "Make a PUT request"},
+								{Name: "http.delete", Type: "function", Description: "Make a DELETE request"},
+								{Name: "base64.encode", Type: "function", Description: "Encode a string to base64"},
+								{Name: "base64.decode", Type: "function", Description: "Decode a base64 string"},
+								{Name: "crypto.md5", Type: "function", Description: "Computes MD5 hash"},
+								{Name: "crypto.sha256", Type: "function", Description: "Computes SHA256 hash"},
+								{Name: "crypto.uuid", Type: "function", Description: "Generates a new UUID v4"},
+								{Name: "time.now", Type: "function", Description: "Returns current Unix timestamp"},
+								{Name: "time.format", Type: "function", Description: "Formats Unix timestamp to string"},
+								{Name: "time.sleep", Type: "function", Description: "Sleeps for specified milliseconds"},
+								{Name: "url.parse", Type: "function", Description: "Parses URL into components"},
+								{Name: "url.encode", Type: "function", Description: "URL-encodes a string"},
+								{Name: "strings.trim", Type: "function", Description: "Removes leading and trailing whitespace"},
+								{Name: "strings.split", Type: "function", Description: "Splits string by separator"},
+								{Name: "strings.contains", Type: "function", Description: "Returns true if string contains substring"},
+								{Name: "random.int", Type: "function", Description: "Generates random integer"},
+								{Name: "random.string", Type: "function", Description: "Generates random alphanumeric string"},
+								{Name: "random.id", Type: "function", Description: "Generates globally unique sortable ID"},
 							},
 						},
 					},

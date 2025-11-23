@@ -278,6 +278,15 @@ css tabActive() {
 	color: white;
 }
 
+// Exported tab style functions for use in other components
+func TabStyle() templ.CSSClass {
+	return tabBase()
+}
+
+func TabActiveStyle() templ.CSSClass {
+	return tabActive()
+}
+
 // Helper functions
 
 func getVariantClass(variant CardVariant) templ.CSSClass {

@@ -2,6 +2,7 @@ package components
 
 import (
 	"fmt"
+	"github.com/dimiro1/faas-go/internal/ui/components/api_reference"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
@@ -15,7 +16,7 @@ type CodeFile struct {
 
 css codeTabContainer() {
 	display: grid;
-	grid-template-columns: 1fr 300px;
+	grid-template-columns: 3fr 2fr;
 	gap: 1.5rem;
 	height: 600px;
 }
@@ -54,7 +55,7 @@ css codeContentPre() {
 	margin: 0;
 }
 
-templ CodeTab(file CodeFile, apiSections []ApiSection) {
+templ CodeTab(file CodeFile, apiSections []api_reference.Section) {
 	<div class={ codeTabContainer() }>
 		<!-- Code Editor -->
 		@card.Card(card.Props{Elevation: card.ElevationLg}) {
@@ -82,6 +83,6 @@ templ CodeTab(file CodeFile, apiSections []ApiSection) {
 			}
 		}
 		<!-- API Reference Sidebar -->
-		@ApiReference(apiSections)
+		@api_reference.Reference(apiSections)
 	</div>
 }

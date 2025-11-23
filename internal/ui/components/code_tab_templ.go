@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
+	"github.com/dimiro1/faas-go/internal/ui/components/api_reference"
 	"github.com/dimiro1/faas-go/internal/ui/components/card"
 	"github.com/dimiro1/faas-go/internal/ui/components/icons"
 )
@@ -24,7 +25,7 @@ type CodeFile struct {
 func codeTabContainer() templ.CSSClass {
 	templ_7745c5c3_CSSBuilder := templruntime.GetBuilder()
 	templ_7745c5c3_CSSBuilder.WriteString(`display:grid;`)
-	templ_7745c5c3_CSSBuilder.WriteString(`grid-template-columns:1fr 300px;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`grid-template-columns:3fr 2fr;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`gap:1.5rem;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`height:600px;`)
 	templ_7745c5c3_CSSID := templ.CSSID(`codeTabContainer`, templ_7745c5c3_CSSBuilder.String())
@@ -98,7 +99,7 @@ func codeContentPre() templ.CSSClass {
 	}
 }
 
-func CodeTab(file CodeFile, apiSections []ApiSection) templ.Component {
+func CodeTab(file CodeFile, apiSections []api_reference.Section) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -190,7 +191,7 @@ func CodeTab(file CodeFile, apiSections []ApiSection) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(file.Language)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/code_tab.templ`, Line: 65, Col: 52}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/code_tab.templ`, Line: 66, Col: 52}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -277,7 +278,7 @@ func CodeTab(file CodeFile, apiSections []ApiSection) templ.Component {
 					var templ_7745c5c3_Var14 string
 					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", i))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/code_tab.templ`, Line: 71, Col: 35}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/code_tab.templ`, Line: 72, Col: 35}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 					if templ_7745c5c3_Err != nil {
@@ -360,7 +361,7 @@ func CodeTab(file CodeFile, apiSections []ApiSection) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = ApiReference(apiSections).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = api_reference.Reference(apiSections).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
