@@ -1,4 +1,5 @@
 // Diff viewer component
+import { icons } from "../icons.js";
 
 // Line types
 export const LineType = {
@@ -14,25 +15,18 @@ export const VersionLabels = {
       vnode.attrs;
 
     return m(".diff-version-labels", [
-      m("span.diff-version-item.diff-version-old", [
-        m.trust(
-          `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
-        ),
-        oldLabel,
-        oldMeta && m("span.diff-version-meta", `(${oldMeta})`),
+      m("span.diff-stats-summary", [
+        additions > 0 &&
+          m("span.diff-stats-added", [
+            m.trust(icons.plusSmall()),
+            ` ${additions} addition${additions !== 1 ? "s" : ""} `,
+          ]),
+        deletions > 0 &&
+          m("span.diff-stats-removed", [
+            m.trust(icons.minusSmall()),
+            ` ${deletions} deletion${deletions !== 1 ? "s" : ""}`,
+          ]),
       ]),
-      m("span.diff-version-item.diff-version-new", [
-        m.trust(
-          `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
-        ),
-        newLabel,
-        newMeta && m("span.diff-version-meta", `(${newMeta})`),
-      ]),
-      (additions > 0 || deletions > 0) &&
-        m("span.diff-version-stats", [
-          additions > 0 && m("span.diff-stats-added", `+${additions}`),
-          deletions > 0 && m("span.diff-stats-removed", `-${deletions}`),
-        ]),
     ]);
   },
 };

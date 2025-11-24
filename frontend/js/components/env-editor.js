@@ -1,4 +1,3 @@
-import { icons } from "../icons.js";
 import { Button, ButtonVariant, ButtonSize } from "./button.js";
 import { FormInput, PasswordInput } from "./form.js";
 

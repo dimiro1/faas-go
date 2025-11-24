@@ -99,23 +99,67 @@ export const LuaAPISections = [
       {
         name: "Context (ctx)",
         items: [
-          { name: "ctx.executionId", type: "string", description: "Unique execution identifier" },
-          { name: "ctx.functionId", type: "string", description: "Function identifier" },
-          { name: "ctx.functionName", type: "string", description: "Function name" },
-          { name: "ctx.version", type: "string", description: "Function version" },
-          { name: "ctx.requestId", type: "string", description: "HTTP request identifier" },
-          { name: "ctx.startedAt", type: "number", description: "Start timestamp (Unix)" },
-          { name: "ctx.baseUrl", type: "string", description: "Server base URL" },
+          {
+            name: "ctx.executionId",
+            type: "string",
+            description: "Unique execution identifier",
+          },
+          {
+            name: "ctx.functionId",
+            type: "string",
+            description: "Function identifier",
+          },
+          {
+            name: "ctx.functionName",
+            type: "string",
+            description: "Function name",
+          },
+          {
+            name: "ctx.version",
+            type: "string",
+            description: "Function version",
+          },
+          {
+            name: "ctx.requestId",
+            type: "string",
+            description: "HTTP request identifier",
+          },
+          {
+            name: "ctx.startedAt",
+            type: "number",
+            description: "Start timestamp (Unix)",
+          },
+          {
+            name: "ctx.baseUrl",
+            type: "string",
+            description: "Server base URL",
+          },
         ],
       },
       {
         name: "Event (event)",
         items: [
-          { name: "event.method", type: "string", description: "HTTP method (GET, POST, etc.)" },
+          {
+            name: "event.method",
+            type: "string",
+            description: "HTTP method (GET, POST, etc.)",
+          },
           { name: "event.path", type: "string", description: "Request path" },
-          { name: "event.body", type: "string", description: "Request body as string" },
-          { name: "event.headers", type: "table", description: "Request headers table" },
-          { name: "event.query", type: "table", description: "Query parameters table" },
+          {
+            name: "event.body",
+            type: "string",
+            description: "Request body as string",
+          },
+          {
+            name: "event.headers",
+            type: "table",
+            description: "Request headers table",
+          },
+          {
+            name: "event.query",
+            type: "table",
+            description: "Query parameters table",
+          },
         ],
       },
     ],
@@ -128,33 +172,81 @@ export const LuaAPISections = [
       {
         name: "Logging (log)",
         items: [
-          { name: "log.info(msg)", type: "function", description: "Log info message" },
-          { name: "log.debug(msg)", type: "function", description: "Log debug message" },
-          { name: "log.warn(msg)", type: "function", description: "Log warning message" },
-          { name: "log.error(msg)", type: "function", description: "Log error message" },
+          {
+            name: "log.info(msg)",
+            type: "function",
+            description: "Log info message",
+          },
+          {
+            name: "log.debug(msg)",
+            type: "function",
+            description: "Log debug message",
+          },
+          {
+            name: "log.warn(msg)",
+            type: "function",
+            description: "Log warning message",
+          },
+          {
+            name: "log.error(msg)",
+            type: "function",
+            description: "Log error message",
+          },
         ],
       },
       {
         name: "Key-Value Store (kv)",
         items: [
-          { name: "kv.get(key)", type: "function", description: "Get value from store" },
-          { name: "kv.set(key, value)", type: "function", description: "Set key-value pair" },
-          { name: "kv.delete(key)", type: "function", description: "Delete key from store" },
+          {
+            name: "kv.get(key)",
+            type: "function",
+            description: "Get value from store",
+          },
+          {
+            name: "kv.set(key, value)",
+            type: "function",
+            description: "Set key-value pair",
+          },
+          {
+            name: "kv.delete(key)",
+            type: "function",
+            description: "Delete key from store",
+          },
         ],
       },
       {
         name: "Environment (env)",
         items: [
-          { name: "env.get(key)", type: "function", description: "Get environment variable" },
+          {
+            name: "env.get(key)",
+            type: "function",
+            description: "Get environment variable",
+          },
         ],
       },
       {
         name: "HTTP Client (http)",
         items: [
-          { name: "http.get(url)", type: "function", description: "GET request" },
-          { name: "http.post(url, body)", type: "function", description: "POST request" },
-          { name: "http.put(url, body)", type: "function", description: "PUT request" },
-          { name: "http.delete(url)", type: "function", description: "DELETE request" },
+          {
+            name: "http.get(url)",
+            type: "function",
+            description: "GET request",
+          },
+          {
+            name: "http.post(url, body)",
+            type: "function",
+            description: "POST request",
+          },
+          {
+            name: "http.put(url, body)",
+            type: "function",
+            description: "PUT request",
+          },
+          {
+            name: "http.delete(url)",
+            type: "function",
+            description: "DELETE request",
+          },
         ],
       },
     ],
@@ -167,24 +259,56 @@ export const LuaAPISections = [
       {
         name: "JSON (json)",
         items: [
-          { name: "json.encode(table)", type: "function", description: "Encode table to JSON" },
-          { name: "json.decode(str)", type: "function", description: "Decode JSON to table" },
+          {
+            name: "json.encode(table)",
+            type: "function",
+            description: "Encode table to JSON",
+          },
+          {
+            name: "json.decode(str)",
+            type: "function",
+            description: "Decode JSON to table",
+          },
         ],
       },
       {
         name: "Base64 (base64)",
         items: [
-          { name: "base64.encode(str)", type: "function", description: "Encode to base64" },
-          { name: "base64.decode(str)", type: "function", description: "Decode from base64" },
+          {
+            name: "base64.encode(str)",
+            type: "function",
+            description: "Encode to base64",
+          },
+          {
+            name: "base64.decode(str)",
+            type: "function",
+            description: "Decode from base64",
+          },
         ],
       },
       {
         name: "Crypto (crypto)",
         items: [
-          { name: "crypto.md5(str)", type: "function", description: "MD5 hash (hex)" },
-          { name: "crypto.sha256(str)", type: "function", description: "SHA256 hash (hex)" },
-          { name: "crypto.hmac_sha256(msg, key)", type: "function", description: "HMAC-SHA256 (hex)" },
-          { name: "crypto.uuid()", type: "function", description: "Generate UUID v4" },
+          {
+            name: "crypto.md5(str)",
+            type: "function",
+            description: "MD5 hash (hex)",
+          },
+          {
+            name: "crypto.sha256(str)",
+            type: "function",
+            description: "SHA256 hash (hex)",
+          },
+          {
+            name: "crypto.hmac_sha256(msg, key)",
+            type: "function",
+            description: "HMAC-SHA256 (hex)",
+          },
+          {
+            name: "crypto.uuid()",
+            type: "function",
+            description: "Generate UUID v4",
+          },
         ],
       },
     ],
@@ -197,29 +321,81 @@ export const LuaAPISections = [
       {
         name: "Time (time)",
         items: [
-          { name: "time.now()", type: "function", description: "Current Unix timestamp" },
-          { name: "time.format(ts, layout)", type: "function", description: "Format timestamp" },
-          { name: "time.parse(str, layout)", type: "function", description: "Parse time string" },
-          { name: "time.sleep(ms)", type: "function", description: "Sleep milliseconds" },
+          {
+            name: "time.now()",
+            type: "function",
+            description: "Current Unix timestamp",
+          },
+          {
+            name: "time.format(ts, layout)",
+            type: "function",
+            description: "Format timestamp",
+          },
+          {
+            name: "time.parse(str, layout)",
+            type: "function",
+            description: "Parse time string",
+          },
+          {
+            name: "time.sleep(ms)",
+            type: "function",
+            description: "Sleep milliseconds",
+          },
         ],
       },
       {
         name: "Strings (strings)",
         items: [
-          { name: "strings.trim(str)", type: "function", description: "Trim whitespace" },
-          { name: "strings.split(str, sep)", type: "function", description: "Split by separator" },
-          { name: "strings.join(arr, sep)", type: "function", description: "Join with separator" },
-          { name: "strings.contains(str, sub)", type: "function", description: "Contains substring" },
-          { name: "strings.replace(str, old, new)", type: "function", description: "Replace in string" },
+          {
+            name: "strings.trim(str)",
+            type: "function",
+            description: "Trim whitespace",
+          },
+          {
+            name: "strings.split(str, sep)",
+            type: "function",
+            description: "Split by separator",
+          },
+          {
+            name: "strings.join(arr, sep)",
+            type: "function",
+            description: "Join with separator",
+          },
+          {
+            name: "strings.contains(str, sub)",
+            type: "function",
+            description: "Contains substring",
+          },
+          {
+            name: "strings.replace(str, old, new)",
+            type: "function",
+            description: "Replace in string",
+          },
         ],
       },
       {
         name: "Random (random)",
         items: [
-          { name: "random.int(min, max)", type: "function", description: "Random integer" },
-          { name: "random.float()", type: "function", description: "Random float 0.0-1.0" },
-          { name: "random.string(len)", type: "function", description: "Random alphanumeric" },
-          { name: "random.id()", type: "function", description: "Unique sortable ID" },
+          {
+            name: "random.int(min, max)",
+            type: "function",
+            description: "Random integer",
+          },
+          {
+            name: "random.float()",
+            type: "function",
+            description: "Random float 0.0-1.0",
+          },
+          {
+            name: "random.string(len)",
+            type: "function",
+            description: "Random alphanumeric",
+          },
+          {
+            name: "random.id()",
+            type: "function",
+            description: "Unique sortable ID",
+          },
         ],
       },
     ],

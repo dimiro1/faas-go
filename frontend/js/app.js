@@ -9,7 +9,6 @@ import { FunctionVersions } from "./views/function-versions.js";
 import { FunctionExecutions } from "./views/function-executions.js";
 import { FunctionSettings } from "./views/function-settings.js";
 import { FunctionTest } from "./views/function-test.js";
-import { FunctionEnv } from "./views/function-env.js";
 import { ExecutionDetail } from "./views/execution-detail.js";
 import { VersionDiff } from "./views/version-diff.js";
 import { Preview } from "./views/preview.js";
@@ -65,9 +64,6 @@ m.route(document.getElementById("app"), "/functions", {
     },
     "/functions/:id/test": {
         render: (vnode) => m(Layout, { breadcrumb: "Test" }, m(FunctionTest, vnode.attrs))
-    },
-    "/functions/:id/env": {
-        render: (vnode) => m(Layout, { breadcrumb: "Environment" }, m(FunctionEnv, vnode.attrs))
     },
     "/functions/:id/diff/:v1/:v2": {
         render: (vnode) => m(Layout, { breadcrumb: "Version Diff" }, m(VersionDiff, vnode.attrs))
