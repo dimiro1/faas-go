@@ -92,95 +92,135 @@ function getTypeClass(type) {
 // Default API sections for Lua functions
 export const LuaAPISections = [
   {
-    id: "http",
-    name: "HTTP",
-    description: "HTTP client for making web requests",
-    items: [
+    id: "handler",
+    name: "Handler",
+    description: "Handler function inputs",
+    groups: [
       {
-        name: "http.get(url, opts)",
-        type: "function",
-        description: "Perform GET request",
+        name: "Context (ctx)",
+        items: [
+          { name: "ctx.executionId", type: "string", description: "Unique execution identifier" },
+          { name: "ctx.functionId", type: "string", description: "Function identifier" },
+          { name: "ctx.functionName", type: "string", description: "Function name" },
+          { name: "ctx.version", type: "string", description: "Function version" },
+          { name: "ctx.requestId", type: "string", description: "HTTP request identifier" },
+          { name: "ctx.startedAt", type: "number", description: "Start timestamp (Unix)" },
+          { name: "ctx.baseUrl", type: "string", description: "Server base URL" },
+        ],
       },
       {
-        name: "http.post(url, body, opts)",
-        type: "function",
-        description: "Perform POST request",
-      },
-      {
-        name: "http.put(url, body, opts)",
-        type: "function",
-        description: "Perform PUT request",
-      },
-      {
-        name: "http.delete(url, opts)",
-        type: "function",
-        description: "Perform DELETE request",
-      },
-    ],
-  },
-  {
-    id: "log",
-    name: "Log",
-    description: "Logging utilities for debugging",
-    items: [
-      {
-        name: "log.info(msg)",
-        type: "function",
-        description: "Log info message",
-      },
-      {
-        name: "log.error(msg)",
-        type: "function",
-        description: "Log error message",
-      },
-      {
-        name: "log.warn(msg)",
-        type: "function",
-        description: "Log warning message",
-      },
-      {
-        name: "log.debug(msg)",
-        type: "function",
-        description: "Log debug message",
+        name: "Event (event)",
+        items: [
+          { name: "event.method", type: "string", description: "HTTP method (GET, POST, etc.)" },
+          { name: "event.path", type: "string", description: "Request path" },
+          { name: "event.body", type: "string", description: "Request body as string" },
+          { name: "event.headers", type: "table", description: "Request headers table" },
+          { name: "event.query", type: "table", description: "Query parameters table" },
+        ],
       },
     ],
   },
   {
-    id: "env",
-    name: "Env",
-    description: "Environment variable management",
-    items: [
+    id: "io",
+    name: "I/O",
+    description: "Input/output operations",
+    groups: [
       {
-        name: "env.get(key)",
-        type: "function",
-        description: "Get environment variable",
+        name: "Logging (log)",
+        items: [
+          { name: "log.info(msg)", type: "function", description: "Log info message" },
+          { name: "log.debug(msg)", type: "function", description: "Log debug message" },
+          { name: "log.warn(msg)", type: "function", description: "Log warning message" },
+          { name: "log.error(msg)", type: "function", description: "Log error message" },
+        ],
       },
       {
-        name: "env.set(key, value)",
-        type: "function",
-        description: "Set environment variable",
+        name: "Key-Value Store (kv)",
+        items: [
+          { name: "kv.get(key)", type: "function", description: "Get value from store" },
+          { name: "kv.set(key, value)", type: "function", description: "Set key-value pair" },
+          { name: "kv.delete(key)", type: "function", description: "Delete key from store" },
+        ],
       },
       {
-        name: "env.delete(key)",
-        type: "function",
-        description: "Delete environment variable",
+        name: "Environment (env)",
+        items: [
+          { name: "env.get(key)", type: "function", description: "Get environment variable" },
+        ],
+      },
+      {
+        name: "HTTP Client (http)",
+        items: [
+          { name: "http.get(url)", type: "function", description: "GET request" },
+          { name: "http.post(url, body)", type: "function", description: "POST request" },
+          { name: "http.put(url, body)", type: "function", description: "PUT request" },
+          { name: "http.delete(url)", type: "function", description: "DELETE request" },
+        ],
       },
     ],
   },
   {
-    id: "json",
-    name: "JSON",
-    description: "JSON encoding and decoding",
-    items: [
+    id: "data",
+    name: "Data",
+    description: "Data transformation",
+    groups: [
       {
-        name: "json.encode(value)",
-        type: "function",
-        description: "Encode value to JSON string",
+        name: "JSON (json)",
+        items: [
+          { name: "json.encode(table)", type: "function", description: "Encode table to JSON" },
+          { name: "json.decode(str)", type: "function", description: "Decode JSON to table" },
+        ],
       },
       {
-        name: "json.decode(str)",
-        type: "function",
-        description: "Decode JSON string to value",
+        name: "Base64 (base64)",
+        items: [
+          { name: "base64.encode(str)", type: "function", description: "Encode to base64" },
+          { name: "base64.decode(str)", type: "function", description: "Decode from base64" },
+        ],
+      },
+      {
+        name: "Crypto (crypto)",
+        items: [
+          { name: "crypto.md5(str)", type: "function", description: "MD5 hash (hex)" },
+          { name: "crypto.sha256(str)", type: "function", description: "SHA256 hash (hex)" },
+          { name: "crypto.hmac_sha256(msg, key)", type: "function", description: "HMAC-SHA256 (hex)" },
+          { name: "crypto.uuid()", type: "function", description: "Generate UUID v4" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "utils",
+    name: "Utils",
+    description: "Utility functions",
+    groups: [
+      {
+        name: "Time (time)",
+        items: [
+          { name: "time.now()", type: "function", description: "Current Unix timestamp" },
+          { name: "time.format(ts, layout)", type: "function", description: "Format timestamp" },
+          { name: "time.parse(str, layout)", type: "function", description: "Parse time string" },
+          { name: "time.sleep(ms)", type: "function", description: "Sleep milliseconds" },
+        ],
+      },
+      {
+        name: "Strings (strings)",
+        items: [
+          { name: "strings.trim(str)", type: "function", description: "Trim whitespace" },
+          { name: "strings.split(str, sep)", type: "function", description: "Split by separator" },
+          { name: "strings.join(arr, sep)", type: "function", description: "Join with separator" },
+          { name: "strings.contains(str, sub)", type: "function", description: "Contains substring" },
+          { name: "strings.replace(str, old, new)", type: "function", description: "Replace in string" },
+        ],
+      },
+      {
+        name: "Random (random)",
+        items: [
+          { name: "random.int(min, max)", type: "function", description: "Random integer" },
+          { name: "random.float()", type: "function", description: "Random float 0.0-1.0" },
+          { name: "random.string(len)", type: "function", description: "Random alphanumeric" },
+          { name: "random.id()", type: "function", description: "Unique sortable ID" },
+        ],
       },
     ],
   },

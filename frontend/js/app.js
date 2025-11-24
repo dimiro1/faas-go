@@ -4,8 +4,11 @@ import { Header } from "./components/navbar.js";
 import { Login } from "./views/login.js";
 import { FunctionsList } from "./views/functions-list.js";
 import { FunctionCreate } from "./views/function-create.js";
-import { FunctionDetail } from "./views/function-detail.js";
-import { FunctionEdit } from "./views/function-edit.js";
+import { FunctionCode } from "./views/function-code.js";
+import { FunctionVersions } from "./views/function-versions.js";
+import { FunctionExecutions } from "./views/function-executions.js";
+import { FunctionSettings } from "./views/function-settings.js";
+import { FunctionTest } from "./views/function-test.js";
 import { FunctionEnv } from "./views/function-env.js";
 import { ExecutionDetail } from "./views/execution-detail.js";
 import { VersionDiff } from "./views/version-diff.js";
@@ -49,10 +52,19 @@ m.route(document.getElementById("app"), "/functions", {
         render: () => m(Layout, { breadcrumb: "New Function" }, m(FunctionCreate))
     },
     "/functions/:id": {
-        render: (vnode) => m(Layout, { breadcrumb: "Function Details" }, m(FunctionDetail, vnode.attrs))
+        render: (vnode) => m(Layout, { breadcrumb: "Code" }, m(FunctionCode, vnode.attrs))
     },
-    "/functions/:id/edit": {
-        render: (vnode) => m(Layout, { breadcrumb: "Edit Function" }, m(FunctionEdit, vnode.attrs))
+    "/functions/:id/versions": {
+        render: (vnode) => m(Layout, { breadcrumb: "Versions" }, m(FunctionVersions, vnode.attrs))
+    },
+    "/functions/:id/executions": {
+        render: (vnode) => m(Layout, { breadcrumb: "Executions" }, m(FunctionExecutions, vnode.attrs))
+    },
+    "/functions/:id/settings": {
+        render: (vnode) => m(Layout, { breadcrumb: "Settings" }, m(FunctionSettings, vnode.attrs))
+    },
+    "/functions/:id/test": {
+        render: (vnode) => m(Layout, { breadcrumb: "Test" }, m(FunctionTest, vnode.attrs))
     },
     "/functions/:id/env": {
         render: (vnode) => m(Layout, { breadcrumb: "Environment" }, m(FunctionEnv, vnode.attrs))

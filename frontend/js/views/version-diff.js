@@ -2,6 +2,8 @@ import { icons } from "../icons.js";
 import { API } from "../api.js";
 import { BackButton } from "../components/button.js";
 import { Card, CardHeader, CardContent } from "../components/card.js";
+import { Badge, BadgeVariant, BadgeSize, IDBadge, StatusBadge } from "../components/badge.js";
+import { DiffViewer, VersionLabels, LineType } from "../components/diff-viewer.js";
 
 export const VersionDiff = {
     func: null,
@@ -41,54 +43,56 @@ export const VersionDiff = {
             return m(".fade-in", m(Card, m(CardContent, "Diff not found")));
         }
 
-        return m(".fade-in", [
-            m(BackButton, { href: `#!/functions/${VersionDiff.func.id}` }),
+        const func = VersionDiff.func;
 
-            m(".page-header", [
-                m(".page-header__title", [
-                    m("div", [
-                        m("h1", "Version Comparison"),
-                        m(".page-header__subtitle",
-                            `${VersionDiff.func.name} - v${VersionDiff.diffData.old_version} → v${VersionDiff.diffData.new_version}`
-                        )
+        return m(".fade-in", [
+            // Header
+            m(".function-details-header", [
+                m(".function-details-left", [
+                    m(BackButton, { href: `#!/functions/${func.id}/versions` }),
+                    m(".function-details-divider"),
+                    m(".function-details-info", [
+                        m("h1.function-details-title", [
+                            func.name,
+                            m(IDBadge, { id: func.id }),
+                            m(Badge, {
+                                variant: BadgeVariant.OUTLINE,
+                                size: BadgeSize.SM,
+                                mono: true
+                            }, `v${VersionDiff.diffData.old_version} → v${VersionDiff.diffData.new_version}`)
+                        ]),
+                        m("p.function-details-description", func.description || "No description")
                     ])
+                ]),
+                m(".function-details-actions", [
+                    m(StatusBadge, { enabled: !func.disabled, glow: true })
                 ])
             ]),
 
             m(Card, [
                 m(CardHeader, {
-                    title: "Code Changes"
-                }, [
-                    m(".diff-legend", [
-                        m("span.diff-legend__removed", `- Version ${VersionDiff.diffData.old_version}`),
-                        m("span.diff-legend__added", `+ Version ${VersionDiff.diffData.new_version}`)
-                    ])
-                ]),
+                    title: "Code Changes",
+                    actions: [
+                        m(VersionLabels, {
+                            oldLabel: `v${VersionDiff.diffData.old_version}`,
+                            newLabel: `v${VersionDiff.diffData.new_version}`,
+                            additions: VersionDiff.diffData.diff.filter(l => l.line_type === "added").length,
+                            deletions: VersionDiff.diffData.diff.filter(l => l.line_type === "removed").length
+                        })
+                    ]
+                }),
                 m(CardContent, { noPadding: true }, [
-                    m(".diff-viewer", [
-                        m("table.diff-table", [
-                            m("tbody",
-                                VersionDiff.diffData.diff.map((line, idx) =>
-                                    m("tr.diff-row", {
-                                        key: idx,
-                                        class: line.line_type === "added" ? "diff-row--added" :
-                                               line.line_type === "removed" ? "diff-row--removed" : ""
-                                    }, [
-                                        m("td.diff-line-num", line.old_line || ""),
-                                        m("td.diff-line-num", line.new_line || ""),
-                                        m("td.diff-symbol", {
-                                            class: line.line_type === "added" ? "diff-symbol--added" :
-                                                   line.line_type === "removed" ? "diff-symbol--removed" : ""
-                                        }, line.line_type === "added" ? "+" : line.line_type === "removed" ? "-" : " "),
-                                        m("td.diff-content", {
-                                            class: line.line_type === "added" ? "diff-content--added" :
-                                                   line.line_type === "removed" ? "diff-content--removed" : ""
-                                        }, line.content || " ")
-                                    ])
-                                )
-                            )
-                        ])
-                    ])
+                    m(DiffViewer, {
+                        lines: VersionDiff.diffData.diff.map(line => ({
+                            type: line.line_type === "added" ? LineType.ADDED :
+                                  line.line_type === "removed" ? LineType.REMOVED : LineType.UNCHANGED,
+                            content: line.content,
+                            oldLine: line.old_line || 0,
+                            newLine: line.new_line || 0
+                        })),
+                        maxHeight: "600px",
+                        noBorder: true
+                    })
                 ])
             ])
         ]);

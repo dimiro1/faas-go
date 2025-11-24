@@ -4,11 +4,12 @@ import { Pagination } from "../components/pagination.js";
 import { formatUnixTimestamp } from "../utils.js";
 import { Button, ButtonVariant, BackButton } from "../components/button.js";
 import { Card, CardHeader, CardContent } from "../components/card.js";
-import { Badge, BadgeVariant, BadgeSize, IDBadge } from "../components/badge.js";
+import { Badge, BadgeVariant, BadgeSize, IDBadge, StatusBadge } from "../components/badge.js";
 import { LogViewer } from "../components/log-viewer.js";
 import { CodeViewer } from "../components/code-viewer.js";
 
 export const ExecutionDetail = {
+    func: null,
     execution: null,
     logs: [],
     loading: true,
@@ -30,6 +31,9 @@ export const ExecutionDetail = {
             ExecutionDetail.execution = execution;
             ExecutionDetail.logs = logsData.logs || [];
             ExecutionDetail.logsTotal = logsData.pagination?.total || 0;
+
+            // Load function details
+            ExecutionDetail.func = await API.functions.get(execution.function_id);
         } catch (e) {
             console.error("Failed to load execution:", e);
         } finally {
@@ -77,18 +81,38 @@ export const ExecutionDetail = {
         }
 
         const exec = ExecutionDetail.execution;
+        const func = ExecutionDetail.func;
 
         return m(".fade-in", [
             // Header
-            m(".execution-details-header", [
-                m(BackButton, { href: `#!/functions/${exec.function_id}` }),
-                m(".execution-details-info", [
-                    m("h3.execution-details-title", m(IDBadge, { id: exec.id })),
-                    m(Badge, {
-                        variant: exec.status === "success" ? BadgeVariant.SUCCESS : BadgeVariant.DESTRUCTIVE,
-                        size: BadgeSize.SM
-                    }, exec.status.toUpperCase()),
-                    m("span.execution-details-duration", exec.duration_ms ? `${exec.duration_ms}ms` : "N/A")
+            m(".function-details-header", [
+                m(".function-details-left", [
+                    m(BackButton, { href: `#!/functions/${exec.function_id}/executions` }),
+                    m(".function-details-divider"),
+                    m(".function-details-info", [
+                        m("h1.function-details-title", [
+                            func ? func.name : "Function",
+                            func && m(IDBadge, { id: func.id }),
+                            m(Badge, {
+                                variant: BadgeVariant.SECONDARY,
+                                size: BadgeSize.SM,
+                                mono: true
+                            }, `exec: ${exec.id.substring(0, 8)}`),
+                            m(Badge, {
+                                variant: exec.status === "success" ? BadgeVariant.SUCCESS : BadgeVariant.DESTRUCTIVE,
+                                size: BadgeSize.SM
+                            }, exec.status.toUpperCase()),
+                            exec.duration_ms && m(Badge, {
+                                variant: BadgeVariant.OUTLINE,
+                                size: BadgeSize.SM,
+                                mono: true
+                            }, `${exec.duration_ms}ms`)
+                        ]),
+                        m("p.function-details-description", formatUnixTimestamp(exec.created_at))
+                    ])
+                ]),
+                m(".function-details-actions", [
+                    func && m(StatusBadge, { enabled: !func.disabled, glow: true })
                 ])
             ]),
 
