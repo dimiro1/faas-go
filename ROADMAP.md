@@ -16,8 +16,6 @@ Here some ideas that I want to implement, the order is not important:
 - Pub Sub
 - Be able to call other functions
 - Cron/scheduling events
-- Improve the way the state is handled in the UI
-- Re-evalute mithriljs
 - Dashboard with calls metrics
 - Consider functions implemented in webassemply (wazero)
 - Consider an api to update the function and env
