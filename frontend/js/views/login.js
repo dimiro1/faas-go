@@ -1,4 +1,12 @@
 import { API } from "../api.js";
+import { Button, ButtonVariant } from "../components/button.js";
+import { Card, CardContent } from "../components/card.js";
+import {
+  FormGroup,
+  FormLabel,
+  PasswordInput,
+  FormHelp,
+} from "../components/form.js";
 
 export const Login = {
   apiKey: "",
@@ -12,10 +20,8 @@ export const Login = {
 
     try {
       await API.auth.login(Login.apiKey);
-      // On success, redirect to functions list
       m.route.set("/functions");
     } catch (err) {
-      // Handle different error formats
       if (err.error) {
         Login.error = err.error;
       } else if (err.message) {
@@ -34,50 +40,63 @@ export const Login = {
   view: () => {
     return m(".login-container", [
       m(".login-card", [
-        m(".login-header", [
-          m("h1", "FaaS-Go"),
-          m("p", "Enter your API key to continue"),
-        ]),
-
-        m(
-          "form",
-          {
-            onsubmit: Login.handleSubmit,
-          },
-          [
-            m(".form-group", [
-              m("label", { for: "api-key" }, "API Key"),
-              m("input#api-key.form-input", {
-                type: "password",
-                placeholder: "Enter your API key",
-                value: Login.apiKey,
-                oninput: (e) => {
-                  Login.apiKey = e.target.value;
-                },
-                required: true,
-                disabled: Login.loading,
-              }),
+        m(Card, [
+          m(CardContent, { large: true }, [
+            m(".login-header", [
+              m("h1.login-title", "FaaS-Go"),
+              m("p.login-subtitle", "Enter your API key to continue"),
             ]),
 
-            Login.error &&
-              m(".alert.alert-error", [m("strong", "Error: "), Login.error]),
+            m(
+              "form",
+              {
+                onsubmit: Login.handleSubmit,
+              },
+              [
+                m(FormGroup, [
+                  m(FormLabel, {
+                    for: "api-key",
+                    text: "API Key",
+                    required: true,
+                  }),
+                  m(PasswordInput, {
+                    id: "api-key",
+                    placeholder: "Enter your API key",
+                    value: Login.apiKey,
+                    required: true,
+                    error: Login.error !== "",
+                    disabled: Login.loading,
+                    oninput: (e) => {
+                      Login.apiKey = e.target.value;
+                    },
+                  }),
+                ]),
+
+                Login.error &&
+                  m(FormHelp, {
+                    text: Login.error,
+                    error: true,
+                  }),
+
+                m(
+                  Button,
+                  {
+                    variant: ButtonVariant.PRIMARY,
+                    type: "submit",
+                    fullWidth: true,
+                    disabled: Login.loading || !Login.apiKey,
+                    loading: Login.loading,
+                  },
+                  Login.loading ? "Logging in..." : "Login",
+                ),
+              ],
+            ),
 
             m(
-              "button.btn.btn-primary.btn-block",
-              {
-                type: "submit",
-                disabled: Login.loading || !Login.apiKey,
-              },
-              Login.loading ? "Logging in..." : "Login",
+              "p.login-footer",
+              "Check the server logs for your API key if this is the first run.",
             ),
-          ],
-        ),
-
-        m(".login-footer", [
-          m(
-            "p.text-muted",
-            "Check the server logs for your API key if this is the first run.",
-          ),
+          ]),
         ]),
       ]),
     ]);
