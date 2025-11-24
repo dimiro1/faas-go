@@ -1,44 +1,52 @@
-import { Icons } from "../icons.js";
 import { API } from "../api.js";
 import { Toast } from "../components/toast.js";
-import { FunctionDocs } from "../components/function-docs.js";
-import { CodeEditor } from "../components/code-editor.js";
+import { Button, ButtonVariant, BackButton } from "../components/button.js";
+import {
+  FormGroup,
+  FormLabel,
+  FormInput,
+  FormTextarea,
+  FormHelp,
+} from "../components/form.js";
+import {
+  TemplateCard,
+  TemplateCards,
+  FunctionTemplates,
+} from "../components/template-card.js";
 
 export const FunctionCreate = {
   formData: {
     name: "",
     description: "",
-    code: `function handler(ctx, event)
-  log.info("Function started")
-
-  return {
-    statusCode = 200,
-    headers = { ["Content-Type"] = "application/json" },
-    body = '{"message": "Hello"}'
-  }
-end`,
+    code: "",
   },
   errors: {},
+  selectedTemplate: "http",
 
   oninit: () => {
     FunctionCreate.formData = {
       name: "",
       description: "",
-      code: `function handler(ctx, event)
-  log.info("Function started")
-
-  return {
-    statusCode = 200,
-    headers = { ["Content-Type"] = "application/json" },
-    body = '{"message": "Hello"}'
-  }
-end`,
+      code: "",
     };
     FunctionCreate.errors = {};
+    FunctionCreate.selectedTemplate = "http";
+    // Set initial code from default template
+    const template = FunctionTemplates.find((t) => t.id === "http");
+    if (template) {
+      FunctionCreate.formData.code = template.code;
+    }
+  },
+
+  selectTemplate: (templateId) => {
+    FunctionCreate.selectedTemplate = templateId;
+    const template = FunctionTemplates.find((t) => t.id === templateId);
+    if (template) {
+      FunctionCreate.formData.code = template.code;
+    }
   },
 
   parseErrorMessage: (message) => {
-    // Parse validation error like "name: name cannot be empty"
     const match = message.match(/^(\w+):\s*(.+)$/);
     if (match) {
       return { field: match[1], message: match[2] };
@@ -69,92 +77,72 @@ end`,
   },
 
   view: () => {
-    return m(".container", [
-      m(".page-header", [
-        m(".page-title", [
-          m("div", [
-            m("h1", "Create New Function"),
-            m(".page-subtitle", "Define your serverless function"),
-          ]),
-          m("a.btn", { href: "#!/functions" }, [Icons.arrowLeft(), "  Back"]),
-        ]),
+    return m(".create-function-page.fade-in", [
+      m(".create-function-header", [
+        m(".create-function-back", [m(BackButton, { href: "#!/functions" })]),
+        m("h1.create-function-title", "Create New Function"),
+        m(
+          "p.create-function-subtitle",
+          "Initialize a new serverless function using Lua.",
+        ),
       ]),
 
-      m(".layout-with-sidebar", [
-        // Main column
-        m(".main-column", [
-          m(".card.mb-24", [
-            m(".card-header", m(".card-title", "Function Details")),
-            m("div", { style: "padding: 16px;" }, [
-              m(".form-group", [
-                m("label.form-label", "Name"),
-                m("input.form-input", {
-                  class: FunctionCreate.errors.name ? "error" : "",
-                  value: FunctionCreate.formData.name,
-                  oninput: (e) => {
-                    FunctionCreate.formData.name = e.target.value;
-                    delete FunctionCreate.errors.name;
-                  },
-                  placeholder: "my-function",
-                }),
-                FunctionCreate.errors.name &&
-                  m("span.form-error", FunctionCreate.errors.name),
-              ]),
-              m(".form-group", [
-                m("label.form-label", "Description"),
-                m("textarea.form-textarea", {
-                  class: FunctionCreate.errors.description ? "error" : "",
-                  value: FunctionCreate.formData.description,
-                  oninput: (e) => {
-                    FunctionCreate.formData.description = e.target.value;
-                    delete FunctionCreate.errors.description;
-                  },
-                  placeholder: "What does this function do?",
-                  rows: 2,
-                }),
-                FunctionCreate.errors.description &&
-                  m("span.form-error", FunctionCreate.errors.description),
-              ]),
-            ]),
-          ]),
-
-          m(".card.mb-24", [
-            m(".card-header", m(".card-title", "Function Code")),
-            m("div", { style: "padding: 16px;" }, [
-              m(CodeEditor, {
-                id: "code-editor",
-                value: FunctionCreate.formData.code,
-                onChange: (value) => {
-                  FunctionCreate.formData.code = value;
-                  delete FunctionCreate.errors.code;
-                },
-              }),
-              FunctionCreate.errors.code &&
-                m("span.form-error", FunctionCreate.errors.code),
-            ]),
-          ]),
-
-          m(
-            "div",
-            {
-              style:
-                "display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 24px;",
+      m(".create-function-form", [
+        // Function Name
+        m(FormGroup, [
+          m(FormLabel, { text: "Function Name", for: "function-name" }),
+          m(FormInput, {
+            id: "function-name",
+            placeholder: "e.g., payment-webhook",
+            value: FunctionCreate.formData.name,
+            error: !!FunctionCreate.errors.name,
+            mono: true,
+            oninput: (e) => {
+              FunctionCreate.formData.name = e.target.value;
+              delete FunctionCreate.errors.name;
             },
-            [
-              m("a.btn", { href: "#!/functions" }, "Cancel"),
-              m(
-                "button.btn.btn-primary",
-                {
-                  onclick: FunctionCreate.createFunction,
-                },
-                "Create Function",
-              ),
-            ],
+          }),
+          FunctionCreate.errors.name &&
+            m(FormHelp, { error: true, text: FunctionCreate.errors.name }),
+        ]),
+
+        // Starter Template
+        m(FormGroup, [
+          m(FormLabel, { text: "Starter Template" }),
+          m(
+            TemplateCards,
+            FunctionTemplates.map((template) =>
+              m(TemplateCard, {
+                key: template.id,
+                name: template.name,
+                description: template.description,
+                icon: template.icon,
+                selected: FunctionCreate.selectedTemplate === template.id,
+                onclick: () => FunctionCreate.selectTemplate(template.id),
+              }),
+            ),
           ),
         ]),
 
-        // Sidebar
-        m(FunctionDocs),
+        // Actions
+        m(".create-function-actions", [
+          m(
+            Button,
+            {
+              variant: ButtonVariant.GHOST,
+              href: "#!/functions",
+            },
+            "Cancel",
+          ),
+          m(
+            Button,
+            {
+              variant: ButtonVariant.PRIMARY,
+              onclick: FunctionCreate.createFunction,
+            },
+            "Create Function",
+          ),
+        ]),
       ]),
     ]);
   },

@@ -1,6 +1,13 @@
 export const Pagination = {
   view: function (vnode) {
-    const { total, limit, offset, onPageChange, onLimitChange } = vnode.attrs;
+    const {
+      total,
+      limit,
+      offset,
+      onPageChange,
+      onLimitChange,
+      showPerPage = true,
+    } = vnode.attrs;
 
     const currentPage = Math.floor(offset / limit) + 1;
     const totalPages = Math.ceil(total / limit);
@@ -8,68 +15,96 @@ export const Pagination = {
     const end = Math.min(offset + limit, total);
 
     if (total === 0) {
-      return m(".pagination", m(".pagination-info", "No items to display"));
+      return null;
     }
 
-    const limitOptions = [10, 20, 50, 100];
+    const hasPrev = currentPage > 1;
+    const hasNext = currentPage < totalPages;
 
-    return m(".pagination", [
-      m(".pagination-info", `Showing ${start}-${end} of ${total}`),
+    const perPageOptions = [10, 20, 50];
 
-      m(".pagination-controls", [
+    return m(
+      "nav.pagination",
+      { role: "navigation", "aria-label": "Pagination" },
+      [
+        m(".pagination__info", [
+          "Showing ",
+          m("span.pagination__highlight", start),
+          " to ",
+          m("span.pagination__highlight", end),
+          " of ",
+          m("span.pagination__highlight", total),
+          " results",
+        ]),
+
+        m(".pagination__controls", [
+          showPerPage &&
+            m(
+              "select.pagination__select",
+              {
+                "aria-label": "Results per page",
+                value: limit,
+                onchange: (e) => onLimitChange(parseInt(e.target.value)),
+              },
+              perPageOptions.map((opt) =>
+                m(
+                  "option",
+                  { value: opt, selected: opt === limit },
+                  `${opt} per page`,
+                ),
+              ),
+            ),
+
+          m(".pagination__buttons", [
+            m(
+              "button.pagination__btn.pagination__btn--prev",
+              {
+                disabled: !hasPrev,
+                onclick: () => hasPrev && onPageChange(offset - limit),
+                "aria-label": "Go to previous page",
+              },
+              "Previous",
+            ),
+            m(
+              "button.pagination__btn",
+              {
+                disabled: !hasNext,
+                onclick: () => hasNext && onPageChange(offset + limit),
+                "aria-label": "Go to next page",
+              },
+              "Next",
+            ),
+          ]),
+        ]),
+      ],
+    );
+  },
+};
+
+// Simple pagination without info text
+export const SimplePagination = {
+  view: function (vnode) {
+    const { hasPrev, hasNext, onPrev, onNext } = vnode.attrs;
+
+    return m(".pagination__controls", [
+      m(".pagination__buttons", [
         m(
-          "button.btn.pagination-button",
+          "button.pagination__btn.pagination__btn--prev",
           {
-            disabled: currentPage === 1,
-            onclick: () => onPageChange(offset - limit),
+            disabled: !hasPrev,
+            onclick: () => hasPrev && onPrev(),
+            "aria-label": "Go to previous page",
           },
           "Previous",
         ),
-
         m(
-          ".pagination-pages",
-          Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-            let pageNum;
-            if (totalPages <= 7) {
-              pageNum = i + 1;
-            } else if (currentPage <= 4) {
-              pageNum = i + 1;
-            } else if (currentPage >= totalPages - 3) {
-              pageNum = totalPages - 6 + i;
-            } else {
-              pageNum = currentPage - 3 + i;
-            }
-
-            return m(
-              "button.btn.pagination-page",
-              {
-                class: pageNum === currentPage ? "active" : "",
-                onclick: () => onPageChange((pageNum - 1) * limit),
-              },
-              pageNum,
-            );
-          }),
-        ),
-
-        m(
-          "button.btn.pagination-button",
+          "button.pagination__btn",
           {
-            disabled: currentPage === totalPages,
-            onclick: () => onPageChange(offset + limit),
+            disabled: !hasNext,
+            onclick: () => hasNext && onNext(),
+            "aria-label": "Go to next page",
           },
           "Next",
-        ),
-      ]),
-
-      m(".pagination-limit", [
-        m("label", "Items per page:"),
-        m(
-          "select.form-select",
-          {
-            value: limit,
-            onchange: (e) => onLimitChange(parseInt(e.target.value)),
-          },
-          limitOptions.map((opt) => m("option", { value: opt }, opt)),
         ),
       ]),
     ]);

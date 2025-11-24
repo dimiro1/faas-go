@@ -1,6 +1,23 @@
-import { Icons } from "../icons.js";
+import { icons } from "../icons.js";
 import { API } from "../api.js";
 import { Pagination } from "../components/pagination.js";
+import { Button, ButtonVariant } from "../components/button.js";
+import { Card, CardHeader, CardContent } from "../components/card.js";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableEmpty,
+} from "../components/table.js";
+import {
+  Badge,
+  BadgeVariant,
+  BadgeSize,
+  StatusBadge,
+} from "../components/badge.js";
 
 export const FunctionsList = {
   functions: [],
@@ -43,99 +60,91 @@ export const FunctionsList = {
 
   view: () => {
     if (FunctionsList.loading) {
-      return m(".loading", "Loading functions...");
+      return m(".loading", [
+        m.trust(icons.spinner()),
+        m("p", "Loading functions..."),
+      ]);
     }
 
-    return m(".container", [
+    return m(".fade-in", [
       m(".page-header", [
-        m(".page-title", [
+        m(".page-header__title", [
           m("div", [
             m("h1", "Functions"),
-            m(".page-subtitle", "Manage your serverless functions"),
+            m(".page-header__subtitle", "Manage your serverless functions"),
           ]),
           m(
-            "a.btn.btn-primary",
+            Button,
             {
+              variant: ButtonVariant.PRIMARY,
               href: "#!/functions/new",
+              icon: "plus",
             },
-            [Icons.plus(), "  New Function"],
+            "New Function",
           ),
         ]),
       ]),
 
-      m(".card", [
-        m(".card-header", [
-          m(".card-title", "All Functions"),
-          m(".card-subtitle", `${FunctionsList.total} functions total`),
-        ]),
+      m(Card, [
+        m(CardHeader, {
+          title: "All Functions",
+          subtitle: `${FunctionsList.total} functions total`,
+        }),
 
         FunctionsList.functions.length === 0
-          ? m(
-              ".text-center.mt-24.mb-24",
-              "No functions yet. Create your first function to get started.",
-            )
-          : [
-              m("table", [
+          ? m(CardContent, [
+              m(".table__empty", [
+                m(".table__empty-icon", m.trust(icons.inbox())),
                 m(
-                  "thead",
-                  m("tr", [
-                    m("th", "Name"),
-                    m("th", "Description"),
-                    m("th", "Active Version"),
-                    m("th.th-actions", "Actions"),
-                  ]),
+                  "p.table__empty-message",
+                  "No functions yet. Create your first function to get started.",
                 ),
+              ]),
+            ])
+          : [
+              m(Table, [
+                m(TableHeader, [
+                  m(TableRow, [
+                    m(TableHead, "Name"),
+                    m(TableHead, "Description"),
+                    m(TableHead, "Status"),
+                    m(TableHead, "Version"),
+                  ]),
+                ]),
                 m(
-                  "tbody",
+                  TableBody,
                   FunctionsList.functions.map((func) =>
-                    m("tr", { key: func.id }, [
-                      m("td", [
-                        func.name,
-                        func.disabled &&
-                          m(
-                            ".badge.badge-error",
-                            { style: "margin-left: 8px; font-size: 10px;" },
-                            "Disabled",
-                          ),
-                      ]),
-                      m("td", func.description || "No description"),
-                      m(
-                        "td",
+                    m(
+                      TableRow,
+                      {
+                        key: func.id,
+                        onclick: () => m.route.set(`/functions/${func.id}`),
+                      },
+                      [
+                        m(TableCell, { mono: true }, func.name),
                         m(
-                          ".badge.badge-success",
-                          `v${func.active_version.version}`,
+                          TableCell,
+                          func.description ||
+                            m("span.text-muted", "No description"),
                         ),
-                      ),
-                      m(
-                        "td.td-actions",
-                        m(".actions", [
+                        m(
+                          TableCell,
+                          m(StatusBadge, { enabled: !func.disabled }),
+                        ),
+                        m(
+                          TableCell,
                           m(
-                            "a.btn.btn-icon",
+                            Badge,
                             {
-                              href: `#!/functions/${func.id}`,
-                              title: "View",
+                              variant: BadgeVariant.SUCCESS,
+                              size: BadgeSize.SM,
+                              mono: true,
                             },
-                            Icons.eye(),
+                            `v${func.active_version.version}`,
                           ),
-                          m(
-                            "a.btn.btn-icon",
-                            {
-                              href: `#!/functions/${func.id}/edit`,
-                              title: "Edit",
-                            },
-                            Icons.pencil(),
-                          ),
-                          m(
-                            "a.btn.btn-icon",
-                            {
-                              href: `#!/functions/${func.id}?tab=test`,
-                              title: "Test",
-                            },
-                            Icons.play(),
-                          ),
-                        ]),
-                      ),
-                    ]),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ]),

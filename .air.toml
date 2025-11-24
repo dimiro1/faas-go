@@ -1,0 +1,31 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  cmd = ""
+  bin = "go"
+  full_bin = "go run ./cmd"
+  delay = 1000
+  exclude_dir = ["assets", "tmp", "vendor", "node_modules", "build"]
+  exclude_regex = ["_test.go"]
+  exclude_unchanged = false
+  follow_symlink = false
+  include_dir = ["cmd", "internal", "frontend"]
+  include_ext = ["go", "html", "js", "css"]
+  kill_delay = "0s"
+  log = "build-errors.log"
+  send_interrupt = false
+  stop_on_error = true
+
+[color]
+  app = ""
+  build = "yellow"
+  main = "magenta"
+  runner = "green"
+  watcher = "cyan"
+
+[log]
+  time = false
+
+[misc]
+  clean_on_exit = true

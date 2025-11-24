@@ -1,5 +1,20 @@
-import { Icons } from "../icons.js";
+import { icons } from "../icons.js";
 import { API } from "../api.js";
+import { BackButton } from "../components/button.js";
+import { routes } from "../routes.js";
+import { Card, CardHeader, CardContent } from "../components/card.js";
+import {
+  Badge,
+  BadgeVariant,
+  BadgeSize,
+  IDBadge,
+  StatusBadge,
+} from "../components/badge.js";
+import {
+  DiffViewer,
+  VersionLabels,
+  LineType,
+} from "../components/diff-viewer.js";
 
 export const VersionDiff = {
   func: null,
@@ -29,127 +44,81 @@ export const VersionDiff = {
 
   view: () => {
     if (VersionDiff.loading) {
-      return m(".loading", "Loading...");
+      return m(".loading", [
+        m.trust(icons.spinner()),
+        m("p", "Loading diff..."),
+      ]);
     }
 
     if (!VersionDiff.func || !VersionDiff.diffData) {
-      return m(".container", m(".card", "Diff not found"));
+      return m(".fade-in", m(Card, m(CardContent, "Diff not found")));
     }
 
-    return m(".container", [
-      m(".page-header", [
-        m(".page-title", [
-          m("div", [
-            m("h1", "Version Comparison"),
+    const func = VersionDiff.func;
+
+    return m(".fade-in", [
+      // Header
+      m(".function-details-header", [
+        m(".function-details-left", [
+          m(BackButton, { href: routes.functionVersions(func.id) }),
+          m(".function-details-divider"),
+          m(".function-details-info", [
+            m("h1.function-details-title", [
+              func.name,
+              m(IDBadge, { id: func.id }),
+              m(
+                Badge,
+                {
+                  variant: BadgeVariant.OUTLINE,
+                  size: BadgeSize.SM,
+                  mono: true,
+                },
+                `v${VersionDiff.diffData.old_version} → v${VersionDiff.diffData.new_version}`,
+              ),
+            ]),
             m(
-              ".page-subtitle",
-              `${VersionDiff.func.name} - v${VersionDiff.diffData.old_version} → v${VersionDiff.diffData.new_version}`,
+              "p.function-details-description",
+              func.description || "No description",
             ),
           ]),
-          m("a.btn", { href: `#!/functions/${VersionDiff.func.id}` }, [
-            Icons.arrowLeft(),
-            "  Back",
-          ]),
+        ]),
+        m(".function-details-actions", [
+          m(StatusBadge, { enabled: !func.disabled, glow: true }),
         ]),
       ]),
 
-      m(".card.mb-24", [
-        m(".card-header", [
-          m(".card-title", "Code Changes"),
-          m("div", { style: "display: flex; gap: 12px; font-size: 13px;" }, [
-            m(
-              "span",
-              { style: "color: #ef4444;" },
-              `- Version ${VersionDiff.diffData.old_version}`,
-            ),
-            m(
-              "span",
-              { style: "color: #86efac;" },
-              `+ Version ${VersionDiff.diffData.new_version}`,
-            ),
-          ]),
+      m(Card, [
+        m(CardHeader, {
+          title: "Code Changes",
+        }, [
+          m(VersionLabels, {
+            oldLabel: `v${VersionDiff.diffData.old_version}`,
+            newLabel: `v${VersionDiff.diffData.new_version}`,
+            additions: VersionDiff.diffData.diff.filter(
+              (l) => l.line_type === "added",
+            ).length,
+            deletions: VersionDiff.diffData.diff.filter(
+              (l) => l.line_type === "removed",
+            ).length,
+          }),
         ]),
-        m(
-          "div",
-          {
-            style:
-              "max-height: 600px; overflow-y: auto; font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace; font-size: 13px; background: #1e1e1e;",
-          },
-          m(
-            "table",
-            { style: "margin: 0; width: 100%; border-collapse: collapse;" },
-            [
-              m(
-                "tbody",
-                VersionDiff.diffData.diff.map((line, idx) =>
-                  m(
-                    "tr",
-                    {
-                      key: idx,
-                      style: `background: ${
-                        line.line_type === "added"
-                          ? "#14532d40"
-                          : line.line_type === "removed"
-                            ? "#7f1d1d40"
-                            : "transparent"
-                      };`,
-                    },
-                    [
-                      m(
-                        "td",
-                        {
-                          style:
-                            "width: 40px; padding: 2px 8px; text-align: right; color: #666; border-right: 1px solid #3e3e42; user-select: none; background: #252526;",
-                        },
-                        line.old_line || "",
-                      ),
-                      m(
-                        "td",
-                        {
-                          style:
-                            "width: 40px; padding: 2px 8px; text-align: right; color: #666; border-right: 1px solid #3e3e42; user-select: none; background: #252526;",
-                        },
-                        line.new_line || "",
-                      ),
-                      m(
-                        "td",
-                        {
-                          style:
-                            "width: 20px; padding: 2px 8px; text-align: center; border-right: 1px solid #3e3e42; user-select: none; font-weight: bold; color: " +
-                            (line.line_type === "added"
-                              ? "#86efac"
-                              : line.line_type === "removed"
-                                ? "#ef4444"
-                                : "#666") +
-                            ";",
-                        },
-                        line.line_type === "added"
-                          ? "+"
-                          : line.line_type === "removed"
-                            ? "-"
-                            : " ",
-                      ),
-                      m(
-                        "td",
-                        {
-                          style:
-                            "padding: 2px 12px; white-space: pre-wrap; word-break: break-all; color: " +
-                            (line.line_type === "added"
-                              ? "#86efac"
-                              : line.line_type === "removed"
-                                ? "#fca5a5"
-                                : "#e5e5e5") +
-                            ";",
-                        },
-                        line.content || " ",
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        m(CardContent, { noPadding: true }, [
+          m(DiffViewer, {
+            lines: VersionDiff.diffData.diff.map((line) => ({
+              type:
+                line.line_type === "added"
+                  ? LineType.ADDED
+                  : line.line_type === "removed"
+                    ? LineType.REMOVED
+                    : LineType.UNCHANGED,
+              content: line.content,
+              oldLine: line.old_line || 0,
+              newLine: line.new_line || 0,
+            })),
+            maxHeight: "600px",
+            noBorder: true,
+          }),
+        ]),
       ]),
     ]);
   },

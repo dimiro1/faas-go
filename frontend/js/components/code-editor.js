@@ -312,6 +312,36 @@ const API_DOCS = {
   },
 };
 
+const registerGitHubDarkTheme = () => {
+  if (!window.monaco || window.__githubDarkThemeRegistered) return;
+  window.__githubDarkThemeRegistered = true;
+
+  monaco.editor.defineTheme("github-dark", {
+    base: "vs-dark",
+    inherit: true,
+    rules: [
+      { token: "comment", foreground: "8b949e" },
+      { token: "keyword", foreground: "ff7b72" },
+      { token: "string", foreground: "a5d6ff" },
+      { token: "number", foreground: "79c0ff" },
+      { token: "type", foreground: "ffa657" },
+      { token: "function", foreground: "d2a8ff" },
+      { token: "variable", foreground: "ffa657" },
+      { token: "constant", foreground: "79c0ff" },
+      { token: "operator", foreground: "ff7b72" },
+    ],
+    colors: {
+      "editor.background": "#0d1117",
+      "editor.foreground": "#c9d1d9",
+      "editor.lineHighlightBackground": "#161b22",
+      "editor.selectionBackground": "#264f78",
+      "editorCursor.foreground": "#c9d1d9",
+      "editorLineNumber.foreground": "#484f58",
+      "editorLineNumber.activeForeground": "#c9d1d9",
+    },
+  });
+};
+
 const registerLuaCompletions = () => {
   if (!window.monaco || window.__luaCompletionsRegistered) return;
   window.__luaCompletionsRegistered = true;
@@ -480,15 +510,15 @@ export const CodeEditor = {
       onChange = null,
       readOnly = false,
       language = "lua",
-      theme = "vs-dark",
+      theme = "github-dark",
       lineNumbers = true,
       minimap = false,
-      height = "400px",
+      height = "500px",
     } = vnode.attrs;
 
     return m("div", {
       id: id,
-      style: `height: ${height}; border: 1px solid #444;`,
+      style: `height: ${height};`,
       oncreate: (divVnode) => {
         const container = divVnode.dom;
         if (container) {
@@ -496,6 +526,7 @@ export const CodeEditor = {
           require(["vs/editor/editor.main"], function () {
             if (!window.monaco) return;
 
+            registerGitHubDarkTheme();
             registerLuaCompletions();
 
             const editor = monaco.editor.create(container, {

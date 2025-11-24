@@ -36,6 +36,9 @@ A lightweight, self-hosted Function-as-a-Service platform written in Go with Lua
 ### Version Comparison
 ![Version Comparison](shots/comparison.png)
 
+### Command Palette
+![Command Palette](shots/command.png)
+
 ## Quick Start
 
 ### Building from Source
