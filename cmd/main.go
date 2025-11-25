@@ -13,6 +13,7 @@ import (
 	"github.com/dimiro1/faas-go/frontend"
 	"github.com/dimiro1/faas-go/internal/api"
 	"github.com/dimiro1/faas-go/internal/env"
+	"github.com/dimiro1/faas-go/internal/housekeeping"
 	internalhttp "github.com/dimiro1/faas-go/internal/http"
 	"github.com/dimiro1/faas-go/internal/kv"
 	"github.com/dimiro1/faas-go/internal/logger"
@@ -63,6 +64,13 @@ func main() {
 	appLogger := logger.NewSQLiteLogger(db)
 	httpClient := internalhttp.NewDefaultClient()
 
+	// Initialize housekeeping scheduler
+	housekeepingScheduler := housekeeping.NewScheduler(apiDB)
+	if err := housekeepingScheduler.Start(); err != nil {
+		slog.Error("Failed to start housekeeping scheduler", "error", err)
+		os.Exit(1)
+	}
+
 	server := api.NewServer(api.ServerConfig{
 		DB:               apiDB,
 		Logger:           appLogger,
@@ -99,6 +107,10 @@ func main() {
 	select {
 	case sig := <-shutdown:
 		slog.Info("Shutdown signal received", "signal", sig)
+
+		// Stop housekeeping scheduler
+		slog.Info("Stopping housekeeping scheduler...")
+		housekeepingScheduler.Stop()
 
 		// Give active connections 30 seconds to complete
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

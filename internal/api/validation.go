@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/dimiro1/faas-go/internal/store"
@@ -23,6 +24,8 @@ const (
 	// MaxEnvVars is the maximum number of environment variables per function
 	MaxEnvVars = 100
 )
+
+var AllowedRetentionDays = []int{7, 15, 30, 365}
 
 // ValidationError represents a validation error
 type ValidationError struct {
@@ -67,7 +70,7 @@ func ValidateUpdateFunctionRequest(req *store.UpdateFunctionRequest) error {
 	}
 
 	// At least one field must be provided
-	if req.Name == nil && req.Description == nil && req.Code == nil && req.Disabled == nil {
+	if req.Name == nil && req.Description == nil && req.Code == nil && req.Disabled == nil && req.RetentionDays == nil {
 		return &ValidationError{Field: "request", Message: "at least one field must be provided for update"}
 	}
 
@@ -88,6 +91,13 @@ func ValidateUpdateFunctionRequest(req *store.UpdateFunctionRequest) error {
 	// Validate code if provided
 	if req.Code != nil {
 		if err := validateCode(*req.Code); err != nil {
+			return err
+		}
+	}
+
+	// Validate retention_days if provided
+	if req.RetentionDays != nil {
+		if err := validateRetentionDays(*req.RetentionDays); err != nil {
 			return err
 		}
 	}
@@ -213,4 +223,16 @@ func isValidEnvVarKey(key string) bool {
 		}
 	}
 	return true
+}
+
+// validateRetentionDays validates retention days value
+func validateRetentionDays(days int) error {
+	// Check if the value is in the allowed list
+	if slices.Contains(AllowedRetentionDays, days) {
+		return nil
+	}
+	return &ValidationError{
+		Field:   "retention_days",
+		Message: fmt.Sprintf("retention_days must be one of: %v", AllowedRetentionDays),
+	}
 }

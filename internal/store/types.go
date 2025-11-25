@@ -21,13 +21,14 @@ const (
 
 // Function represents a serverless function
 type Function struct {
-	ID          string            `json:"id"`
-	Name        string            `json:"name"`
-	Description *string           `json:"description,omitempty"`
-	EnvVars     map[string]string `json:"env_vars"`
-	Disabled    bool              `json:"disabled"`
-	CreatedAt   int64             `json:"created_at"`
-	UpdatedAt   int64             `json:"updated_at"`
+	ID            string            `json:"id"`
+	Name          string            `json:"name"`
+	Description   *string           `json:"description,omitempty"`
+	EnvVars       map[string]string `json:"env_vars"`
+	Disabled      bool              `json:"disabled"`
+	RetentionDays *int              `json:"retention_days,omitempty"`
+	CreatedAt     int64             `json:"created_at"`
+	UpdatedAt     int64             `json:"updated_at"`
 }
 
 // FunctionVersion represents a specific version of a function
@@ -88,8 +89,9 @@ type PaginationInfo struct {
 
 // UpdateFunctionRequest is the request body for updating a function
 type UpdateFunctionRequest struct {
-	Name        *string `json:"name,omitempty"`
-	Description *string `json:"description,omitempty"`
-	Code        *string `json:"code,omitempty"`
-	Disabled    *bool   `json:"disabled,omitempty"`
+	Name          *string `json:"name,omitempty"`
+	Description   *string `json:"description,omitempty"`
+	Code          *string `json:"code,omitempty"`
+	Disabled      *bool   `json:"disabled,omitempty"`
+	RetentionDays *int    `json:"retention_days,omitempty"`
 }

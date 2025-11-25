@@ -869,6 +869,44 @@ func TestUpdateFunction_ToggleDisabled(t *testing.T) {
 	}
 }
 
+func TestUpdateFunction_RetentionDays(t *testing.T) {
+	database := store.NewMemoryDB()
+	server := createTestServer(database)
+
+	// Create a test function first
+	fn := createTestFunction(t, database)
+
+	// Update retention days to 30
+	retentionDays := 30
+	reqBody := store.UpdateFunctionRequest{
+		RetentionDays: &retentionDays,
+	}
+
+	body, _ := json.Marshal(reqBody)
+	req := makeAuthRequest(http.MethodPut, "/api/functions/"+fn.ID, body)
+	w := httptest.NewRecorder()
+
+	server.Handler().ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Errorf("expected status 200, got %d", w.Code)
+	}
+
+	// Verify the retention days was updated
+	updated, err := database.GetFunction(context.Background(), fn.ID)
+	if err != nil {
+		t.Fatalf("failed to get updated function: %v", err)
+	}
+
+	if updated.RetentionDays == nil {
+		t.Fatal("expected retention_days to be set")
+	}
+
+	if *updated.RetentionDays != 30 {
+		t.Errorf("expected retention_days to be 30, got %d", *updated.RetentionDays)
+	}
+}
+
 func TestExecuteFunction_DisabledFunction(t *testing.T) {
 	database := store.NewMemoryDB()
 	server := NewServer(ServerConfig{

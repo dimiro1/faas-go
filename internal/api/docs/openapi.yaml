@@ -1060,6 +1060,12 @@ components:
           description: Whether the function is disabled and cannot be executed
           example: false
           default: false
+        retention_days:
+          type: integer
+          nullable: true
+          description: Number of days to retain execution logs (default is 7 days)
+          enum: [7, 15, 30, 365]
+          example: 7
         created_at:
           type: integer
           format: int64
@@ -1305,6 +1311,12 @@ components:
           nullable: true
           description: Set to true to disable the function (preventing execution), false to enable it
           example: false
+        retention_days:
+          type: integer
+          nullable: true
+          description: Number of days to retain execution logs
+          enum: [7, 15, 30, 365]
+          example: 30
 
     UpdateEnvVarsRequest:
       type: object

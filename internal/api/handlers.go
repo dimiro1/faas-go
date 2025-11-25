@@ -230,7 +230,7 @@ func UpdateFunctionHandler(database store.DB) http.HandlerFunc {
 		}
 
 		// If metadata is provided, update the function
-		if req.Name != nil || req.Description != nil || req.Disabled != nil {
+		if req.Name != nil || req.Description != nil || req.Disabled != nil || req.RetentionDays != nil {
 			err := database.UpdateFunction(r.Context(), id, req)
 			if err != nil {
 				writeError(w, http.StatusNotFound, "Function not found")

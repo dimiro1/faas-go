@@ -42,14 +42,15 @@ func (db *SQLiteDB) CreateFunction(ctx context.Context, fn Function) (Function, 
 }
 
 func (db *SQLiteDB) GetFunction(ctx context.Context, id string) (Function, error) {
-	query := `SELECT id, name, description, disabled, created_at, updated_at
+	query := `SELECT id, name, description, disabled, retention_days, created_at, updated_at
 	          FROM functions WHERE id = ?`
 
 	var fn Function
 	var description sql.NullString
+	var retentionDays sql.NullInt64
 
 	err := db.db.QueryRowContext(ctx, query, id).Scan(
-		&fn.ID, &fn.Name, &description, &fn.Disabled, &fn.CreatedAt, &fn.UpdatedAt,
+		&fn.ID, &fn.Name, &description, &fn.Disabled, &retentionDays, &fn.CreatedAt, &fn.UpdatedAt,
 	)
 	if errors.Is(err, sql.ErrNoRows) {
 		return Function{}, fmt.Errorf("function not found")
@@ -60,6 +61,10 @@ func (db *SQLiteDB) GetFunction(ctx context.Context, id string) (Function, error
 
 	if description.Valid {
 		fn.Description = &description.String
+	}
+	if retentionDays.Valid {
+		days := int(retentionDays.Int64)
+		fn.RetentionDays = &days
 	}
 
 	fn.EnvVars = make(map[string]string)
@@ -79,7 +84,7 @@ func (db *SQLiteDB) ListFunctions(ctx context.Context, params PaginationParams) 
 	params = params.Normalize()
 
 	query := `SELECT
-		f.id, f.name, f.description, f.disabled, f.created_at, f.updated_at,
+		f.id, f.name, f.description, f.disabled, f.retention_days, f.created_at, f.updated_at,
 		fv.id, fv.version, fv.code, fv.created_at, fv.created_by
 	FROM functions f
 	LEFT JOIN function_versions fv ON f.id = fv.function_id AND fv.is_active = 1
@@ -96,13 +101,14 @@ func (db *SQLiteDB) ListFunctions(ctx context.Context, params PaginationParams) 
 	for rows.Next() {
 		var fn FunctionWithActiveVersion
 		var description sql.NullString
+		var retentionDays sql.NullInt64
 		var versionID, versionCode sql.NullString
 		var versionNum sql.NullInt64
 		var versionCreatedAt sql.NullInt64
 		var versionCreatedBy sql.NullString
 
 		if err := rows.Scan(
-			&fn.ID, &fn.Name, &description, &fn.Disabled, &fn.CreatedAt, &fn.UpdatedAt,
+			&fn.ID, &fn.Name, &description, &fn.Disabled, &retentionDays, &fn.CreatedAt, &fn.UpdatedAt,
 			&versionID, &versionNum, &versionCode, &versionCreatedAt, &versionCreatedBy,
 		); err != nil {
 			return nil, 0, fmt.Errorf("failed to scan function: %w", err)
@@ -110,6 +116,10 @@ func (db *SQLiteDB) ListFunctions(ctx context.Context, params PaginationParams) 
 
 		if description.Valid {
 			fn.Description = &description.String
+		}
+		if retentionDays.Valid {
+			days := int(retentionDays.Int64)
+			fn.RetentionDays = &days
 		}
 
 		fn.EnvVars = make(map[string]string)
@@ -173,6 +183,14 @@ func (db *SQLiteDB) UpdateFunction(ctx context.Context, id string, updates Updat
 			*updates.Disabled, time.Now().Unix(), id)
 		if err != nil {
 			return fmt.Errorf("failed to update disabled status: %w", err)
+		}
+	}
+
+	if updates.RetentionDays != nil {
+		_, err = tx.ExecContext(ctx, "UPDATE functions SET retention_days = ?, updated_at = ? WHERE id = ?",
+			updates.RetentionDays, time.Now().Unix(), id)
+		if err != nil {
+			return fmt.Errorf("failed to update retention days: %w", err)
 		}
 	}
 
@@ -528,6 +546,22 @@ func (db *SQLiteDB) ListExecutions(ctx context.Context, functionID string, param
 	}
 
 	return executions, total, rows.Err()
+}
+
+func (db *SQLiteDB) DeleteOldExecutions(ctx context.Context, beforeTimestamp int64) (int64, error) {
+	query := `DELETE FROM executions WHERE created_at < ?`
+
+	result, err := db.db.ExecContext(ctx, query, beforeTimestamp)
+	if err != nil {
+		return 0, fmt.Errorf("failed to delete old executions: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, fmt.Errorf("failed to get rows affected: %w", err)
+	}
+
+	return rowsAffected, nil
 }
 
 // Health check

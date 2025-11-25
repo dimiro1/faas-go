@@ -1208,3 +1208,184 @@ func TestSQLiteDB_Ping(t *testing.T) {
 		t.Fatalf("Ping failed: %v", err)
 	}
 }
+
+// Retention tests
+
+func TestSQLiteDB_UpdateFunction_RetentionDays(t *testing.T) {
+	db, sqliteDB := setupTestDB(t)
+	defer func() { _ = db.Close() }()
+
+	ctx := context.Background()
+
+	// Create a function
+	fn := Function{
+		ID:      "func_retention",
+		Name:    "retention-test",
+		EnvVars: make(map[string]string),
+	}
+
+	created, err := sqliteDB.CreateFunction(ctx, fn)
+	if err != nil {
+		t.Fatalf("CreateFunction failed: %v", err)
+	}
+
+	if created.RetentionDays != nil {
+		t.Error("Expected RetentionDays to be nil initially")
+	}
+
+	// Update retention days
+	retentionDays := 30
+	updates := UpdateFunctionRequest{
+		RetentionDays: &retentionDays,
+	}
+
+	if err := sqliteDB.UpdateFunction(ctx, fn.ID, updates); err != nil {
+		t.Fatalf("UpdateFunction failed: %v", err)
+	}
+
+	// Retrieve and verify
+	updated, err := sqliteDB.GetFunction(ctx, fn.ID)
+	if err != nil {
+		t.Fatalf("GetFunction failed: %v", err)
+	}
+
+	if updated.RetentionDays == nil {
+		t.Fatal("Expected RetentionDays to be set")
+	}
+	if *updated.RetentionDays != 30 {
+		t.Errorf("Expected RetentionDays 30, got %d", *updated.RetentionDays)
+	}
+}
+
+func TestSQLiteDB_DeleteOldExecutions(t *testing.T) {
+	db, sqliteDB := setupTestDB(t)
+	defer func() { _ = db.Close() }()
+
+	ctx := context.Background()
+
+	// Create function and version
+	fn := Function{
+		ID:      "func_cleanup",
+		Name:    "cleanup-test",
+		EnvVars: make(map[string]string),
+	}
+
+	if _, err := sqliteDB.CreateFunction(ctx, fn); err != nil {
+		t.Fatalf("CreateFunction failed: %v", err)
+	}
+
+	ver, err := sqliteDB.CreateVersion(ctx, fn.ID, "code", nil)
+	if err != nil {
+		t.Fatalf("CreateVersion failed: %v", err)
+	}
+
+	// Create executions with different timestamps
+	now := time.Now().Unix()
+	oldTime := now - (10 * 24 * 60 * 60) // 10 days ago
+	recentTime := now - (2 * 24 * 60 * 60) // 2 days ago
+
+	// Manually insert executions with specific timestamps
+	_, err = db.ExecContext(ctx, `INSERT INTO executions (id, function_id, function_version_id, status, created_at) VALUES (?, ?, ?, ?, ?)`,
+		"exec_old", fn.ID, ver.ID, ExecutionStatusSuccess, oldTime)
+	if err != nil {
+		t.Fatalf("Failed to insert old execution: %v", err)
+	}
+
+	_, err = db.ExecContext(ctx, `INSERT INTO executions (id, function_id, function_version_id, status, created_at) VALUES (?, ?, ?, ?, ?)`,
+		"exec_recent", fn.ID, ver.ID, ExecutionStatusSuccess, recentTime)
+	if err != nil {
+		t.Fatalf("Failed to insert recent execution: %v", err)
+	}
+
+	// Delete executions older than 7 days
+	cutoffTime := now - (7 * 24 * 60 * 60)
+	deleted, err := sqliteDB.DeleteOldExecutions(ctx, cutoffTime)
+	if err != nil {
+		t.Fatalf("DeleteOldExecutions failed: %v", err)
+	}
+
+	if deleted != 1 {
+		t.Errorf("Expected 1 deleted execution, got %d", deleted)
+	}
+
+	// Verify old execution is gone
+	_, err = sqliteDB.GetExecution(ctx, "exec_old")
+	if err == nil {
+		t.Error("Expected old execution to be deleted")
+	}
+
+	// Verify recent execution still exists
+	_, err = sqliteDB.GetExecution(ctx, "exec_recent")
+	if err != nil {
+		t.Errorf("Expected recent execution to still exist: %v", err)
+	}
+}
+
+func TestSQLiteDB_DeleteOldExecutions_NoExecutions(t *testing.T) {
+	db, sqliteDB := setupTestDB(t)
+	defer func() { _ = db.Close() }()
+
+	ctx := context.Background()
+
+	// Delete without any executions
+	cutoffTime := time.Now().Unix()
+	deleted, err := sqliteDB.DeleteOldExecutions(ctx, cutoffTime)
+	if err != nil {
+		t.Fatalf("DeleteOldExecutions failed: %v", err)
+	}
+
+	if deleted != 0 {
+		t.Errorf("Expected 0 deleted executions, got %d", deleted)
+	}
+}
+
+func TestSQLiteDB_DeleteOldExecutions_AllNew(t *testing.T) {
+	db, sqliteDB := setupTestDB(t)
+	defer func() { _ = db.Close() }()
+
+	ctx := context.Background()
+
+	// Create function, version, and recent execution
+	fn := Function{
+		ID:      "func_cleanup_new",
+		Name:    "cleanup-new-test",
+		EnvVars: make(map[string]string),
+	}
+
+	if _, err := sqliteDB.CreateFunction(ctx, fn); err != nil {
+		t.Fatalf("CreateFunction failed: %v", err)
+	}
+
+	ver, err := sqliteDB.CreateVersion(ctx, fn.ID, "code", nil)
+	if err != nil {
+		t.Fatalf("CreateVersion failed: %v", err)
+	}
+
+	exec := Execution{
+		ID:                "exec_new",
+		FunctionID:        fn.ID,
+		FunctionVersionID: ver.ID,
+		Status:            ExecutionStatusSuccess,
+	}
+
+	if _, err := sqliteDB.CreateExecution(ctx, exec); err != nil {
+		t.Fatalf("CreateExecution failed: %v", err)
+	}
+
+	// Try to delete with cutoff time in the past (before execution was created)
+	cutoffTime := time.Now().Unix() - (30 * 24 * 60 * 60) // 30 days ago
+	deleted, err := sqliteDB.DeleteOldExecutions(ctx, cutoffTime)
+	if err != nil {
+		t.Fatalf("DeleteOldExecutions failed: %v", err)
+	}
+
+	if deleted != 0 {
+		t.Errorf("Expected 0 deleted executions, got %d", deleted)
+	}
+
+	// Verify execution still exists
+	_, err = sqliteDB.GetExecution(ctx, exec.ID)
+	if err != nil {
+		t.Errorf("Expected execution to still exist: %v", err)
+	}
+}

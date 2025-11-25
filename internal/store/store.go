@@ -27,6 +27,7 @@ type DB interface {
 	GetExecution(ctx context.Context, executionID string) (Execution, error)
 	UpdateExecution(ctx context.Context, executionID string, status ExecutionStatus, durationMs *int64, errorMsg *string) error
 	ListExecutions(ctx context.Context, functionID string, params PaginationParams) ([]Execution, int64, error)
+	DeleteOldExecutions(ctx context.Context, beforeTimestamp int64) (int64, error)
 
 	// Health check
 	Ping(ctx context.Context) error

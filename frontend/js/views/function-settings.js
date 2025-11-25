@@ -36,6 +36,7 @@ export const FunctionSettings = {
   editedName: null,
   editedDescription: null,
   editedDisabled: null,
+  editedRetentionDays: null,
   envVars: [],
   envErrors: {},
 
@@ -43,6 +44,7 @@ export const FunctionSettings = {
     FunctionSettings.editedName = null;
     FunctionSettings.editedDescription = null;
     FunctionSettings.editedDisabled = null;
+    FunctionSettings.editedRetentionDays = null;
     FunctionSettings.envVars = [];
     FunctionSettings.envErrors = {};
     FunctionSettings.loadFunction(vnode.attrs.id);
@@ -55,6 +57,7 @@ export const FunctionSettings = {
       FunctionSettings.editedName = null;
       FunctionSettings.editedDescription = null;
       FunctionSettings.editedDisabled = null;
+      FunctionSettings.editedRetentionDays = null;
       FunctionSettings.envVars = Object.entries(
         FunctionSettings.func.env_vars || {},
       ).map(([key, value]) => ({
@@ -106,7 +109,8 @@ export const FunctionSettings = {
   hasGeneralChanges: () => {
     return (
       FunctionSettings.editedName !== null ||
-      FunctionSettings.editedDescription !== null
+      FunctionSettings.editedDescription !== null ||
+      FunctionSettings.editedRetentionDays !== null
     );
   },
 
@@ -120,6 +124,9 @@ export const FunctionSettings = {
       }
       if (FunctionSettings.editedDescription !== null) {
         updates.description = FunctionSettings.editedDescription;
+      }
+      if (FunctionSettings.editedRetentionDays !== null) {
+        updates.retention_days = FunctionSettings.editedRetentionDays || 7;
       }
 
       await API.functions.update(FunctionSettings.func.id, updates);
@@ -259,6 +266,31 @@ export const FunctionSettings = {
                       FunctionSettings.editedDescription = null;
                     }
                   },
+                }),
+              ]),
+              m(FormGroup, [
+                m(FormLabel, { text: "Log Retention Period" }),
+                m("select.form-select", {
+                  value:
+                    FunctionSettings.editedRetentionDays !== null
+                      ? FunctionSettings.editedRetentionDays
+                      : func.retention_days || 7,
+                  onchange: (e) => {
+                    const value = parseInt(e.target.value, 10);
+                    if (value !== (func.retention_days || 7)) {
+                      FunctionSettings.editedRetentionDays = value;
+                    } else {
+                      FunctionSettings.editedRetentionDays = null;
+                    }
+                  },
+                }, [
+                  m("option", { value: 7 }, "7 days"),
+                  m("option", { value: 15 }, "15 days"),
+                  m("option", { value: 30 }, "30 days"),
+                  m("option", { value: 365 }, "1 year"),
+                ]),
+                m(FormHelp, {
+                  text: "Executions older than this will be automatically deleted",
                 }),
               ]),
             ]),

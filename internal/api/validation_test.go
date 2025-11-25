@@ -353,3 +353,157 @@ func TestIsValidEnvVarKey(t *testing.T) {
 func strPtr(s string) *string {
 	return &s
 }
+
+// Helper function for creating int pointers
+func intPtr(i int) *int {
+	return &i
+}
+
+func TestValidateRetentionDays(t *testing.T) {
+	tests := []struct {
+		name    string
+		days    int
+		wantErr bool
+		errMsg  string
+	}{
+		{
+			name:    "valid 7 days",
+			days:    7,
+			wantErr: false,
+		},
+		{
+			name:    "valid 15 days",
+			days:    15,
+			wantErr: false,
+		},
+		{
+			name:    "valid 30 days",
+			days:    30,
+			wantErr: false,
+		},
+		{
+			name:    "valid 365 days (1 year)",
+			days:    365,
+			wantErr: false,
+		},
+		{
+			name:    "invalid 1 day",
+			days:    1,
+			wantErr: true,
+			errMsg:  "must be one of",
+		},
+		{
+			name:    "invalid 5 days",
+			days:    5,
+			wantErr: true,
+			errMsg:  "must be one of",
+		},
+		{
+			name:    "invalid 60 days",
+			days:    60,
+			wantErr: true,
+			errMsg:  "must be one of",
+		},
+		{
+			name:    "invalid 500 days",
+			days:    500,
+			wantErr: true,
+			errMsg:  "must be one of",
+		},
+		{
+			name:    "invalid 0 days",
+			days:    0,
+			wantErr: true,
+			errMsg:  "must be one of",
+		},
+		{
+			name:    "invalid negative days",
+			days:    -1,
+			wantErr: true,
+			errMsg:  "must be one of",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := validateRetentionDays(tt.days)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("validateRetentionDays() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if err != nil && tt.errMsg != "" && !strings.Contains(err.Error(), tt.errMsg) {
+				t.Errorf("validateRetentionDays() error = %v, should contain %v", err, tt.errMsg)
+			}
+		})
+	}
+}
+
+func TestValidateUpdateFunctionRequest_WithRetentionDays(t *testing.T) {
+	tests := []struct {
+		name    string
+		req     *store.UpdateFunctionRequest
+		wantErr bool
+		errMsg  string
+	}{
+		{
+			name: "valid retention days 7",
+			req: &store.UpdateFunctionRequest{
+				RetentionDays: intPtr(7),
+			},
+			wantErr: false,
+		},
+		{
+			name: "valid retention days 30",
+			req: &store.UpdateFunctionRequest{
+				RetentionDays: intPtr(30),
+			},
+			wantErr: false,
+		},
+		{
+			name: "invalid retention days 5",
+			req: &store.UpdateFunctionRequest{
+				RetentionDays: intPtr(5),
+			},
+			wantErr: true,
+			errMsg:  "must be one of",
+		},
+		{
+			name: "invalid retention days 100",
+			req: &store.UpdateFunctionRequest{
+				RetentionDays: intPtr(100),
+			},
+			wantErr: true,
+			errMsg:  "must be one of",
+		},
+		{
+			name: "combined update with valid retention days",
+			req: &store.UpdateFunctionRequest{
+				Name:          strPtr("new-name"),
+				RetentionDays: intPtr(15),
+			},
+			wantErr: false,
+		},
+		{
+			name: "combined update with invalid retention days",
+			req: &store.UpdateFunctionRequest{
+				Name:          strPtr("new-name"),
+				RetentionDays: intPtr(20),
+			},
+			wantErr: true,
+			errMsg:  "must be one of",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateUpdateFunctionRequest(tt.req)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateUpdateFunctionRequest() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if err != nil && tt.errMsg != "" && !strings.Contains(err.Error(), tt.errMsg) {
+				t.Errorf("ValidateUpdateFunctionRequest() error = %v, should contain %v", err, tt.errMsg)
+			}
+		})
+	}
+}

@@ -112,6 +112,9 @@ func (db *MemoryDB) UpdateFunction(_ context.Context, id string, updates UpdateF
 	if updates.Disabled != nil {
 		fn.Disabled = *updates.Disabled
 	}
+	if updates.RetentionDays != nil {
+		fn.RetentionDays = updates.RetentionDays
+	}
 
 	fn.UpdatedAt = time.Now().Unix()
 	db.functions[id] = fn
@@ -272,7 +275,10 @@ func (db *MemoryDB) CreateExecution(_ context.Context, exec Execution) (Executio
 	db.mu.Lock()
 	defer db.mu.Unlock()
 
-	exec.CreatedAt = time.Now().Unix()
+	// Only set CreatedAt if not already set (allows manual timestamps for testing)
+	if exec.CreatedAt == 0 {
+		exec.CreatedAt = time.Now().Unix()
+	}
 	db.executions[exec.ID] = exec
 	return exec, nil
 }
@@ -327,12 +333,24 @@ func (db *MemoryDB) ListExecutions(_ context.Context, functionID string, params 
 		return []Execution{}, total, nil
 	}
 
-	end := start + params.Limit
-	if end > len(allExecutions) {
-		end = len(allExecutions)
-	}
+	end := min(start+params.Limit, len(allExecutions))
 
 	return allExecutions[start:end], total, nil
+}
+
+func (db *MemoryDB) DeleteOldExecutions(_ context.Context, beforeTimestamp int64) (int64, error) {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+
+	var deletedCount int64
+	for id, exec := range db.executions {
+		if exec.CreatedAt < beforeTimestamp {
+			delete(db.executions, id)
+			deletedCount++
+		}
+	}
+
+	return deletedCount, nil
 }
 
 // Health check
