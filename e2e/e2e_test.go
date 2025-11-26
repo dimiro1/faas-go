@@ -68,7 +68,7 @@ func startTestServer(t *testing.T) *httptest.Server {
 	// Register cleanup
 	t.Cleanup(func() {
 		ts.Close()
-		db.Close()
+		_ = db.Close()
 	})
 
 	return ts
