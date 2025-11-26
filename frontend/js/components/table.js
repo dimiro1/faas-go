@@ -1,9 +1,27 @@
+/**
+ * @fileoverview Table components for displaying tabular data.
+ */
+
 import { icons } from "../icons.js";
 
 /**
- * Table wrapper component
+ * @typedef {import('../types.js').IconName} IconName
+ */
+
+/**
+ * Table wrapper component with responsive scrolling.
+ * @type {Object}
  */
 export const Table = {
+  /**
+   * Renders the table wrapper.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {boolean} [vnode.attrs.hoverable=true] - Enable row hover effects
+   * @param {boolean} [vnode.attrs.striped=false] - Enable striped rows
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       hoverable = true,
@@ -29,9 +47,17 @@ export const Table = {
 };
 
 /**
- * Table Header component
+ * Table Header component (thead).
+ * @type {Object}
  */
 export const TableHeader = {
+  /**
+   * Renders the table header.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { class: className = "", ...attrs } = vnode.attrs;
     return m(
@@ -46,9 +72,17 @@ export const TableHeader = {
 };
 
 /**
- * Table Body component
+ * Table Body component (tbody).
+ * @type {Object}
  */
 export const TableBody = {
+  /**
+   * Renders the table body.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { class: className = "", ...attrs } = vnode.attrs;
     return m(
@@ -63,9 +97,19 @@ export const TableBody = {
 };
 
 /**
- * Table Row component
+ * Table Row component (tr).
+ * @type {Object}
  */
 export const TableRow = {
+  /**
+   * Renders the table row.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {boolean} [vnode.attrs.selected=false] - Whether row is selected
+   * @param {() => void} [vnode.attrs.onclick] - Click handler
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       selected = false,
@@ -96,9 +140,18 @@ export const TableRow = {
 };
 
 /**
- * Table Head cell component
+ * Table Head cell component (th).
+ * @type {Object}
  */
 export const TableHead = {
+  /**
+   * Renders the table head cell.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.width] - Column width (e.g., "200px", "20%")
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { width, class: className = "", ...attrs } = vnode.attrs;
 
@@ -116,9 +169,19 @@ export const TableHead = {
 };
 
 /**
- * Table Cell component
+ * Table Cell component (td).
+ * @type {Object}
  */
 export const TableCell = {
+  /**
+   * Renders the table cell.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {boolean} [vnode.attrs.mono=false] - Use monospace font
+   * @param {('left'|'center'|'right')} [vnode.attrs.align] - Text alignment
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       mono = false,
@@ -149,9 +212,20 @@ export const TableCell = {
 };
 
 /**
- * Table Empty state component
+ * Table Empty state component - displayed when table has no data.
+ * @type {Object}
  */
 export const TableEmpty = {
+  /**
+   * Renders the empty table state.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {number} [vnode.attrs.colspan=1] - Number of columns to span
+   * @param {string} [vnode.attrs.message='No data available'] - Message to display
+   * @param {IconName} [vnode.attrs.icon='inbox'] - Icon to display
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       colspan = 1,
@@ -177,9 +251,23 @@ export const TableEmpty = {
 };
 
 /**
- * Helper to create a header row from column definitions
+ * @typedef {Object} ColumnDefinition
+ * @property {string} name - Column header text
+ * @property {string} [width] - Column width
+ */
+
+/**
+ * Helper component to create a header row from column definitions.
+ * @type {Object}
  */
 export const TableHeaderRow = {
+  /**
+   * Renders a header row from column definitions.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {(string|ColumnDefinition)[]} [vnode.attrs.columns=[]] - Column definitions
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { columns = [] } = vnode.attrs;
 

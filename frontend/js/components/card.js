@@ -1,6 +1,17 @@
+/**
+ * @fileoverview Card components for content containers.
+ */
+
 import { icons } from "../icons.js";
 
-// Card variants
+/**
+ * @typedef {import('../types.js').IconName} IconName
+ */
+
+/**
+ * Available card color variants.
+ * @enum {string}
+ */
 export const CardVariant = {
   DEFAULT: "default",
   DANGER: "danger",
@@ -10,9 +21,19 @@ export const CardVariant = {
 };
 
 /**
- * Card component
+ * Card container component.
+ * @type {Object}
  */
 export const Card = {
+  /**
+   * Renders the card container.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.variant='default'] - Color variant from CardVariant
+   * @param {boolean} [vnode.attrs.padded=false] - Add padding to card body
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       variant = CardVariant.DEFAULT,
@@ -35,9 +56,21 @@ export const Card = {
 };
 
 /**
- * Card Header component
+ * Card Header component with title and optional subtitle.
+ * @type {Object}
  */
 export const CardHeader = {
+  /**
+   * Renders the card header.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} vnode.attrs.title - Header title text
+   * @param {string} [vnode.attrs.subtitle] - Optional subtitle text
+   * @param {IconName} [vnode.attrs.icon] - Optional icon name
+   * @param {string} [vnode.attrs.variant='default'] - Color variant from CardVariant
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       title,
@@ -75,9 +108,9 @@ export const CardHeader = {
         icon && m("span", { class: iconClasses }, m.trust(icons[icon]())),
         subtitle
           ? m(".card__header-title-group", [
-              m("h3", { class: titleClasses }, title),
-              m("p.card__subtitle", subtitle),
-            ])
+            m("h3", { class: titleClasses }, title),
+            m("p.card__subtitle", subtitle),
+          ])
           : m("h3", { class: titleClasses }, title),
       ]),
       m(".card__header-title-wrapper", vnode.children),
@@ -86,9 +119,20 @@ export const CardHeader = {
 };
 
 /**
- * Card Content component
+ * Card Content component for the main body.
+ * @type {Object}
  */
 export const CardContent = {
+  /**
+   * Renders the card content.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {boolean} [vnode.attrs.dark=false] - Dark background
+   * @param {boolean} [vnode.attrs.large=false] - Large padding
+   * @param {boolean} [vnode.attrs.noPadding=false] - Remove padding
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       dark = false,
@@ -113,9 +157,17 @@ export const CardContent = {
 };
 
 /**
- * Card Footer component
+ * Card Footer component.
+ * @type {Object}
  */
 export const CardFooter = {
+  /**
+   * Renders the card footer.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { class: className = "", ...attrs } = vnode.attrs;
 
@@ -131,9 +183,14 @@ export const CardFooter = {
 };
 
 /**
- * Card Divider component
+ * Card Divider component - horizontal line separator.
+ * @type {Object}
  */
 export const CardDivider = {
+  /**
+   * Renders the card divider.
+   * @returns {Object} Mithril vnode
+   */
   view() {
     return m("hr.card__divider");
   },

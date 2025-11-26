@@ -1,53 +1,110 @@
+/**
+ * @fileoverview Function versions view with version history and comparison.
+ */
+
 import { icons } from "../icons.js";
 import { API } from "../api.js";
 import { Toast } from "../components/toast.js";
 import { Pagination } from "../components/pagination.js";
 import { formatUnixTimestamp, getFunctionTabs } from "../utils.js";
-import { routes, paths } from "../routes.js";
+import { paths, routes } from "../routes.js";
 import {
-  Button,
-  ButtonVariant,
-  ButtonSize,
   BackButton,
+  Button,
+  ButtonSize,
+  ButtonVariant,
 } from "../components/button.js";
 import {
   Card,
-  CardHeader,
   CardContent,
   CardFooter,
+  CardHeader,
 } from "../components/card.js";
 import {
   Badge,
-  BadgeVariant,
   BadgeSize,
+  BadgeVariant,
   IDBadge,
   StatusBadge,
 } from "../components/badge.js";
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableRow,
-  TableHead,
   TableCell,
   TableEmpty,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "../components/table.js";
-import { Tabs, TabContent } from "../components/tabs.js";
+import { TabContent, Tabs } from "../components/tabs.js";
 
+/**
+ * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').FunctionVersion} FunctionVersion
+ */
+
+/**
+ * Function versions view component.
+ * Displays version history with ability to activate versions and compare diffs.
+ * @type {Object}
+ */
 export const FunctionVersions = {
+  /**
+   * Currently loaded function.
+   * @type {FaaSFunction|null}
+   */
   func: null,
+
+  /**
+   * Array of loaded versions.
+   * @type {FunctionVersion[]}
+   */
   versions: [],
+
+  /**
+   * Whether the view is loading.
+   * @type {boolean}
+   */
   loading: true,
+
+  /**
+   * Number of versions per page.
+   * @type {number}
+   */
   versionsLimit: 20,
+
+  /**
+   * Current pagination offset.
+   * @type {number}
+   */
   versionsOffset: 0,
+
+  /**
+   * Total number of versions.
+   * @type {number}
+   */
   versionsTotal: 0,
+
+  /**
+   * Array of selected version numbers for comparison (max 2).
+   * @type {number[]}
+   */
   selectedVersions: [],
 
+  /**
+   * Initializes the view and loads data.
+   * @param {Object} vnode - Mithril vnode
+   */
   oninit: (vnode) => {
     FunctionVersions.selectedVersions = [];
     FunctionVersions.loadData(vnode.attrs.id);
   },
 
+  /**
+   * Loads function and versions data.
+   * @param {string} id - Function ID
+   * @returns {Promise<void>}
+   */
   loadData: async (id) => {
     FunctionVersions.loading = true;
     try {
@@ -70,6 +127,10 @@ export const FunctionVersions = {
     }
   },
 
+  /**
+   * Reloads versions with current pagination.
+   * @returns {Promise<void>}
+   */
   loadVersions: async () => {
     try {
       const versions = await API.versions.list(
@@ -85,17 +146,30 @@ export const FunctionVersions = {
     }
   },
 
+  /**
+   * Handles page change from pagination.
+   * @param {number} newOffset - New pagination offset
+   */
   handlePageChange: (newOffset) => {
     FunctionVersions.versionsOffset = newOffset;
     FunctionVersions.loadVersions();
   },
 
+  /**
+   * Handles limit change from pagination.
+   * @param {number} newLimit - New items per page limit
+   */
   handleLimitChange: (newLimit) => {
     FunctionVersions.versionsLimit = newLimit;
     FunctionVersions.versionsOffset = 0;
     FunctionVersions.loadVersions();
   },
 
+  /**
+   * Toggles version selection for comparison.
+   * Maintains max 2 selections using FIFO.
+   * @param {number} version - Version number to toggle
+   */
   toggleVersionSelection: (version) => {
     const idx = FunctionVersions.selectedVersions.indexOf(version);
     if (idx === -1) {
@@ -110,6 +184,11 @@ export const FunctionVersions = {
     }
   },
 
+  /**
+   * Activates a specific version.
+   * @param {number} version - Version number to activate
+   * @returns {Promise<void>}
+   */
   activateVersion: async (version) => {
     if (!confirm(`Activate version ${version}?`)) return;
     try {
@@ -121,12 +200,20 @@ export const FunctionVersions = {
     }
   },
 
+  /**
+   * Navigates to version diff view for selected versions.
+   */
   compareVersions: () => {
     if (FunctionVersions.selectedVersions.length !== 2) return;
     const [v1, v2] = FunctionVersions.selectedVersions.sort((a, b) => a - b);
     m.route.set(paths.functionDiff(FunctionVersions.func.id, v1, v2));
   },
 
+  /**
+   * Renders the function versions view.
+   * @param {Object} vnode - Mithril vnode
+   * @returns {Object} Mithril vnode
+   */
   view: (vnode) => {
     if (FunctionVersions.loading) {
       return m(".loading", [
@@ -189,97 +276,97 @@ export const FunctionVersions = {
             }),
             FunctionVersions.versions.length === 0
               ? m(CardContent, [
-                  m(TableEmpty, {
-                    icon: "inbox",
-                    message: "No versions yet.",
-                  }),
-                ])
+                m(TableEmpty, {
+                  icon: "inbox",
+                  message: "No versions yet.",
+                }),
+              ])
               : [
-                  m(Table, [
-                    m(TableHeader, [
-                      m(TableRow, [
-                        m(TableHead, { style: "width: 40px" }, ""),
-                        m(TableHead, "Version"),
-                        m(TableHead, "Created"),
-                        m(TableHead, "Actions"),
-                      ]),
+                m(Table, [
+                  m(TableHeader, [
+                    m(TableRow, [
+                      m(TableHead, { style: "width: 40px" }, ""),
+                      m(TableHead, "Version"),
+                      m(TableHead, "Created"),
+                      m(TableHead, "Actions"),
                     ]),
-                    m(
-                      TableBody,
-                      FunctionVersions.versions.map((ver) =>
-                        m(
-                          TableRow,
-                          {
-                            key: ver.version,
-                            class: FunctionVersions.selectedVersions.includes(
+                  ]),
+                  m(
+                    TableBody,
+                    FunctionVersions.versions.map((ver) =>
+                      m(
+                        TableRow,
+                        {
+                          key: ver.version,
+                          class: FunctionVersions.selectedVersions.includes(
                               ver.version,
                             )
-                              ? "table__row--selected"
-                              : "",
-                          },
-                          [
-                            m(TableCell, [
-                              m("input[type=checkbox]", {
-                                checked:
-                                  FunctionVersions.selectedVersions.includes(
+                            ? "table__row--selected"
+                            : "",
+                        },
+                        [
+                          m(TableCell, [
+                            m("input[type=checkbox]", {
+                              checked: FunctionVersions.selectedVersions
+                                .includes(
+                                  ver.version,
+                                ),
+                              onchange: () =>
+                                FunctionVersions.toggleVersionSelection(
+                                  ver.version,
+                                ),
+                            }),
+                          ]),
+                          m(TableCell, [
+                            m(
+                              "span",
+                              {
+                                style:
+                                  "font-family: var(--font-mono); margin-right: 0.5rem;",
+                              },
+                              `v${ver.version}`,
+                            ),
+                            ver.version === func.active_version.version &&
+                            m(
+                              Badge,
+                              {
+                                variant: BadgeVariant.SUCCESS,
+                                size: BadgeSize.SM,
+                              },
+                              "ACTIVE",
+                            ),
+                          ]),
+                          m(TableCell, formatUnixTimestamp(ver.created_at)),
+                          m(TableCell, { align: "right" }, [
+                            ver.version !== func.active_version.version &&
+                            m(
+                              Button,
+                              {
+                                variant: ButtonVariant.OUTLINE,
+                                size: ButtonSize.SM,
+                                onclick: (e) => {
+                                  e.stopPropagation();
+                                  FunctionVersions.activateVersion(
                                     ver.version,
-                                  ),
-                                onchange: () =>
-                                  FunctionVersions.toggleVersionSelection(
-                                    ver.version,
-                                  ),
-                              }),
-                            ]),
-                            m(TableCell, [
-                              m(
-                                "span",
-                                {
-                                  style:
-                                    "font-family: var(--font-mono); margin-right: 0.5rem;",
+                                  );
                                 },
-                                `v${ver.version}`,
-                              ),
-                              ver.version === func.active_version.version &&
-                                m(
-                                  Badge,
-                                  {
-                                    variant: BadgeVariant.SUCCESS,
-                                    size: BadgeSize.SM,
-                                  },
-                                  "ACTIVE",
-                                ),
-                            ]),
-                            m(TableCell, formatUnixTimestamp(ver.created_at)),
-                            m(TableCell, { align: "right" }, [
-                              ver.version !== func.active_version.version &&
-                                m(
-                                  Button,
-                                  {
-                                    variant: ButtonVariant.OUTLINE,
-                                    size: ButtonSize.SM,
-                                    onclick: (e) => {
-                                      e.stopPropagation();
-                                      FunctionVersions.activateVersion(
-                                        ver.version,
-                                      );
-                                    },
-                                  },
-                                  "Activate",
-                                ),
-                            ]),
-                          ],
-                        ),
-                      ),
+                              },
+                              "Activate",
+                            ),
+                          ]),
+                        ],
+                      )
                     ),
-                  ]),
-                  m(Pagination, {
-                    total: FunctionVersions.versionsTotal,
-                    limit: FunctionVersions.versionsLimit,
-                    offset: FunctionVersions.versionsOffset,
-                    onPageChange: FunctionVersions.handlePageChange,
-                    onLimitChange: FunctionVersions.handleLimitChange,
-                  }),
-                ],
+                  ),
+                ]),
+                m(Pagination, {
+                  total: FunctionVersions.versionsTotal,
+                  limit: FunctionVersions.versionsLimit,
+                  offset: FunctionVersions.versionsOffset,
+                  onPageChange: FunctionVersions.handlePageChange,
+                  onLimitChange: FunctionVersions.handleLimitChange,
+                }),
+              ],
             m(CardFooter, [
               m(
                 Button,
@@ -289,7 +376,9 @@ export const FunctionVersions = {
                   disabled: FunctionVersions.selectedVersions.length !== 2,
                 },
                 FunctionVersions.selectedVersions.length === 2
-                  ? `Compare v${FunctionVersions.selectedVersions[0]} and v${FunctionVersions.selectedVersions[1]}`
+                  ? `Compare v${FunctionVersions.selectedVersions[0]} and v${
+                    FunctionVersions.selectedVersions[1]
+                  }`
                   : "Select 2 versions to compare",
               ),
             ]),

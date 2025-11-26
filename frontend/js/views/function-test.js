@@ -1,16 +1,20 @@
+/**
+ * @fileoverview Function test view with request builder and response viewer.
+ */
+
 import { icons } from "../icons.js";
 import { API } from "../api.js";
 import { Toast } from "../components/toast.js";
 import { BackButton } from "../components/button.js";
-import { Card, CardHeader, CardContent } from "../components/card.js";
+import { Card, CardContent, CardHeader } from "../components/card.js";
 import {
   Badge,
-  BadgeVariant,
   BadgeSize,
+  BadgeVariant,
   IDBadge,
   StatusBadge,
 } from "../components/badge.js";
-import { Tabs, TabContent } from "../components/tabs.js";
+import { TabContent, Tabs } from "../components/tabs.js";
 import { getFunctionTabs } from "../utils.js";
 import { routes } from "../routes.js";
 import { CodeExamples } from "../components/code-examples.js";
@@ -19,23 +23,74 @@ import { LogViewer } from "../components/log-viewer.js";
 import { CodeViewer } from "../components/code-viewer.js";
 import { FormGroup, FormLabel } from "../components/form.js";
 
+/**
+ * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').ExecuteResponse} ExecuteResponse
+ * @typedef {import('../types.js').ExecutionLog} ExecutionLog
+ */
+
+/**
+ * @typedef {Object} TestRequest
+ * @property {string} method - HTTP method
+ * @property {string} query - Query string
+ * @property {string} body - Request body
+ */
+
+/**
+ * Function test view component.
+ * Provides a request builder to test function execution with code examples.
+ * @type {Object}
+ */
 export const FunctionTest = {
+  /**
+   * Currently loaded function.
+   * @type {FaaSFunction|null}
+   */
   func: null,
+
+  /**
+   * Whether the view is loading.
+   * @type {boolean}
+   */
   loading: true,
+
+  /**
+   * Test request configuration.
+   * @type {TestRequest}
+   */
   testRequest: {
     method: "GET",
     query: "",
     body: "",
   },
+
+  /**
+   * Last test response (null if no test run yet).
+   * @type {ExecuteResponse|null}
+   */
   testResponse: null,
+
+  /**
+   * Logs from last test execution.
+   * @type {ExecutionLog[]}
+   */
   testLogs: [],
 
+  /**
+   * Initializes the view and loads the function.
+   * @param {Object} vnode - Mithril vnode
+   */
   oninit: (vnode) => {
     FunctionTest.testResponse = null;
     FunctionTest.testLogs = [];
     FunctionTest.loadFunction(vnode.attrs.id);
   },
 
+  /**
+   * Loads a function by ID.
+   * @param {string} id - Function ID
+   * @returns {Promise<void>}
+   */
   loadFunction: async (id) => {
     FunctionTest.loading = true;
     try {
@@ -48,6 +103,10 @@ export const FunctionTest = {
     }
   },
 
+  /**
+   * Executes a test request against the function.
+   * @returns {Promise<void>}
+   */
   executeTest: async () => {
     try {
       const response = await API.execute(
@@ -58,8 +117,8 @@ export const FunctionTest = {
       FunctionTest.testLogs = [];
       m.redraw();
 
-      const executionId =
-        response.headers && response.headers["X-Execution-Id"];
+      const executionId = response.headers &&
+        response.headers["X-Execution-Id"];
       if (executionId) {
         try {
           const logsData = await API.executions.getLogs(executionId);
@@ -75,6 +134,11 @@ export const FunctionTest = {
     }
   },
 
+  /**
+   * Renders the function test view.
+   * @param {Object} vnode - Mithril vnode
+   * @returns {Object} Mithril vnode
+   */
   view: (vnode) => {
     if (FunctionTest.loading) {
       return m(".loading", [
@@ -143,10 +207,12 @@ export const FunctionTest = {
               method: FunctionTest.testRequest.method,
               query: FunctionTest.testRequest.query,
               body: FunctionTest.testRequest.body,
-              onMethodChange: (value) =>
-                (FunctionTest.testRequest.method = value),
-              onQueryChange: (value) =>
-                (FunctionTest.testRequest.query = value),
+              onMethodChange: (
+                value,
+              ) => (FunctionTest.testRequest.method = value),
+              onQueryChange: (
+                value,
+              ) => (FunctionTest.testRequest.query = value),
               onBodyChange: (value) => (FunctionTest.testRequest.body = value),
               onExecute: FunctionTest.executeTest,
             }),
@@ -162,76 +228,75 @@ export const FunctionTest = {
               m(CardContent, [
                 FunctionTest.testResponse
                   ? m("div", [
-                      m(FormGroup, [
-                        m(FormLabel, { text: "Status" }),
-                        m(
-                          "div",
-                          {
-                            style:
-                              "display: flex; align-items: center; gap: 0.5rem;",
-                          },
-                          [
+                    m(FormGroup, [
+                      m(FormLabel, { text: "Status" }),
+                      m(
+                        "div",
+                        {
+                          style:
+                            "display: flex; align-items: center; gap: 0.5rem;",
+                        },
+                        [
+                          m(
+                            Badge,
+                            {
+                              variant: FunctionTest.testResponse.status === 200
+                                ? BadgeVariant.SUCCESS
+                                : BadgeVariant.DESTRUCTIVE,
+                              size: BadgeSize.SM,
+                            },
+                            FunctionTest.testResponse.status,
+                          ),
+                          FunctionTest.testResponse.headers &&
+                          FunctionTest.testResponse.headers[
+                            "X-Execution-Id"
+                          ] &&
+                          m(
+                            "a",
+                            {
+                              href: routes.execution(
+                                FunctionTest.testResponse.headers[
+                                  "X-Execution-Id"
+                                ],
+                              ),
+                              style: "text-decoration: none;",
+                            },
                             m(
                               Badge,
                               {
-                                variant:
-                                  FunctionTest.testResponse.status === 200
-                                    ? BadgeVariant.SUCCESS
-                                    : BadgeVariant.DESTRUCTIVE,
+                                variant: BadgeVariant.OUTLINE,
                                 size: BadgeSize.SM,
                               },
-                              FunctionTest.testResponse.status,
+                              "View Execution",
                             ),
-                            FunctionTest.testResponse.headers &&
-                              FunctionTest.testResponse.headers[
-                                "X-Execution-Id"
-                              ] &&
-                              m(
-                                "a",
-                                {
-                                  href: routes.execution(
-                                    FunctionTest.testResponse.headers[
-                                      "X-Execution-Id"
-                                    ],
-                                  ),
-                                  style: "text-decoration: none;",
-                                },
-                                m(
-                                  Badge,
-                                  {
-                                    variant: BadgeVariant.OUTLINE,
-                                    size: BadgeSize.SM,
-                                  },
-                                  "View Execution",
-                                ),
-                              ),
-                          ],
-                        ),
-                      ]),
-                      m(FormGroup, [
-                        m(FormLabel, { text: "Body" }),
-                        m(CodeViewer, {
-                          code: FunctionTest.testResponse.body || "",
-                          language: "json",
-                          maxHeight: "300px",
-                        }),
-                      ]),
-                      FunctionTest.testLogs.length > 0 &&
-                        m(FormGroup, [
-                          m(FormLabel, { text: "Logs" }),
-                          m(LogViewer, {
-                            logs: FunctionTest.testLogs,
-                            maxHeight: "200px",
-                          }),
-                        ]),
-                    ])
-                  : m(".no-response", [
-                      m("p", "No response yet"),
-                      m(
-                        "p.text-muted",
-                        "Execute a request to see the response",
+                          ),
+                        ],
                       ),
                     ]),
+                    m(FormGroup, [
+                      m(FormLabel, { text: "Body" }),
+                      m(CodeViewer, {
+                        code: FunctionTest.testResponse.body || "",
+                        language: "json",
+                        maxHeight: "300px",
+                      }),
+                    ]),
+                    FunctionTest.testLogs.length > 0 &&
+                    m(FormGroup, [
+                      m(FormLabel, { text: "Logs" }),
+                      m(LogViewer, {
+                        logs: FunctionTest.testLogs,
+                        maxHeight: "200px",
+                      }),
+                    ]),
+                  ])
+                  : m(".no-response", [
+                    m("p", "No response yet"),
+                    m(
+                      "p.text-muted",
+                      "Execute a request to see the response",
+                    ),
+                  ]),
               ]),
             ]),
           ]),

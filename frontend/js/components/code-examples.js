@@ -1,10 +1,36 @@
-import { Card, CardHeader, CardContent } from "./card.js";
+/**
+ * @fileoverview Code examples component showing API calls in multiple languages.
+ */
+
+import { Card, CardContent, CardHeader } from "./card.js";
 import { icons } from "../icons.js";
 
+/**
+ * @typedef {('curl'|'javascript'|'python'|'go')} SupportedLanguage
+ */
+
+/**
+ * Code examples component.
+ * Shows how to call a function from different programming languages.
+ * @type {Object}
+ */
 export const CodeExamples = {
+  /**
+   * Currently selected language.
+   * @type {SupportedLanguage}
+   */
   selectedLang: "curl",
+
+  /**
+   * Whether copy was successful (for feedback).
+   * @type {boolean}
+   */
   copied: false,
 
+  /**
+   * Copies text to clipboard and shows feedback.
+   * @param {string} text - Text to copy
+   */
   copyToClipboard: (text) => {
     navigator.clipboard.writeText(text).then(() => {
       CodeExamples.copied = true;
@@ -16,16 +42,37 @@ export const CodeExamples = {
     });
   },
 
+  /**
+   * Generates a code example for the selected language.
+   * @param {string} functionId - Function ID
+   * @param {string} method - HTTP method
+   * @param {string} query - Query string
+   * @param {string} body - Request body
+   * @returns {string} Generated code example
+   */
   generateCodeExample: (functionId, method, query, body) => {
     const host = window.location.origin;
     const url = `${host}/fn/${functionId}${query ? "?" + query : ""}`;
     const lang = CodeExamples.selectedLang;
 
+    /** @type {Object.<SupportedLanguage, string>} */
     const examples = {
-      curl: `curl -X ${method} '${url}'${body ? ` \\\n  -H 'Content-Type: application/json' \\\n  -d '${body.replace(/'/g, "'\\''")}'` : ""}`,
+      curl: `curl -X ${method} '${url}'${
+        body
+          ? ` \\\n  -H 'Content-Type: application/json' \\\n  -d '${
+            body.replace(/'/g, "'\\''")
+          }'`
+          : ""
+      }`,
 
       javascript: `fetch('${url}', {
-  method: '${method}',${body ? `\n  headers: {\n    'Content-Type': 'application/json'\n  },\n  body: '${body.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'` : ""}
+  method: '${method}',${
+        body
+          ? `\n  headers: {\n    'Content-Type': 'application/json'\n  },\n  body: '${
+            body.replace(/\\/g, "\\\\").replace(/'/g, "\\'")
+          }'`
+          : ""
+      }
 })
   .then(response => response.text())
   .then(data => console.log(data))
@@ -33,7 +80,9 @@ export const CodeExamples = {
 
       python: `import requests
 
-response = requests.${method.toLowerCase()}('${url}'${body ? `,\n    json=${body}` : ""})
+response = requests.${method.toLowerCase()}('${url}'${
+        body ? `,\n    json=${body}` : ""
+      })
 print(response.text)`,
 
       go: `package main
@@ -46,11 +95,11 @@ import (
 
 func main() {
     ${
-      body
-        ? `body := strings.NewReader(\`${body}\`)
+        body
+          ? `body := strings.NewReader(\`${body}\`)
     req, err := http.NewRequest("${method}", "${url}", body)`
-        : `req, err := http.NewRequest("${method}", "${url}", nil)`
-    }
+          : `req, err := http.NewRequest("${method}", "${url}", nil)`
+      }
     if err != nil {
         panic(err)
     }
@@ -70,7 +119,12 @@ func main() {
     return examples[lang] || examples.curl;
   },
 
+  /**
+   * Gets the highlight.js language class for the selected language.
+   * @returns {string} Language class name
+   */
   getLanguageClass: () => {
+    /** @type {Object.<SupportedLanguage, string>} */
     const langMap = {
       curl: "bash",
       javascript: "javascript",
@@ -80,6 +134,16 @@ func main() {
     return langMap[CodeExamples.selectedLang] || "bash";
   },
 
+  /**
+   * Renders the code examples component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} vnode.attrs.functionId - Function ID
+   * @param {string} vnode.attrs.method - HTTP method
+   * @param {string} vnode.attrs.query - Query string
+   * @param {string} vnode.attrs.body - Request body
+   * @returns {Object} Mithril vnode
+   */
   view: (vnode) => {
     const { functionId, method, query, body } = vnode.attrs;
 
@@ -129,10 +193,10 @@ func main() {
             },
             CodeExamples.copied
               ? m(
-                  "span",
-                  { style: "color: var(--color-success)" },
-                  m.trust(icons.check()),
-                )
+                "span",
+                { style: "color: var(--color-success)" },
+                m.trust(icons.check()),
+              )
               : m.trust(icons.copy()),
           ),
           m(

@@ -1,6 +1,25 @@
-// Simple code viewer component (non-editable)
+/**
+ * @fileoverview Simple read-only code viewer component with syntax highlighting.
+ */
 
+/**
+ * Code viewer component for displaying code with syntax highlighting.
+ * Uses highlight.js for syntax highlighting.
+ * @type {Object}
+ */
 export const CodeViewer = {
+  /**
+   * Renders the code viewer component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.code=''] - Code to display
+   * @param {string} [vnode.attrs.language=''] - Language for syntax highlighting
+   * @param {string} [vnode.attrs.maxHeight=''] - Maximum height with overflow scroll
+   * @param {boolean} [vnode.attrs.noBorder=false] - Remove border styling
+   * @param {boolean} [vnode.attrs.padded=false] - Add padding to code block
+   * @param {boolean} [vnode.attrs.showHeader=false] - Show language header
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       code = "",
@@ -18,10 +37,10 @@ export const CodeViewer = {
       },
       [
         showHeader &&
-          language &&
-          m(".code-viewer__header", [
-            m("span.code-viewer__language", language.toUpperCase()),
-          ]),
+        language &&
+        m(".code-viewer__header", [
+          m("span.code-viewer__language", language.toUpperCase()),
+        ]),
         m(
           ".code-viewer__content",
           {

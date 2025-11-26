@@ -1,3 +1,19 @@
+/**
+ * @fileoverview Monaco-based code editor component with Lua autocompletion.
+ */
+
+/**
+ * @typedef {Object} APIDocEntry
+ * @property {string} signature - Function signature for hover display
+ * @property {string} snippet - Code snippet for autocompletion
+ * @property {string} description - Description of the function
+ */
+
+/**
+ * API documentation for Lua runtime functions.
+ * Used for autocompletion and hover information in the Monaco editor.
+ * @type {Object.<string, APIDocEntry>}
+ */
 const API_DOCS = {
   "ctx.executionId": {
     signature: "ctx.executionId: string",
@@ -312,6 +328,10 @@ const API_DOCS = {
   },
 };
 
+/**
+ * Registers the GitHub Dark theme for Monaco editor.
+ * Only registers once using a global flag.
+ */
 const registerGitHubDarkTheme = () => {
   if (!window.monaco || window.__githubDarkThemeRegistered) return;
   window.__githubDarkThemeRegistered = true;
@@ -342,6 +362,10 @@ const registerGitHubDarkTheme = () => {
   });
 };
 
+/**
+ * Registers Lua language completions and hover provider for Monaco.
+ * Only registers once using a global flag.
+ */
 const registerLuaCompletions = () => {
   if (!window.monaco || window.__luaCompletionsRegistered) return;
   window.__luaCompletionsRegistered = true;
@@ -502,7 +526,26 @@ const registerLuaCompletions = () => {
   });
 };
 
+/**
+ * Monaco-based code editor component.
+ * @type {Object}
+ */
 export const CodeEditor = {
+  /**
+   * Renders the code editor.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.id='code-editor'] - DOM element ID
+   * @param {string} [vnode.attrs.value=''] - Initial code value
+   * @param {(value: string) => void} [vnode.attrs.onChange] - Change callback
+   * @param {boolean} [vnode.attrs.readOnly=false] - Read-only mode
+   * @param {string} [vnode.attrs.language='lua'] - Editor language
+   * @param {string} [vnode.attrs.theme='github-dark'] - Editor theme
+   * @param {boolean} [vnode.attrs.lineNumbers=true] - Show line numbers
+   * @param {boolean} [vnode.attrs.minimap=false] - Show minimap
+   * @param {string} [vnode.attrs.height='500px'] - Editor height
+   * @returns {Object} Mithril vnode
+   */
   view: (vnode) => {
     const {
       id = "code-editor",

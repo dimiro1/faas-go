@@ -1,15 +1,75 @@
+/**
+ * @fileoverview Command palette component for quick navigation and search.
+ */
+
 import { icons } from "../icons.js";
 import { API } from "../api.js";
 import { paths } from "../routes.js";
 
+/**
+ * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ */
+
+/**
+ * @typedef {('nav'|'function'|'action')} CommandItemType
+ */
+
+/**
+ * @typedef {Object} CommandItem
+ * @property {CommandItemType} type - Type of command item
+ * @property {string} label - Display label
+ * @property {string} [description] - Optional description
+ * @property {string} path - Navigation path
+ * @property {string} icon - Icon name from icons module
+ * @property {string} [id] - Function ID (for function/action types)
+ * @property {boolean} [disabled] - Whether the function is disabled
+ */
+
+/**
+ * Command palette component for quick navigation and function search.
+ * Activated with Cmd+K (Mac) or Ctrl+K (Windows/Linux).
+ * @type {Object}
+ */
 export const CommandPalette = {
+  /**
+   * Whether the palette is currently open.
+   * @type {boolean}
+   */
   isOpen: false,
+
+  /**
+   * Current search query.
+   * @type {string}
+   */
   query: "",
+
+  /**
+   * Filtered search results.
+   * @type {CommandItem[]}
+   */
   results: [],
+
+  /**
+   * Currently selected item index.
+   * @type {number}
+   */
   selectedIndex: 0,
+
+  /**
+   * All loaded functions.
+   * @type {FaaSFunction[]}
+   */
   functions: [],
+
+  /**
+   * Whether functions are being loaded.
+   * @type {boolean}
+   */
   loading: false,
 
+  /**
+   * Opens the command palette.
+   */
   open: () => {
     CommandPalette.isOpen = true;
     CommandPalette.query = "";
@@ -23,6 +83,9 @@ export const CommandPalette = {
     }, 10);
   },
 
+  /**
+   * Closes the command palette.
+   */
   close: () => {
     CommandPalette.isOpen = false;
     CommandPalette.query = "";
@@ -30,6 +93,10 @@ export const CommandPalette = {
     m.redraw();
   },
 
+  /**
+   * Loads all functions from the API.
+   * @returns {Promise<void>}
+   */
   loadFunctions: async () => {
     CommandPalette.loading = true;
     try {
@@ -45,6 +112,10 @@ export const CommandPalette = {
     }
   },
 
+  /**
+   * Updates the filtered results based on the current search query.
+   * Combines navigation items and function-related actions.
+   */
   updateResults: () => {
     const q = CommandPalette.query.toLowerCase().trim();
 
@@ -140,6 +211,9 @@ export const CommandPalette = {
     }
   },
 
+  /**
+   * Scrolls the selected item into view.
+   */
   scrollToSelected: () => {
     setTimeout(() => {
       const selected = document.querySelector(
@@ -151,6 +225,10 @@ export const CommandPalette = {
     }, 0);
   },
 
+  /**
+   * Handles keyboard navigation and selection.
+   * @param {KeyboardEvent} e - Keyboard event
+   */
   handleKeyDown: (e) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -179,12 +257,18 @@ export const CommandPalette = {
     }
   },
 
+  /**
+   * Selects an item and navigates to its path.
+   * @param {CommandItem} item - The item to select
+   */
   selectItem: (item) => {
     CommandPalette.close();
     m.route.set(item.path);
   },
 
-  // Initialize global keyboard listener
+  /**
+   * Initializes the global keyboard listener for Cmd+K/Ctrl+K.
+   */
   init: () => {
     document.addEventListener("keydown", (e) => {
       // Cmd+K or Ctrl+K
@@ -199,6 +283,10 @@ export const CommandPalette = {
     });
   },
 
+  /**
+   * Renders the command palette overlay and content.
+   * @returns {Object|null} Mithril vnode or null if closed
+   */
   view: () => {
     if (!CommandPalette.isOpen) return null;
 
@@ -232,50 +320,48 @@ export const CommandPalette = {
           m(".command-palette__results", [
             CommandPalette.loading
               ? m(".command-palette__loading", [
-                  m.trust(icons.spinner()),
-                  " Loading...",
-                ])
+                m.trust(icons.spinner()),
+                " Loading...",
+              ])
               : CommandPalette.results.length === 0
-                ? m(".command-palette__empty", "No results found")
-                : CommandPalette.results.map((item, index) =>
+              ? m(".command-palette__empty", "No results found")
+              : CommandPalette.results.map((item, index) =>
+                m(
+                  ".command-palette__item",
+                  {
+                    class: [
+                      index === CommandPalette.selectedIndex
+                        ? "command-palette__item--selected"
+                        : "",
+                      item.disabled ? "command-palette__item--disabled" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" "),
+                    onclick: () => CommandPalette.selectItem(item),
+                    onmouseenter: () => {
+                      CommandPalette.selectedIndex = index;
+                      m.redraw();
+                    },
+                  },
+                  [
                     m(
-                      ".command-palette__item",
-                      {
-                        class: [
-                          index === CommandPalette.selectedIndex
-                            ? "command-palette__item--selected"
-                            : "",
-                          item.disabled
-                            ? "command-palette__item--disabled"
-                            : "",
-                        ]
-                          .filter(Boolean)
-                          .join(" "),
-                        onclick: () => CommandPalette.selectItem(item),
-                        onmouseenter: () => {
-                          CommandPalette.selectedIndex = index;
-                          m.redraw();
-                        },
-                      },
-                      [
-                        m(
-                          "span.command-palette__item-icon",
-                          m.trust(icons[item.icon]()),
-                        ),
-                        m(".command-palette__item-content", [
-                          m("span.command-palette__item-label", item.label),
-                          item.description &&
-                            m(
-                              "span.command-palette__item-description",
-                              item.description,
-                            ),
-                        ]),
-                        item.type === "function" &&
-                          item.disabled &&
-                          m("span.command-palette__item-badge", "Disabled"),
-                      ],
+                      "span.command-palette__item-icon",
+                      m.trust(icons[item.icon]()),
                     ),
-                  ),
+                    m(".command-palette__item-content", [
+                      m("span.command-palette__item-label", item.label),
+                      item.description &&
+                      m(
+                        "span.command-palette__item-description",
+                        item.description,
+                      ),
+                    ]),
+                    item.type === "function" &&
+                    item.disabled &&
+                    m("span.command-palette__item-badge", "Disabled"),
+                  ],
+                )
+              ),
           ]),
           m(".command-palette__footer", [
             m("span.command-palette__hint", [m("kbd", "↑↓"), " to navigate"]),

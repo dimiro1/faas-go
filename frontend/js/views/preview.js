@@ -1,53 +1,58 @@
+/**
+ * @fileoverview Preview view for showcasing all UI components.
+ * Development tool for viewing and testing component variations.
+ */
+
 import {
-  Button,
-  ButtonVariant,
-  ButtonSize,
   BackButton,
+  Button,
+  ButtonSize,
+  ButtonVariant,
 } from "../components/button.js";
 import {
   Card,
-  CardHeader,
   CardContent,
-  CardFooter,
   CardDivider,
+  CardFooter,
+  CardHeader,
 } from "../components/card.js";
 import {
   Badge,
-  BadgeVariant,
   BadgeSize,
+  BadgeVariant,
   IDBadge,
-  StatusBadge,
-  MethodBadges,
   LogLevelBadge,
+  MethodBadges,
+  StatusBadge,
 } from "../components/badge.js";
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableRow,
-  TableHead,
   TableCell,
   TableEmpty,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "../components/table.js";
-import { Tabs, TabContent } from "../components/tabs.js";
+import { TabContent, Tabs } from "../components/tabs.js";
 import {
-  FormGroup,
-  FormLabel,
-  FormInput,
-  FormTextarea,
-  FormSelect,
-  FormCheckbox,
-  FormHelp,
-  PasswordInput,
   CopyInput,
+  FormCheckbox,
+  FormGroup,
+  FormHelp,
+  FormInput,
+  FormLabel,
+  FormSelect,
+  FormTextarea,
+  PasswordInput,
 } from "../components/form.js";
 import { Pagination } from "../components/pagination.js";
 import { Toast } from "../components/toast.js";
 import { Kbd, Separator } from "../components/kbd.js";
 import {
+  FunctionTemplates,
   TemplateCard,
   TemplateCards,
-  FunctionTemplates,
 } from "../components/template-card.js";
 import { APIReference, LuaAPISections } from "../components/api-reference.js";
 import { LogViewer } from "../components/log-viewer.js";
@@ -56,15 +61,45 @@ import { EnvEditor } from "../components/env-editor.js";
 import { RequestBuilder } from "../components/request-builder.js";
 import {
   DiffViewer,
-  VersionLabels,
   LineType,
+  VersionLabels,
 } from "../components/diff-viewer.js";
 
-// Preview page for all components
+/**
+ * @typedef {import('../components/env-editor.js').EnvVar} EnvVar
+ */
+
+/**
+ * @typedef {Object} PreviewDemoState
+ * @property {string} selectedTemplate - Currently selected template ID
+ * @property {string} activeTab - Currently active tab ID
+ * @property {string} apiSection - Currently selected API section
+ * @property {boolean} checkboxChecked - Checkbox demo state
+ * @property {string} selectValue - Select demo value
+ * @property {number} paginationOffset - Pagination offset
+ * @property {number} paginationLimit - Pagination limit
+ * @property {EnvVar[]} envVars - Environment variables demo data
+ * @property {string} requestMethod - Request builder method
+ * @property {string} requestQuery - Request builder query
+ * @property {string} requestBody - Request builder body
+ */
+
+/**
+ * Preview view component for showcasing all UI components.
+ * Provides an interactive gallery for development and testing.
+ * @type {Object}
+ */
 export const Preview = {
+  /**
+   * Currently active component name in the sidebar.
+   * @type {string}
+   */
   activeComponent: "button",
 
-  // State for interactive demos
+  /**
+   * State for interactive component demos.
+   * @type {PreviewDemoState}
+   */
   demoState: {
     selectedTemplate: "http",
     activeTab: "tab1",
@@ -87,6 +122,10 @@ export const Preview = {
     requestBody: "",
   },
 
+  /**
+   * Initializes the preview view with the component from route params.
+   * @param {Object} vnode - Mithril vnode
+   */
   oninit: (vnode) => {
     const component = m.route.param("component");
     if (component) {
@@ -94,6 +133,10 @@ export const Preview = {
     }
   },
 
+  /**
+   * Updates the active component when route changes.
+   * @param {Object} vnode - Mithril vnode
+   */
   onbeforeupdate: (vnode) => {
     const component = m.route.param("component");
     if (component && component !== Preview.activeComponent) {
@@ -101,6 +144,10 @@ export const Preview = {
     }
   },
 
+  /**
+   * List of available components to preview.
+   * @type {string[]}
+   */
   components: [
     "button",
     "card",
@@ -120,6 +167,10 @@ export const Preview = {
     "diff-viewer",
   ],
 
+  /**
+   * Renders the preview page with sidebar navigation and component display.
+   * @returns {Object} Mithril vnode
+   */
   view: () => {
     return m(".preview-page", [
       m(".preview-sidebar", [
@@ -131,13 +182,12 @@ export const Preview = {
               "a.preview-sidebar__link",
               {
                 href: `#!/preview/${comp}`,
-                class:
-                  Preview.activeComponent === comp
-                    ? "preview-sidebar__link--active"
-                    : "",
+                class: Preview.activeComponent === comp
+                  ? "preview-sidebar__link--active"
+                  : "",
               },
               comp.replace("-", " "),
-            ),
+            )
           ),
         ),
       ]),
@@ -153,6 +203,11 @@ export const Preview = {
     ]);
   },
 
+  /**
+   * Renders the appropriate component preview based on name.
+   * @param {string} name - Component name to render
+   * @returns {Object} Mithril vnode
+   */
   renderComponent: (name) => {
     switch (name) {
       case "button":
@@ -192,6 +247,10 @@ export const Preview = {
     }
   },
 
+  /**
+   * Renders button component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderButtons: () => {
     return m(".preview-section", [
       m("h3", "Variants"),
@@ -234,6 +293,10 @@ export const Preview = {
     ]);
   },
 
+  /**
+   * Renders card component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderCards: () => {
     return m(".preview-section", [
       m("h3", "Basic Card"),
@@ -269,6 +332,10 @@ export const Preview = {
     ]);
   },
 
+  /**
+   * Renders badge component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderBadges: () => {
     return m(".preview-section", [
       m("h3", "Variants"),
@@ -315,6 +382,10 @@ export const Preview = {
     ]);
   },
 
+  /**
+   * Renders table component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderTable: () => {
     const data = [
       { id: "func-1", name: "get-users", status: "active", version: "1.0.0" },
@@ -353,7 +424,7 @@ export const Preview = {
                   m(StatusBadge, { enabled: row.status === "active" }),
                 ),
                 m(TableCell, row.version),
-              ]),
+              ])
             ),
           ),
         ]),
@@ -374,6 +445,10 @@ export const Preview = {
     ]);
   },
 
+  /**
+   * Renders tabs component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderTabs: () => {
     const tabs = [
       { id: "tab1", label: "Overview" },
@@ -390,15 +465,19 @@ export const Preview = {
       }),
       m(TabContent, [
         Preview.demoState.activeTab === "tab1" &&
-          m(Card, [m(CardContent, "Overview content goes here")]),
+        m(Card, [m(CardContent, "Overview content goes here")]),
         Preview.demoState.activeTab === "tab2" &&
-          m(Card, [m(CardContent, "Settings content goes here")]),
+        m(Card, [m(CardContent, "Settings content goes here")]),
         Preview.demoState.activeTab === "tab3" &&
-          m(Card, [m(CardContent, "Logs content goes here")]),
+        m(Card, [m(CardContent, "Logs content goes here")]),
       ]),
     ]);
   },
 
+  /**
+   * Renders form component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderForms: () => {
     return m(".preview-section", [
       m("h3", "Input"),
@@ -479,15 +558,19 @@ export const Preview = {
             label: "Enable feature",
             description: "This will enable the experimental feature.",
             checked: Preview.demoState.checkboxChecked,
-            onchange: () =>
-              (Preview.demoState.checkboxChecked =
-                !Preview.demoState.checkboxChecked),
+            onchange:
+              () => (Preview.demoState.checkboxChecked = !Preview.demoState
+                .checkboxChecked),
           }),
         ]),
       ]),
     ]);
   },
 
+  /**
+   * Renders pagination component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderPagination: () => {
     return m(".preview-section", [
       m("h3", "Pagination"),
@@ -497,8 +580,9 @@ export const Preview = {
             total: 100,
             limit: Preview.demoState.paginationLimit,
             offset: Preview.demoState.paginationOffset,
-            onPageChange: (offset) =>
-              (Preview.demoState.paginationOffset = offset),
+            onPageChange: (
+              offset,
+            ) => (Preview.demoState.paginationOffset = offset),
             onLimitChange: (limit) => {
               Preview.demoState.paginationLimit = limit;
               Preview.demoState.paginationOffset = 0;
@@ -509,6 +593,10 @@ export const Preview = {
     ]);
   },
 
+  /**
+   * Renders toast component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderToast: () => {
     return m(".preview-section", [
       m("h3", "Toast Notifications"),
@@ -541,6 +629,10 @@ export const Preview = {
     ]);
   },
 
+  /**
+   * Renders keyboard shortcut component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderKbd: () => {
     return m(".preview-section", [
       m("h3", "Keyboard Shortcuts"),
@@ -553,6 +645,10 @@ export const Preview = {
     ]);
   },
 
+  /**
+   * Renders template card component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderTemplateCards: () => {
     return m(".preview-section", [
       m("h3", "Template Cards"),
@@ -566,12 +662,16 @@ export const Preview = {
             icon: template.icon,
             selected: Preview.demoState.selectedTemplate === template.id,
             onclick: () => (Preview.demoState.selectedTemplate = template.id),
-          }),
+          })
         ),
       ),
     ]);
   },
 
+  /**
+   * Renders API reference component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderAPIReference: () => {
     return m(".preview-section", [
       m("h3", "API Reference"),
@@ -587,6 +687,10 @@ export const Preview = {
     ]);
   },
 
+  /**
+   * Renders log viewer component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderLogViewer: () => {
     const logs = [
       {
@@ -638,6 +742,10 @@ export const Preview = {
     ]);
   },
 
+  /**
+   * Renders code viewer component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderCodeViewer: () => {
     const luaCode = `function handle(ctx)
     local method = ctx.request.method
@@ -685,6 +793,10 @@ end`;
     ]);
   },
 
+  /**
+   * Renders environment editor component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderEnvEditor: () => {
     return m(".preview-section", [
       m("h3", "Environment Editor"),
@@ -719,6 +831,10 @@ end`;
     ]);
   },
 
+  /**
+   * Renders request builder component previews.
+   * @returns {Object} Mithril vnode
+   */
   renderRequestBuilder: () => {
     return m(".preview-section", [
       m("h3", "Request Builder"),
@@ -737,6 +853,10 @@ end`;
     ]);
   },
 
+  /**
+   * Renders diff viewer component previews.
+   * @returns {Object[]} Array of Mithril vnodes
+   */
   renderDiffViewer: () => {
     const sampleDiff = [
       {

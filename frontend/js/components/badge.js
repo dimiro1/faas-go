@@ -1,6 +1,17 @@
+/**
+ * @fileoverview Badge components for displaying labels, statuses, and tags.
+ */
+
 import { icons } from "../icons.js";
 
-// Badge variants
+/**
+ * @typedef {import('../types.js').IconName} IconName
+ */
+
+/**
+ * Available badge color variants.
+ * @enum {string}
+ */
 export const BadgeVariant = {
   PRIMARY: "primary",
   SECONDARY: "secondary",
@@ -10,7 +21,10 @@ export const BadgeVariant = {
   WARNING: "warning",
 };
 
-// Badge sizes
+/**
+ * Available badge sizes.
+ * @enum {string}
+ */
 export const BadgeSize = {
   SM: "sm",
   DEFAULT: "default",
@@ -18,9 +32,26 @@ export const BadgeSize = {
 };
 
 /**
- * Badge component
+ * Badge component for displaying labels and tags.
+ * @type {Object}
  */
 export const Badge = {
+  /**
+   * Renders the badge component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.variant='primary'] - Color variant from BadgeVariant
+   * @param {string} [vnode.attrs.size='default'] - Size from BadgeSize
+   * @param {boolean} [vnode.attrs.uppercase=false] - Uppercase text
+   * @param {boolean} [vnode.attrs.mono=false] - Monospace font
+   * @param {boolean} [vnode.attrs.dot=false] - Show status dot
+   * @param {boolean} [vnode.attrs.dotGlow=false] - Add glow effect to dot
+   * @param {IconName} [vnode.attrs.icon] - Icon name for left icon
+   * @param {IconName} [vnode.attrs.iconRight] - Icon name for right icon
+   * @param {string} [vnode.attrs.href] - If provided, renders as anchor
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       variant = BadgeVariant.PRIMARY,
@@ -49,9 +80,9 @@ export const Badge = {
 
     const content = [
       dot &&
-        m("span", {
-          class: `badge__dot ${dotGlow ? "badge__dot--glow" : ""}`.trim(),
-        }),
+      m("span", {
+        class: `badge__dot ${dotGlow ? "badge__dot--glow" : ""}`.trim(),
+      }),
       icon && m("span.badge__icon", m.trust(icons[icon]())),
       vnode.children,
       iconRight && m("span.badge__icon", m.trust(icons[iconRight]())),
@@ -66,9 +97,18 @@ export const Badge = {
 };
 
 /**
- * ID Badge component - displays an ID with hashtag icon
+ * ID Badge component - displays an ID with hashtag icon.
+ * @type {Object}
  */
 export const IDBadge = {
+  /**
+   * Renders the ID badge.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} vnode.attrs.id - The ID to display
+   * @param {string} [vnode.attrs.href] - Optional link URL
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { id, href } = vnode.attrs;
 
@@ -87,9 +127,18 @@ export const IDBadge = {
 };
 
 /**
- * Status Badge component - displays enabled/disabled status
+ * Status Badge component - displays enabled/disabled status.
+ * @type {Object}
  */
 export const StatusBadge = {
+  /**
+   * Renders the status badge.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {boolean} vnode.attrs.enabled - Whether the status is enabled
+   * @param {boolean} [vnode.attrs.glow=false] - Add glow effect when enabled
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { enabled, glow = false } = vnode.attrs;
 
@@ -109,9 +158,17 @@ export const StatusBadge = {
 };
 
 /**
- * Method Badges component - displays a list of HTTP methods
+ * Method Badges component - displays a list of HTTP methods.
+ * @type {Object}
  */
 export const MethodBadges = {
+  /**
+   * Renders method badges.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string[]} [vnode.attrs.methods=[]] - Array of HTTP method names
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { methods = [] } = vnode.attrs;
 
@@ -126,19 +183,28 @@ export const MethodBadges = {
             mono: true,
           },
           method,
-        ),
+        )
       ),
     );
   },
 };
 
 /**
- * Log Level Badge - for execution logs
+ * Log Level Badge - for execution logs.
+ * @type {Object}
  */
 export const LogLevelBadge = {
+  /**
+   * Renders the log level badge.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {('INFO'|'WARN'|'ERROR'|'DEBUG')} vnode.attrs.level - Log level
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { level } = vnode.attrs;
 
+    /** @type {Object.<string, string>} */
     const variantMap = {
       INFO: BadgeVariant.SUCCESS,
       WARN: BadgeVariant.WARNING,

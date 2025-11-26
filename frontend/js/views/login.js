@@ -1,18 +1,46 @@
+/**
+ * @fileoverview Login view for API key authentication.
+ */
+
 import { API } from "../api.js";
 import { Button, ButtonVariant } from "../components/button.js";
 import { Card, CardContent } from "../components/card.js";
 import {
   FormGroup,
+  FormHelp,
   FormLabel,
   PasswordInput,
-  FormHelp,
 } from "../components/form.js";
 
+/**
+ * Login view component.
+ * Handles API key authentication and redirects to functions list on success.
+ * @type {Object}
+ */
 export const Login = {
+  /**
+   * Current API key input value.
+   * @type {string}
+   */
   apiKey: "",
+
+  /**
+   * Error message to display.
+   * @type {string}
+   */
   error: "",
+
+  /**
+   * Whether login is in progress.
+   * @type {boolean}
+   */
   loading: false,
 
+  /**
+   * Handles form submission for login.
+   * @param {Event} e - Form submit event
+   * @returns {Promise<void>}
+   */
   handleSubmit: async (e) => {
     e.preventDefault();
     Login.error = "";
@@ -37,6 +65,10 @@ export const Login = {
     }
   },
 
+  /**
+   * Renders the login view.
+   * @returns {Object} Mithril vnode
+   */
   view: () => {
     return m(".login-container", [
       m(".login-card", [
@@ -73,10 +105,10 @@ export const Login = {
                 ]),
 
                 Login.error &&
-                  m(FormHelp, {
-                    text: Login.error,
-                    error: true,
-                  }),
+                m(FormHelp, {
+                  text: Login.error,
+                  error: true,
+                }),
 
                 m(
                   Button,

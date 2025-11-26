@@ -1,28 +1,67 @@
+/**
+ * @fileoverview Function creation view with template selection.
+ */
+
 import { API } from "../api.js";
 import { Toast } from "../components/toast.js";
-import { Button, ButtonVariant, BackButton } from "../components/button.js";
+import { BackButton, Button, ButtonVariant } from "../components/button.js";
 import {
   FormGroup,
-  FormLabel,
-  FormInput,
-  FormTextarea,
   FormHelp,
+  FormInput,
+  FormLabel,
+  FormTextarea,
 } from "../components/form.js";
 import {
+  FunctionTemplates,
   TemplateCard,
   TemplateCards,
-  FunctionTemplates,
 } from "../components/template-card.js";
 
+/**
+ * @typedef {Object} FormData
+ * @property {string} name - Function name
+ * @property {string} description - Function description
+ * @property {string} code - Initial function code
+ */
+
+/**
+ * @typedef {Object} ParsedError
+ * @property {string} field - Field name that has the error
+ * @property {string} message - Error message
+ */
+
+/**
+ * Function creation view component.
+ * Allows creating new functions with template selection.
+ * @type {Object}
+ */
 export const FunctionCreate = {
+  /**
+   * Form data state.
+   * @type {FormData}
+   */
   formData: {
     name: "",
     description: "",
     code: "",
   },
+
+  /**
+   * Field-specific errors.
+   * @type {Object.<string, string>}
+   */
   errors: {},
+
+  /**
+   * Currently selected template ID.
+   * @type {string}
+   */
   selectedTemplate: "http",
 
+  /**
+   * Initializes the view and resets form state.
+   */
   oninit: () => {
     FunctionCreate.formData = {
       name: "",
@@ -38,6 +77,10 @@ export const FunctionCreate = {
     }
   },
 
+  /**
+   * Selects a template and updates the code.
+   * @param {string} templateId - Template ID to select
+   */
   selectTemplate: (templateId) => {
     FunctionCreate.selectedTemplate = templateId;
     const template = FunctionTemplates.find((t) => t.id === templateId);
@@ -46,6 +89,11 @@ export const FunctionCreate = {
     }
   },
 
+  /**
+   * Parses an error message into field and message.
+   * @param {string} message - Error message in "field: message" format
+   * @returns {ParsedError|null} Parsed error or null if format doesn't match
+   */
   parseErrorMessage: (message) => {
     const match = message.match(/^(\w+):\s*(.+)$/);
     if (match) {
@@ -54,6 +102,10 @@ export const FunctionCreate = {
     return null;
   },
 
+  /**
+   * Creates a new function via the API.
+   * @returns {Promise<void>}
+   */
   createFunction: async () => {
     FunctionCreate.errors = {};
     try {
@@ -76,6 +128,10 @@ export const FunctionCreate = {
     }
   },
 
+  /**
+   * Renders the function creation view.
+   * @returns {Object} Mithril vnode
+   */
   view: () => {
     return m(".create-function-page.fade-in", [
       m(".create-function-header", [
@@ -103,7 +159,7 @@ export const FunctionCreate = {
             },
           }),
           FunctionCreate.errors.name &&
-            m(FormHelp, { error: true, text: FunctionCreate.errors.name }),
+          m(FormHelp, { error: true, text: FunctionCreate.errors.name }),
         ]),
 
         // Starter Template
@@ -119,7 +175,7 @@ export const FunctionCreate = {
                 icon: template.icon,
                 selected: FunctionCreate.selectedTemplate === template.id,
                 onclick: () => FunctionCreate.selectTemplate(template.id),
-              }),
+              })
             ),
           ),
         ]),

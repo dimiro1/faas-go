@@ -1,16 +1,55 @@
+/**
+ * @fileoverview Request builder component for testing HTTP endpoints.
+ */
+
 import { Button, ButtonVariant } from "./button.js";
-import { Card, CardHeader, CardContent } from "./card.js";
+import { Card, CardContent, CardHeader } from "./card.js";
 import {
-  FormGroup,
-  FormLabel,
-  FormInput,
-  FormTextarea,
-  FormSelect,
   CopyInput,
+  FormGroup,
+  FormInput,
+  FormLabel,
+  FormSelect,
+  FormTextarea,
 } from "./form.js";
 
-// Request builder component for testing functions
+/**
+ * @typedef {Object} HttpMethod
+ * @property {string} value - HTTP method value
+ * @property {string} label - Display label
+ */
+
+/**
+ * @typedef {Object} CodeExamples
+ * @property {string} curl - cURL command example
+ * @property {string} javascript - JavaScript fetch example
+ * @property {string} python - Python requests example
+ * @property {string} go - Go net/http example
+ */
+
+/**
+ * Request builder component for testing functions.
+ * Provides a form interface for building and sending HTTP requests.
+ * @type {Object}
+ */
 export const RequestBuilder = {
+  /**
+   * Renders the request builder component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.url=''] - Base URL for the request
+   * @param {string} [vnode.attrs.method='GET'] - HTTP method
+   * @param {string} [vnode.attrs.query=''] - Query string parameters
+   * @param {string} [vnode.attrs.headers] - Request headers as JSON string
+   * @param {string} [vnode.attrs.body=''] - Request body
+   * @param {function(string): void} [vnode.attrs.onMethodChange] - Callback when method changes
+   * @param {function(string): void} [vnode.attrs.onQueryChange] - Callback when query changes
+   * @param {function(string): void} [vnode.attrs.onHeadersChange] - Callback when headers change
+   * @param {function(string): void} [vnode.attrs.onBodyChange] - Callback when body changes
+   * @param {function} [vnode.attrs.onExecute] - Callback when execute button is clicked
+   * @param {boolean} [vnode.attrs.loading=false] - Whether request is in progress
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       url = "",
@@ -101,7 +140,16 @@ export const RequestBuilder = {
   },
 };
 
-// Generate code examples for different languages
+/**
+ * Generates code examples for different programming languages.
+ * Creates ready-to-use code snippets for cURL, JavaScript, Python, and Go.
+ * @param {string} url - Base URL
+ * @param {string} method - HTTP method
+ * @param {string} query - Query string parameters
+ * @param {string} headers - Headers as JSON string
+ * @param {string} body - Request body
+ * @returns {CodeExamples} Object with code examples for each language
+ */
 export function generateCodeExamples(url, method, query, headers, body) {
   const fullUrl = url + (query ? `?${query}` : "");
   const hasBody = body && ["POST", "PUT", "PATCH"].includes(method);
@@ -123,16 +171,19 @@ export function generateCodeExamples(url, method, query, headers, body) {
   curl += ` \\\n  '${fullUrl}'`;
 
   // JavaScript
-  let js =
-    headersList.length || hasBody
-      ? `const response = await fetch('${fullUrl}', {\n  method: '${method}',\n`
-      : `const response = await fetch('${fullUrl}');\n\n`;
+  let js = headersList.length || hasBody
+    ? `const response = await fetch('${fullUrl}', {\n  method: '${method}',\n`
+    : `const response = await fetch('${fullUrl}');\n\n`;
   if (headersList.length || hasBody) {
     if (headersList.length) {
-      js += `  headers: {\n${headersList.map((h) => `    '${h.key}': '${h.value}'`).join(",\n")}\n  },\n`;
+      js += `  headers: {\n${
+        headersList.map((h) => `    '${h.key}': '${h.value}'`).join(",\n")
+      }\n  },\n`;
     }
     if (hasBody) {
-      js += `  body: '${body.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n")}'\n`;
+      js += `  body: '${
+        body.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/\n/g, "\\n")
+      }'\n`;
     }
     js += `});\n\n`;
   }
@@ -141,7 +192,9 @@ export function generateCodeExamples(url, method, query, headers, body) {
   // Python
   let py = `import requests\n\n`;
   if (headersList.length) {
-    py += `headers = {\n${headersList.map((h) => `    '${h.key}': '${h.value}'`).join(",\n")}\n}\n\n`;
+    py += `headers = {\n${
+      headersList.map((h) => `    '${h.key}': '${h.value}'`).join(",\n")
+    }\n}\n\n`;
   }
   py += `response = requests.${method.toLowerCase()}(\n    '${fullUrl}'`;
   if (headersList.length) py += `,\n    headers=headers`;
@@ -153,7 +206,9 @@ export function generateCodeExamples(url, method, query, headers, body) {
   if (hasBody) go += `\n\t"strings"`;
   go += `\n)\n\nfunc main() {\n`;
   if (hasBody) {
-    go += `\tbody := strings.NewReader("${body.replace(/"/g, '\\"').replace(/\n/g, "\\n")}")\n`;
+    go += `\tbody := strings.NewReader("${
+      body.replace(/"/g, '\\"').replace(/\n/g, "\\n")
+    }")\n`;
     go += `\treq, err := http.NewRequest("${method}", "${fullUrl}", body)\n`;
   } else {
     go += `\treq, err := http.NewRequest("${method}", "${fullUrl}", nil)\n`;
@@ -165,7 +220,8 @@ export function generateCodeExamples(url, method, query, headers, body) {
   if (headersList.length) go += `\n`;
   go += `\tclient := &http.Client{}\n\tresp, err := client.Do(req)\n`;
   go += `\tif err != nil {\n\t\tpanic(err)\n\t}\n\tdefer resp.Body.Close()\n\n`;
-  go += `\tresBody, _ := io.ReadAll(resp.Body)\n\tfmt.Println(string(resBody))\n}`;
+  go +=
+    `\tresBody, _ := io.ReadAll(resp.Body)\n\tfmt.Println(string(resBody))\n}`;
 
   return { curl, javascript: js, python: py, go };
 }

@@ -1,6 +1,44 @@
-// API Reference component with tabbed sections
+/**
+ * @fileoverview API Reference component for displaying Lua API documentation.
+ */
 
+/**
+ * @typedef {Object} DocItemDef
+ * @property {string} name - Item name/signature
+ * @property {string} type - Type (string, number, table, function, module)
+ * @property {string} description - Item description
+ */
+
+/**
+ * @typedef {Object} DocGroup
+ * @property {string} name - Group name
+ * @property {DocItemDef[]} items - Items in the group
+ */
+
+/**
+ * @typedef {Object} APISection
+ * @property {string} id - Unique section identifier
+ * @property {string} name - Section display name
+ * @property {string} [description] - Section description
+ * @property {DocItemDef[]} [items] - Direct items (if no groups)
+ * @property {DocGroup[]} [groups] - Grouped items
+ */
+
+/**
+ * API Reference component with tabbed sections.
+ * Displays documentation for Lua API functions and modules.
+ * @type {Object}
+ */
 export const APIReference = {
+  /**
+   * Renders the API reference component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {APISection[]} [vnode.attrs.sections=[]] - API sections to display
+   * @param {string} [vnode.attrs.activeSection] - Currently active section ID
+   * @param {(sectionId: string) => void} [vnode.attrs.onSectionChange] - Section change callback
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { sections = [], activeSection, onSectionChange } = vnode.attrs;
     const active = activeSection || sections[0]?.id;
@@ -18,7 +56,7 @@ export const APIReference = {
               onclick: () => onSectionChange && onSectionChange(section.id),
             },
             section.name,
-          ),
+          )
         ),
       ),
       // Content
@@ -29,28 +67,27 @@ export const APIReference = {
           .map((section) =>
             m(".api-reference__panel", { key: section.id }, [
               section.description &&
-                m("p.api-reference__description", section.description),
+              m("p.api-reference__description", section.description),
               section.items &&
-                section.items.map((item) =>
-                  m(DocItem, { key: item.name, item }),
-                ),
+              section.items.map((item) => m(DocItem, { key: item.name, item })),
               section.groups &&
-                section.groups.map((group, i) =>
-                  m(".api-reference__group", { key: group.name }, [
-                    m(
-                      "h4.api-reference__group-header",
-                      {
-                        class:
-                          i === 0 ? "api-reference__group-header--first" : "",
-                      },
-                      group.name,
-                    ),
-                    group.items.map((item) =>
-                      m(DocItem, { key: item.name, item }),
-                    ),
-                  ]),
-                ),
-            ]),
+              section.groups.map((group, i) =>
+                m(".api-reference__group", { key: group.name }, [
+                  m(
+                    "h4.api-reference__group-header",
+                    {
+                      class: i === 0
+                        ? "api-reference__group-header--first"
+                        : "",
+                    },
+                    group.name,
+                  ),
+                  group.items.map((item) =>
+                    m(DocItem, { key: item.name, item })
+                  ),
+                ])
+              ),
+            ])
           ),
       ),
       // Footer
@@ -69,7 +106,20 @@ export const APIReference = {
   },
 };
 
+/**
+ * Documentation item component.
+ * Displays a single API item with name, type, and description.
+ * @type {Object}
+ * @private
+ */
 const DocItem = {
+  /**
+   * Renders the documentation item.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {DocItemDef} vnode.attrs.item - The documentation item
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { item } = vnode.attrs;
     const typeClass = getTypeClass(item.type);
@@ -84,6 +134,11 @@ const DocItem = {
   },
 };
 
+/**
+ * Gets the CSS class for a type badge.
+ * @param {string} type - The type name
+ * @returns {string} CSS class name
+ */
 function getTypeClass(type) {
   switch (type) {
     case "string":
@@ -101,7 +156,11 @@ function getTypeClass(type) {
   }
 }
 
-// Default API sections for Lua functions
+/**
+ * Default API sections for Lua functions.
+ * Contains documentation for handler inputs, I/O, data transformation, and utilities.
+ * @type {APISection[]}
+ */
 export const LuaAPISections = [
   {
     id: "handler",

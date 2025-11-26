@@ -1,40 +1,92 @@
+/**
+ * @fileoverview Function executions view with execution history.
+ */
+
 import { icons } from "../icons.js";
 import { API } from "../api.js";
 import { Pagination } from "../components/pagination.js";
 import { formatUnixTimestamp, getFunctionTabs } from "../utils.js";
-import { routes, paths } from "../routes.js";
+import { paths, routes } from "../routes.js";
 import { BackButton } from "../components/button.js";
-import { Card, CardHeader, CardContent } from "../components/card.js";
+import { Card, CardContent, CardHeader } from "../components/card.js";
 import {
   Badge,
-  BadgeVariant,
   BadgeSize,
+  BadgeVariant,
   IDBadge,
   StatusBadge,
 } from "../components/badge.js";
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableRow,
-  TableHead,
   TableCell,
   TableEmpty,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "../components/table.js";
-import { Tabs, TabContent } from "../components/tabs.js";
+import { TabContent, Tabs } from "../components/tabs.js";
 
+/**
+ * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').Execution} Execution
+ */
+
+/**
+ * Function executions view component.
+ * Displays paginated execution history for a function.
+ * @type {Object}
+ */
 export const FunctionExecutions = {
+  /**
+   * Currently loaded function.
+   * @type {FaaSFunction|null}
+   */
   func: null,
+
+  /**
+   * Array of loaded executions.
+   * @type {Execution[]}
+   */
   executions: [],
+
+  /**
+   * Whether the view is loading.
+   * @type {boolean}
+   */
   loading: true,
+
+  /**
+   * Number of executions per page.
+   * @type {number}
+   */
   executionsLimit: 20,
+
+  /**
+   * Current pagination offset.
+   * @type {number}
+   */
   executionsOffset: 0,
+
+  /**
+   * Total number of executions.
+   * @type {number}
+   */
   executionsTotal: 0,
 
+  /**
+   * Initializes the view and loads data.
+   * @param {Object} vnode - Mithril vnode
+   */
   oninit: (vnode) => {
     FunctionExecutions.loadData(vnode.attrs.id);
   },
 
+  /**
+   * Loads function and executions data.
+   * @param {string} id - Function ID
+   * @returns {Promise<void>}
+   */
   loadData: async (id) => {
     FunctionExecutions.loading = true;
     try {
@@ -57,6 +109,10 @@ export const FunctionExecutions = {
     }
   },
 
+  /**
+   * Reloads executions with current pagination.
+   * @returns {Promise<void>}
+   */
   loadExecutions: async () => {
     try {
       const executions = await API.executions.list(
@@ -72,17 +128,30 @@ export const FunctionExecutions = {
     }
   },
 
+  /**
+   * Handles page change from pagination.
+   * @param {number} newOffset - New pagination offset
+   */
   handlePageChange: (newOffset) => {
     FunctionExecutions.executionsOffset = newOffset;
     FunctionExecutions.loadExecutions();
   },
 
+  /**
+   * Handles limit change from pagination.
+   * @param {number} newLimit - New items per page limit
+   */
   handleLimitChange: (newLimit) => {
     FunctionExecutions.executionsLimit = newLimit;
     FunctionExecutions.executionsOffset = 0;
     FunctionExecutions.loadExecutions();
   },
 
+  /**
+   * Renders the function executions view.
+   * @param {Object} vnode - Mithril vnode
+   * @returns {Object} Mithril vnode
+   */
   view: (vnode) => {
     if (FunctionExecutions.loading) {
       return m(".loading", [
@@ -140,73 +209,70 @@ export const FunctionExecutions = {
           m(Card, [
             m(CardHeader, {
               title: "Execution History",
-              subtitle: `${FunctionExecutions.executionsTotal} total executions`,
+              subtitle:
+                `${FunctionExecutions.executionsTotal} total executions`,
             }),
             FunctionExecutions.executions.length === 0
               ? m(CardContent, [
-                  m(TableEmpty, {
-                    icon: "inbox",
-                    message:
-                      "No executions yet. Test your function to see execution history.",
-                  }),
-                ])
+                m(TableEmpty, {
+                  icon: "inbox",
+                  message:
+                    "No executions yet. Test your function to see execution history.",
+                }),
+              ])
               : [
-                  m(Table, [
-                    m(TableHeader, [
-                      m(TableRow, [
-                        m(TableHead, "Execution ID"),
-                        m(TableHead, "Status"),
-                        m(TableHead, "Duration"),
-                        m(TableHead, "Time"),
-                      ]),
+                m(Table, [
+                  m(TableHeader, [
+                    m(TableRow, [
+                      m(TableHead, "Execution ID"),
+                      m(TableHead, "Status"),
+                      m(TableHead, "Duration"),
+                      m(TableHead, "Time"),
                     ]),
-                    m(
-                      TableBody,
-                      FunctionExecutions.executions.map((exec) =>
-                        m(
-                          TableRow,
-                          {
-                            key: exec.id,
-                            onclick: () =>
-                              m.route.set(paths.execution(exec.id)),
-                          },
-                          [
-                            m(TableCell, m(IDBadge, { id: exec.id })),
-                            m(
-                              TableCell,
-                              m(
-                                Badge,
-                                {
-                                  variant:
-                                    exec.status === "success"
-                                      ? BadgeVariant.SUCCESS
-                                      : BadgeVariant.DESTRUCTIVE,
-                                  size: BadgeSize.SM,
-                                },
-                                exec.status.toUpperCase(),
-                              ),
-                            ),
-                            m(
-                              TableCell,
-                              { mono: true },
-                              exec.duration_ms
-                                ? `${exec.duration_ms}ms`
-                                : "N/A",
-                            ),
-                            m(TableCell, formatUnixTimestamp(exec.created_at)),
-                          ],
-                        ),
-                      ),
-                    ),
                   ]),
-                  m(Pagination, {
-                    total: FunctionExecutions.executionsTotal,
-                    limit: FunctionExecutions.executionsLimit,
-                    offset: FunctionExecutions.executionsOffset,
-                    onPageChange: FunctionExecutions.handlePageChange,
-                    onLimitChange: FunctionExecutions.handleLimitChange,
-                  }),
-                ],
+                  m(
+                    TableBody,
+                    FunctionExecutions.executions.map((exec) =>
+                      m(
+                        TableRow,
+                        {
+                          key: exec.id,
+                          onclick: () => m.route.set(paths.execution(exec.id)),
+                        },
+                        [
+                          m(TableCell, m(IDBadge, { id: exec.id })),
+                          m(
+                            TableCell,
+                            m(
+                              Badge,
+                              {
+                                variant: exec.status === "success"
+                                  ? BadgeVariant.SUCCESS
+                                  : BadgeVariant.DESTRUCTIVE,
+                                size: BadgeSize.SM,
+                              },
+                              exec.status.toUpperCase(),
+                            ),
+                          ),
+                          m(
+                            TableCell,
+                            { mono: true },
+                            exec.duration_ms ? `${exec.duration_ms}ms` : "N/A",
+                          ),
+                          m(TableCell, formatUnixTimestamp(exec.created_at)),
+                        ],
+                      )
+                    ),
+                  ),
+                ]),
+                m(Pagination, {
+                  total: FunctionExecutions.executionsTotal,
+                  limit: FunctionExecutions.executionsLimit,
+                  offset: FunctionExecutions.executionsOffset,
+                  onPageChange: FunctionExecutions.handlePageChange,
+                  onLimitChange: FunctionExecutions.handleLimitChange,
+                }),
+              ],
           ]),
         ]),
       ]),

@@ -1,35 +1,79 @@
+/**
+ * @fileoverview Functions list view - displays all functions with pagination.
+ */
+
 import { icons } from "../icons.js";
 import { API } from "../api.js";
 import { Pagination } from "../components/pagination.js";
 import { Button, ButtonVariant } from "../components/button.js";
-import { Card, CardHeader, CardContent } from "../components/card.js";
+import { Card, CardContent, CardHeader } from "../components/card.js";
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableRow,
-  TableHead,
   TableCell,
   TableEmpty,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "../components/table.js";
 import {
   Badge,
-  BadgeVariant,
   BadgeSize,
+  BadgeVariant,
   StatusBadge,
 } from "../components/badge.js";
 
+/**
+ * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ */
+
+/**
+ * Functions list view component.
+ * Displays a paginated table of all functions.
+ * @type {Object}
+ */
 export const FunctionsList = {
+  /**
+   * Array of loaded functions.
+   * @type {FaaSFunction[]}
+   */
   functions: [],
+
+  /**
+   * Whether the view is loading.
+   * @type {boolean}
+   */
   loading: true,
+
+  /**
+   * Number of functions per page.
+   * @type {number}
+   */
   limit: 20,
+
+  /**
+   * Current pagination offset.
+   * @type {number}
+   */
   offset: 0,
+
+  /**
+   * Total number of functions.
+   * @type {number}
+   */
   total: 0,
 
+  /**
+   * Initializes the view and loads functions.
+   */
   oninit: () => {
     FunctionsList.loadFunctions();
   },
 
+  /**
+   * Loads functions from the API.
+   * @returns {Promise<void>}
+   */
   loadFunctions: async () => {
     FunctionsList.loading = true;
     try {
@@ -47,17 +91,29 @@ export const FunctionsList = {
     }
   },
 
+  /**
+   * Handles page change from pagination.
+   * @param {number} newOffset - New pagination offset
+   */
   handlePageChange: (newOffset) => {
     FunctionsList.offset = newOffset;
     FunctionsList.loadFunctions();
   },
 
+  /**
+   * Handles limit change from pagination.
+   * @param {number} newLimit - New items per page limit
+   */
   handleLimitChange: (newLimit) => {
     FunctionsList.limit = newLimit;
     FunctionsList.offset = 0;
     FunctionsList.loadFunctions();
   },
 
+  /**
+   * Renders the functions list view.
+   * @returns {Object} Mithril vnode
+   */
   view: () => {
     if (FunctionsList.loading) {
       return m(".loading", [
@@ -93,69 +149,69 @@ export const FunctionsList = {
 
         FunctionsList.functions.length === 0
           ? m(CardContent, [
-              m(".table__empty", [
-                m(".table__empty-icon", m.trust(icons.inbox())),
-                m(
-                  "p.table__empty-message",
-                  "No functions yet. Create your first function to get started.",
-                ),
-              ]),
-            ])
+            m(".table__empty", [
+              m(".table__empty-icon", m.trust(icons.inbox())),
+              m(
+                "p.table__empty-message",
+                "No functions yet. Create your first function to get started.",
+              ),
+            ]),
+          ])
           : [
-              m(Table, [
-                m(TableHeader, [
-                  m(TableRow, [
-                    m(TableHead, "Name"),
-                    m(TableHead, "Description"),
-                    m(TableHead, "Status"),
-                    m(TableHead, "Version"),
-                  ]),
+            m(Table, [
+              m(TableHeader, [
+                m(TableRow, [
+                  m(TableHead, "Name"),
+                  m(TableHead, "Description"),
+                  m(TableHead, "Status"),
+                  m(TableHead, "Version"),
                 ]),
-                m(
-                  TableBody,
-                  FunctionsList.functions.map((func) =>
-                    m(
-                      TableRow,
-                      {
-                        key: func.id,
-                        onclick: () => m.route.set(`/functions/${func.id}`),
-                      },
-                      [
-                        m(TableCell, { mono: true }, func.name),
-                        m(
-                          TableCell,
-                          func.description ||
-                            m("span.text-muted", "No description"),
-                        ),
-                        m(
-                          TableCell,
-                          m(StatusBadge, { enabled: !func.disabled }),
-                        ),
-                        m(
-                          TableCell,
-                          m(
-                            Badge,
-                            {
-                              variant: BadgeVariant.SUCCESS,
-                              size: BadgeSize.SM,
-                              mono: true,
-                            },
-                            `v${func.active_version.version}`,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ]),
-              m(Pagination, {
-                total: FunctionsList.total,
-                limit: FunctionsList.limit,
-                offset: FunctionsList.offset,
-                onPageChange: FunctionsList.handlePageChange,
-                onLimitChange: FunctionsList.handleLimitChange,
-              }),
-            ],
+              m(
+                TableBody,
+                FunctionsList.functions.map((func) =>
+                  m(
+                    TableRow,
+                    {
+                      key: func.id,
+                      onclick: () => m.route.set(`/functions/${func.id}`),
+                    },
+                    [
+                      m(TableCell, { mono: true }, func.name),
+                      m(
+                        TableCell,
+                        func.description ||
+                          m("span.text-muted", "No description"),
+                      ),
+                      m(
+                        TableCell,
+                        m(StatusBadge, { enabled: !func.disabled }),
+                      ),
+                      m(
+                        TableCell,
+                        m(
+                          Badge,
+                          {
+                            variant: BadgeVariant.SUCCESS,
+                            size: BadgeSize.SM,
+                            mono: true,
+                          },
+                          `v${func.active_version.version}`,
+                        ),
+                      ),
+                    ],
+                  )
+                ),
+              ),
+            ]),
+            m(Pagination, {
+              total: FunctionsList.total,
+              limit: FunctionsList.limit,
+              offset: FunctionsList.offset,
+              onPageChange: FunctionsList.handlePageChange,
+              onLimitChange: FunctionsList.handleLimitChange,
+            }),
+          ],
       ]),
     ]);
   },

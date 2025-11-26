@@ -1,37 +1,78 @@
+/**
+ * @fileoverview Function code editor view with Monaco editor and API reference.
+ */
+
 import { icons } from "../icons.js";
 import { API } from "../api.js";
 import { Toast } from "../components/toast.js";
 import { CodeEditor } from "../components/code-editor.js";
 import {
-  Button,
-  ButtonVariant,
-  ButtonSize,
   BackButton,
+  Button,
+  ButtonSize,
+  ButtonVariant,
 } from "../components/button.js";
-import { Card, CardHeader, CardContent } from "../components/card.js";
+import { Card, CardContent, CardHeader } from "../components/card.js";
 import {
   Badge,
-  BadgeVariant,
   BadgeSize,
+  BadgeVariant,
   IDBadge,
   StatusBadge,
 } from "../components/badge.js";
-import { Tabs, TabContent } from "../components/tabs.js";
+import { TabContent, Tabs } from "../components/tabs.js";
 import { getFunctionTabs } from "../utils.js";
 import { routes } from "../routes.js";
 import { APIReference, LuaAPISections } from "../components/api-reference.js";
 
+/**
+ * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ */
+
+/**
+ * Function code editor view component.
+ * Provides a Monaco editor for editing function code with an API reference sidebar.
+ * @type {Object}
+ */
 export const FunctionCode = {
+  /**
+   * Currently loaded function.
+   * @type {FaaSFunction|null}
+   */
   func: null,
+
+  /**
+   * Whether the view is loading.
+   * @type {boolean}
+   */
   loading: true,
+
+  /**
+   * Currently active API reference section.
+   * @type {string}
+   */
   activeApiSection: "handler",
+
+  /**
+   * Edited code (null if unchanged from saved version).
+   * @type {string|null}
+   */
   editedCode: null,
 
+  /**
+   * Initializes the view and loads the function.
+   * @param {Object} vnode - Mithril vnode
+   */
   oninit: (vnode) => {
     FunctionCode.editedCode = null;
     FunctionCode.loadFunction(vnode.attrs.id);
   },
 
+  /**
+   * Loads a function by ID from the API.
+   * @param {string} id - Function ID
+   * @returns {Promise<void>}
+   */
   loadFunction: async (id) => {
     FunctionCode.loading = true;
     try {
@@ -44,6 +85,10 @@ export const FunctionCode = {
     }
   },
 
+  /**
+   * Saves the edited code to the API, creating a new version.
+   * @returns {Promise<void>}
+   */
   saveCode: async () => {
     if (FunctionCode.editedCode === null) return;
 
@@ -59,6 +104,11 @@ export const FunctionCode = {
     }
   },
 
+  /**
+   * Renders the function code editor view.
+   * @param {Object} vnode - Mithril vnode
+   * @returns {Object} Mithril vnode
+   */
   view: (vnode) => {
     if (FunctionCode.loading) {
       return m(".loading", [
@@ -132,10 +182,9 @@ export const FunctionCode = {
             m(CardContent, { noPadding: true }, [
               m(CodeEditor, {
                 id: "code-viewer",
-                value:
-                  FunctionCode.editedCode !== null
-                    ? FunctionCode.editedCode
-                    : func.active_version.code,
+                value: FunctionCode.editedCode !== null
+                  ? FunctionCode.editedCode
+                  : func.active_version.code,
                 onChange: (value) => {
                   if (value !== func.active_version.code) {
                     FunctionCode.editedCode = value;

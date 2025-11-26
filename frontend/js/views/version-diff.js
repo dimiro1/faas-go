@@ -1,30 +1,69 @@
+/**
+ * @fileoverview Version diff view for comparing two function versions.
+ */
+
 import { icons } from "../icons.js";
 import { API } from "../api.js";
 import { BackButton } from "../components/button.js";
 import { routes } from "../routes.js";
-import { Card, CardHeader, CardContent } from "../components/card.js";
+import { Card, CardContent, CardHeader } from "../components/card.js";
 import {
   Badge,
-  BadgeVariant,
   BadgeSize,
+  BadgeVariant,
   IDBadge,
   StatusBadge,
 } from "../components/badge.js";
 import {
   DiffViewer,
-  VersionLabels,
   LineType,
+  VersionLabels,
 } from "../components/diff-viewer.js";
 
+/**
+ * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').DiffResponse} DiffResponse
+ */
+
+/**
+ * Version diff view component.
+ * Displays a side-by-side or unified diff between two function versions.
+ * @type {Object}
+ */
 export const VersionDiff = {
+  /**
+   * Currently loaded function.
+   * @type {FaaSFunction|null}
+   */
   func: null,
+
+  /**
+   * Diff data from the API.
+   * @type {DiffResponse|null}
+   */
   diffData: null,
+
+  /**
+   * Whether the view is loading.
+   * @type {boolean}
+   */
   loading: true,
 
+  /**
+   * Initializes the view and loads diff data.
+   * @param {Object} vnode - Mithril vnode
+   */
   oninit: (vnode) => {
     VersionDiff.loadData(vnode.attrs.id, vnode.attrs.v1, vnode.attrs.v2);
   },
 
+  /**
+   * Loads function and diff data.
+   * @param {string} functionId - Function ID
+   * @param {number} v1 - First version number
+   * @param {number} v2 - Second version number
+   * @returns {Promise<void>}
+   */
   loadData: async (functionId, v1, v2) => {
     VersionDiff.loading = true;
     try {
@@ -42,6 +81,10 @@ export const VersionDiff = {
     }
   },
 
+  /**
+   * Renders the version diff view.
+   * @returns {Object} Mithril vnode
+   */
   view: () => {
     if (VersionDiff.loading) {
       return m(".loading", [
@@ -105,12 +148,11 @@ export const VersionDiff = {
         m(CardContent, { noPadding: true }, [
           m(DiffViewer, {
             lines: VersionDiff.diffData.diff.map((line) => ({
-              type:
-                line.line_type === "added"
-                  ? LineType.ADDED
-                  : line.line_type === "removed"
-                    ? LineType.REMOVED
-                    : LineType.UNCHANGED,
+              type: line.line_type === "added"
+                ? LineType.ADDED
+                : line.line_type === "removed"
+                ? LineType.REMOVED
+                : LineType.UNCHANGED,
               content: line.content,
               oldLine: line.old_line || 0,
               newLine: line.new_line || 0,

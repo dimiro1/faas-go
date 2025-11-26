@@ -1,45 +1,109 @@
+/**
+ * @fileoverview Function settings view for configuration management.
+ */
+
 import { icons } from "../icons.js";
 import { API } from "../api.js";
 import { Toast } from "../components/toast.js";
-import { Button, ButtonVariant, BackButton } from "../components/button.js";
+import { BackButton, Button, ButtonVariant } from "../components/button.js";
 import {
   Card,
-  CardHeader,
   CardContent,
   CardFooter,
+  CardHeader,
 } from "../components/card.js";
 import {
   Badge,
-  BadgeVariant,
   BadgeSize,
+  BadgeVariant,
   IDBadge,
-  StatusBadge,
   MethodBadges,
+  StatusBadge,
 } from "../components/badge.js";
-import { Tabs, TabContent } from "../components/tabs.js";
+import { TabContent, Tabs } from "../components/tabs.js";
 import { getFunctionTabs } from "../utils.js";
-import { routes, paths } from "../routes.js";
+import { paths, routes } from "../routes.js";
 import {
-  FormGroup,
-  FormLabel,
-  FormInput,
-  FormTextarea,
-  FormCheckbox,
-  FormHelp,
   CopyInput,
+  FormCheckbox,
+  FormGroup,
+  FormHelp,
+  FormInput,
+  FormLabel,
+  FormTextarea,
 } from "../components/form.js";
 import { EnvEditor } from "../components/env-editor.js";
 
+/**
+ * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ */
+
+/**
+ * @typedef {Object} EnvVar
+ * @property {string} key - Environment variable key
+ * @property {string} value - Environment variable value
+ * @property {('original'|'added'|'modified'|'removed')} state - Edit state
+ * @property {string} [originalKey] - Original key before editing
+ */
+
+/**
+ * Function settings view component.
+ * Manages function configuration including name, description, env vars, and status.
+ * @type {Object}
+ */
 export const FunctionSettings = {
+  /**
+   * Currently loaded function.
+   * @type {FaaSFunction|null}
+   */
   func: null,
+
+  /**
+   * Whether the view is loading.
+   * @type {boolean}
+   */
   loading: true,
+
+  /**
+   * Edited name (null if unchanged).
+   * @type {string|null}
+   */
   editedName: null,
+
+  /**
+   * Edited description (null if unchanged).
+   * @type {string|null}
+   */
   editedDescription: null,
+
+  /**
+   * Edited disabled state (null if unchanged).
+   * @type {boolean|null}
+   */
   editedDisabled: null,
+
+  /**
+   * Edited retention days (null if unchanged).
+   * @type {number|null}
+   */
   editedRetentionDays: null,
+
+  /**
+   * Array of environment variables with edit state.
+   * @type {EnvVar[]}
+   */
   envVars: [],
+
+  /**
+   * Environment variable errors.
+   * @type {Object.<string, string>}
+   */
   envErrors: {},
 
+  /**
+   * Initializes the view and loads the function.
+   * @param {Object} vnode - Mithril vnode
+   */
   oninit: (vnode) => {
     FunctionSettings.editedName = null;
     FunctionSettings.editedDescription = null;
@@ -50,6 +114,11 @@ export const FunctionSettings = {
     FunctionSettings.loadFunction(vnode.attrs.id);
   },
 
+  /**
+   * Loads a function by ID and initializes env vars.
+   * @param {string} id - Function ID
+   * @returns {Promise<void>}
+   */
   loadFunction: async (id) => {
     FunctionSettings.loading = true;
     try {
@@ -75,6 +144,10 @@ export const FunctionSettings = {
     }
   },
 
+  /**
+   * Checks if there are unsaved environment variable changes.
+   * @returns {boolean} True if there are changes
+   */
   hasEnvChanges: () => {
     return (
       FunctionSettings.envVars.some((v) => v.state !== "original") ||
@@ -82,6 +155,10 @@ export const FunctionSettings = {
     );
   },
 
+  /**
+   * Saves environment variables to the API.
+   * @returns {Promise<void>}
+   */
   saveEnvVars: async () => {
     FunctionSettings.envErrors = {};
 
@@ -106,6 +183,10 @@ export const FunctionSettings = {
     }
   },
 
+  /**
+   * Checks if there are unsaved general settings changes.
+   * @returns {boolean} True if there are changes
+   */
   hasGeneralChanges: () => {
     return (
       FunctionSettings.editedName !== null ||
@@ -114,6 +195,10 @@ export const FunctionSettings = {
     );
   },
 
+  /**
+   * Saves general settings (name, description, retention) to the API.
+   * @returns {Promise<void>}
+   */
   saveGeneralSettings: async () => {
     if (!FunctionSettings.hasGeneralChanges()) return;
 
@@ -137,6 +222,10 @@ export const FunctionSettings = {
     }
   },
 
+  /**
+   * Deletes the function after confirmation.
+   * @returns {Promise<void>}
+   */
   deleteFunction: async () => {
     if (
       !confirm(
@@ -155,10 +244,18 @@ export const FunctionSettings = {
     }
   },
 
+  /**
+   * Checks if there are unsaved status changes.
+   * @returns {boolean} True if there are changes
+   */
   hasStatusChanges: () => {
     return FunctionSettings.editedDisabled !== null;
   },
 
+  /**
+   * Saves status settings (enabled/disabled) to the API.
+   * @returns {Promise<void>}
+   */
   saveStatusSettings: async () => {
     if (!FunctionSettings.hasStatusChanges()) return;
 
@@ -174,6 +271,11 @@ export const FunctionSettings = {
     }
   },
 
+  /**
+   * Renders the function settings view.
+   * @param {Object} vnode - Mithril vnode
+   * @returns {Object} Mithril vnode
+   */
   view: (vnode) => {
     if (FunctionSettings.loading) {
       return m(".loading", [
@@ -235,10 +337,9 @@ export const FunctionSettings = {
               m(FormGroup, [
                 m(FormLabel, { text: "Function Name" }),
                 m(FormInput, {
-                  value:
-                    FunctionSettings.editedName !== null
-                      ? FunctionSettings.editedName
-                      : func.name,
+                  value: FunctionSettings.editedName !== null
+                    ? FunctionSettings.editedName
+                    : func.name,
                   mono: true,
                   oninput: (e) => {
                     const value = e.target.value;
@@ -253,10 +354,9 @@ export const FunctionSettings = {
               m(FormGroup, [
                 m(FormLabel, { text: "Description" }),
                 m(FormTextarea, {
-                  value:
-                    FunctionSettings.editedDescription !== null
-                      ? FunctionSettings.editedDescription
-                      : func.description || "",
+                  value: FunctionSettings.editedDescription !== null
+                    ? FunctionSettings.editedDescription
+                    : func.description || "",
                   rows: 2,
                   oninput: (e) => {
                     const value = e.target.value;
@@ -271,10 +371,9 @@ export const FunctionSettings = {
               m(FormGroup, [
                 m(FormLabel, { text: "Log Retention Period" }),
                 m("select.form-select", {
-                  value:
-                    FunctionSettings.editedRetentionDays !== null
-                      ? FunctionSettings.editedRetentionDays
-                      : func.retention_days || 7,
+                  value: FunctionSettings.editedRetentionDays !== null
+                    ? FunctionSettings.editedRetentionDays
+                    : func.retention_days || 7,
                   onchange: (e) => {
                     const value = parseInt(e.target.value, 10);
                     if (value !== (func.retention_days || 7)) {
@@ -290,7 +389,8 @@ export const FunctionSettings = {
                   m("option", { value: 365 }, "1 year"),
                 ]),
                 m(FormHelp, {
-                  text: "Executions older than this will be automatically deleted",
+                  text:
+                    "Executions older than this will be automatically deleted",
                 }),
               ]),
             ]),
@@ -311,15 +411,18 @@ export const FunctionSettings = {
           m(Card, { style: "margin-bottom: 1.5rem" }, [
             m(CardHeader, {
               title: "Environment Variables",
-              subtitle: `${FunctionSettings.envVars.filter((v) => v.state !== "removed").length} variables`,
+              subtitle: `${
+                FunctionSettings.envVars.filter((v) => v.state !== "removed")
+                  .length
+              } variables`,
             }),
             m(CardContent, [
               FunctionSettings.envErrors.general &&
-                m(FormHelp, {
-                  error: true,
-                  text: FunctionSettings.envErrors.general,
-                  style: "margin-bottom: 1rem",
-                }),
+              m(FormHelp, {
+                error: true,
+                text: FunctionSettings.envErrors.general,
+                style: "margin-bottom: 1rem",
+              }),
 
               m(EnvEditor, {
                 envVars: FunctionSettings.envVars,
@@ -394,15 +497,13 @@ export const FunctionSettings = {
                 label: "Enable Function",
                 description:
                   "Disabling will stop all incoming requests to this function.",
-                checked:
-                  FunctionSettings.editedDisabled !== null
-                    ? !FunctionSettings.editedDisabled
-                    : !func.disabled,
+                checked: FunctionSettings.editedDisabled !== null
+                  ? !FunctionSettings.editedDisabled
+                  : !func.disabled,
                 onchange: () => {
-                  const newValue =
-                    FunctionSettings.editedDisabled !== null
-                      ? !FunctionSettings.editedDisabled
-                      : !func.disabled;
+                  const newValue = FunctionSettings.editedDisabled !== null
+                    ? !FunctionSettings.editedDisabled
+                    : !func.disabled;
                   if (newValue === func.disabled) {
                     FunctionSettings.editedDisabled = null;
                   } else {

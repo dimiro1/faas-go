@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Main application entry point.
+ * Defines the Layout component and application routes.
+ */
+
 import { Toast } from "./components/toast.js";
 import { Header } from "./components/navbar.js";
 import { CommandPalette } from "./components/command-palette.js";
@@ -14,8 +19,17 @@ import { VersionDiff } from "./views/version-diff.js";
 import { Preview } from "./views/preview.js";
 import { API } from "./api.js";
 
-// Layout component with new navbar
+/**
+ * Layout component that wraps all authenticated pages.
+ * Provides the header, main content area, toast notifications, and command palette.
+ * @type {Object}
+ */
 const Layout = {
+  /**
+   * Handles user logout.
+   * Calls the logout API and redirects to the login page.
+   * @returns {Promise<void>}
+   */
   handleLogout: async () => {
     try {
       await API.auth.logout();
@@ -25,6 +39,14 @@ const Layout = {
     }
   },
 
+  /**
+   * Renders the layout component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.breadcrumb] - Breadcrumb text for the current page
+   * @param {Object} vnode.children - Child components to render in the main area
+   * @returns {Object[]} Array of Mithril vnodes
+   */
   view: (vnode) => {
     const breadcrumb = vnode.attrs.breadcrumb;
 

@@ -1,9 +1,38 @@
-import { Button, ButtonVariant, ButtonSize } from "./button.js";
+/**
+ * @fileoverview Environment variable editor component for managing key-value pairs.
+ */
+
+import { Button, ButtonSize, ButtonVariant } from "./button.js";
 import { FormInput, PasswordInput } from "./form.js";
 
-// Environment variable editor component
-// Tracks state: 'original' (existing), 'added' (new), 'removed' (marked for deletion)
+/**
+ * @typedef {('original'|'added'|'removed')} EnvVarState
+ */
+
+/**
+ * @typedef {Object} EnvVar
+ * @property {string} key - Environment variable key
+ * @property {string} value - Environment variable value
+ * @property {EnvVarState} [state] - State of the variable (original, added, removed)
+ * @property {string} [originalKey] - Original key name (for tracking changes)
+ */
+
+/**
+ * Environment variable editor component.
+ * Allows adding, editing, and removing environment variables with visual state tracking.
+ * @type {Object}
+ */
 export const EnvEditor = {
+  /**
+   * Renders the environment editor component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {EnvVar[]} [vnode.attrs.envVars=[]] - Array of environment variables
+   * @param {function} vnode.attrs.onAdd - Callback when adding a new variable
+   * @param {function(number): void} vnode.attrs.onToggleRemove - Callback to toggle remove state
+   * @param {function(number, string, string): void} vnode.attrs.onChange - Callback when value changes (index, key, value)
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { envVars = [], onAdd, onToggleRemove, onChange } = vnode.attrs;
 
@@ -12,17 +41,17 @@ export const EnvEditor = {
         ".env-editor__rows",
         envVars.length === 0
           ? m(
-              ".env-editor__empty",
-              'No environment variables. Click "Add Variable" to add one.',
-            )
+            ".env-editor__empty",
+            'No environment variables. Click "Add Variable" to add one.',
+          )
           : envVars.map((envVar, i) =>
-              m(EnvRow, {
-                key: envVar.originalKey || i,
-                envVar,
-                onToggleRemove: () => onToggleRemove(i),
-                onChange: (key, value) => onChange(i, key, value),
-              }),
-            ),
+            m(EnvRow, {
+              key: envVar.originalKey || i,
+              envVar,
+              onToggleRemove: () => onToggleRemove(i),
+              onChange: (key, value) => onChange(i, key, value),
+            })
+          ),
       ),
       m(".env-editor__actions", [
         m(
@@ -40,7 +69,21 @@ export const EnvEditor = {
   },
 };
 
+/**
+ * Single environment variable row component.
+ * @type {Object}
+ * @private
+ */
 const EnvRow = {
+  /**
+   * Renders a single environment variable row.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {EnvVar} vnode.attrs.envVar - The environment variable
+   * @param {function} vnode.attrs.onToggleRemove - Callback to toggle removal
+   * @param {function(string, string): void} vnode.attrs.onChange - Callback when value changes (key, value)
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { envVar, onToggleRemove, onChange } = vnode.attrs;
     const state = envVar.state || "original";
@@ -50,12 +93,11 @@ const EnvRow = {
       ".env-editor__row",
       {
         "data-state": state,
-        class:
-          state === "removed"
-            ? "env-editor__row--removed"
-            : state === "added"
-              ? "env-editor__row--added"
-              : "",
+        class: state === "removed"
+          ? "env-editor__row--removed"
+          : state === "added"
+          ? "env-editor__row--added"
+          : "",
       },
       [
         m(".env-editor__inputs", [

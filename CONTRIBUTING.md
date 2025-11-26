@@ -21,6 +21,7 @@ There are a few things that I want to implement in the near future:
   - Railway
   - Fly
   - coolify
+- Accessiblity ARIA improvements on the admin application.
 
 ### Nice additions
 

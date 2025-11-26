@@ -1,10 +1,33 @@
+/**
+ * @fileoverview Navigation bar components.
+ */
+
 import { icons } from "../icons.js";
 import { Kbd } from "./kbd.js";
 
 /**
- * Navbar component
+ * @typedef {import('../types.js').IconName} IconName
+ */
+
+/**
+ * @typedef {Object} BreadcrumbItem
+ * @property {string} label - Breadcrumb text
+ * @property {string} [href] - Link URL (if not active)
+ * @property {boolean} [active] - Whether this is the current page
+ */
+
+/**
+ * Navbar container component.
+ * @type {Object}
  */
 export const Navbar = {
+  /**
+   * Renders the navbar container.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { class: className = "", ...attrs } = vnode.attrs;
 
@@ -20,9 +43,17 @@ export const Navbar = {
 };
 
 /**
- * Navbar Section component
+ * Navbar Section component for grouping navbar items.
+ * @type {Object}
  */
 export const NavbarSection = {
+  /**
+   * Renders the navbar section.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { class: className = "", ...attrs } = vnode.attrs;
 
@@ -38,9 +69,20 @@ export const NavbarSection = {
 };
 
 /**
- * Navbar Brand component
+ * Navbar Brand component - logo and name.
+ * @type {Object}
  */
 export const NavbarBrand = {
+  /**
+   * Renders the navbar brand.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.name='Dashboard'] - Brand name
+   * @param {string} [vnode.attrs.href='#!/'] - Brand link URL
+   * @param {IconName} [vnode.attrs.icon='bolt'] - Brand icon name
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       name = "Dashboard",
@@ -66,9 +108,18 @@ export const NavbarBrand = {
 };
 
 /**
- * Navbar Breadcrumb component
+ * Navbar Breadcrumb component.
+ * @type {Object}
  */
 export const NavbarBreadcrumb = {
+  /**
+   * Renders the navbar breadcrumb.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {BreadcrumbItem[]} [vnode.attrs.items=[]] - Breadcrumb items
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { items = [], class: className = "" } = vnode.attrs;
 
@@ -81,17 +132,17 @@ export const NavbarBreadcrumb = {
       items
         .map((item, i) => [
           i > 0 &&
-            m(
-              "span.navbar__breadcrumb-separator",
-              { "aria-hidden": "true" },
-              "/",
-            ),
+          m(
+            "span.navbar__breadcrumb-separator",
+            { "aria-hidden": "true" },
+            "/",
+          ),
           item.active
             ? m(
-                "span.navbar__breadcrumb-current",
-                { "aria-current": "page" },
-                item.label,
-              )
+              "span.navbar__breadcrumb-current",
+              { "aria-current": "page" },
+              item.label,
+            )
             : m("a.navbar__breadcrumb-link", { href: item.href }, item.label),
         ])
         .flat(),
@@ -100,9 +151,20 @@ export const NavbarBreadcrumb = {
 };
 
 /**
- * Navbar Search button component
+ * Navbar Search button component.
+ * @type {Object}
  */
 export const NavbarSearch = {
+  /**
+   * Renders the navbar search button.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.placeholder='Search'] - Placeholder text
+   * @param {string} [vnode.attrs.shortcut='⌘K'] - Keyboard shortcut to display
+   * @param {() => void} [vnode.attrs.onclick] - Click handler
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       placeholder = "Search",
@@ -123,18 +185,35 @@ export const NavbarSearch = {
 };
 
 /**
- * Navbar Divider component
+ * Navbar Divider component - vertical separator.
+ * @type {Object}
  */
 export const NavbarDivider = {
+  /**
+   * Renders the navbar divider.
+   * @returns {Object} Mithril vnode
+   */
   view() {
     return m(".navbar__divider", { "aria-hidden": "true" });
   },
 };
 
 /**
- * Navbar Action component
+ * Navbar Action component - button or link in navbar.
+ * @type {Object}
  */
 export const NavbarAction = {
+  /**
+   * Renders the navbar action.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.label] - Button/link text
+   * @param {string} [vnode.attrs.href] - If provided, renders as anchor
+   * @param {IconName} [vnode.attrs.icon] - Icon name
+   * @param {() => void} [vnode.attrs.onclick] - Click handler (for button)
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       label,
@@ -172,9 +251,19 @@ export const NavbarAction = {
 };
 
 /**
- * Standard Header component - convenience wrapper
+ * Standard Header component - convenience wrapper for common navbar layout.
+ * @type {Object}
  */
 export const Header = {
+  /**
+   * Renders the standard header.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.breadcrumb] - Current page breadcrumb text
+   * @param {() => void} [vnode.attrs.onLogout] - Logout button handler
+   * @param {() => void} [vnode.attrs.onSearch] - Search button handler
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { breadcrumb, onLogout, onSearch } = vnode.attrs;
 
@@ -182,15 +271,15 @@ export const Header = {
       m(NavbarSection, [
         m(NavbarBrand, { name: "Dashboard", href: "#!/" }),
         breadcrumb &&
-          m(
-            "span.navbar__breadcrumb-separator",
-            { "aria-hidden": "true" },
-            "/",
-          ),
+        m(
+          "span.navbar__breadcrumb-separator",
+          { "aria-hidden": "true" },
+          "/",
+        ),
         breadcrumb &&
-          m(NavbarBreadcrumb, {
-            items: [{ label: breadcrumb, active: true }],
-          }),
+        m(NavbarBreadcrumb, {
+          items: [{ label: breadcrumb, active: true }],
+        }),
       ]),
       m(NavbarSection, [
         m(NavbarSearch, {

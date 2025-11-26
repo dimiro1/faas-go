@@ -1,4 +1,24 @@
+/**
+ * @fileoverview Pagination components for navigating through paginated data.
+ */
+
+/**
+ * Full pagination component with info text and per-page selector.
+ * @type {Object}
+ */
 export const Pagination = {
+  /**
+   * Renders the pagination component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {number} vnode.attrs.total - Total number of items
+   * @param {number} vnode.attrs.limit - Items per page
+   * @param {number} vnode.attrs.offset - Current offset (0-indexed)
+   * @param {(newOffset: number) => void} vnode.attrs.onPageChange - Callback when page changes
+   * @param {(newLimit: number) => void} vnode.attrs.onLimitChange - Callback when limit changes
+   * @param {boolean} [vnode.attrs.showPerPage=true] - Show per-page selector
+   * @returns {Object|null} Mithril vnode or null if no items
+   */
   view: function (vnode) {
     const {
       total,
@@ -21,6 +41,7 @@ export const Pagination = {
     const hasPrev = currentPage > 1;
     const hasNext = currentPage < totalPages;
 
+    /** @type {number[]} */
     const perPageOptions = [10, 20, 50];
 
     return m(
@@ -39,21 +60,21 @@ export const Pagination = {
 
         m(".pagination__controls", [
           showPerPage &&
-            m(
-              "select.pagination__select",
-              {
-                "aria-label": "Results per page",
-                value: limit,
-                onchange: (e) => onLimitChange(parseInt(e.target.value)),
-              },
-              perPageOptions.map((opt) =>
-                m(
-                  "option",
-                  { value: opt, selected: opt === limit },
-                  `${opt} per page`,
-                ),
-              ),
+          m(
+            "select.pagination__select",
+            {
+              "aria-label": "Results per page",
+              value: limit,
+              onchange: (e) => onLimitChange(parseInt(e.target.value)),
+            },
+            perPageOptions.map((opt) =>
+              m(
+                "option",
+                { value: opt, selected: opt === limit },
+                `${opt} per page`,
+              )
             ),
+          ),
 
           m(".pagination__buttons", [
             m(
@@ -81,8 +102,21 @@ export const Pagination = {
   },
 };
 
-// Simple pagination without info text
+/**
+ * Simple pagination without info text - just prev/next buttons.
+ * @type {Object}
+ */
 export const SimplePagination = {
+  /**
+   * Renders simple prev/next pagination.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {boolean} vnode.attrs.hasPrev - Whether previous page exists
+   * @param {boolean} vnode.attrs.hasNext - Whether next page exists
+   * @param {() => void} vnode.attrs.onPrev - Callback for previous button
+   * @param {() => void} vnode.attrs.onNext - Callback for next button
+   * @returns {Object} Mithril vnode
+   */
   view: function (vnode) {
     const { hasPrev, hasNext, onPrev, onNext } = vnode.attrs;
 

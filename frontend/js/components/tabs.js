@@ -1,13 +1,40 @@
+/**
+ * @fileoverview Tab navigation components.
+ */
+
 import { icons } from "../icons.js";
 
 /**
- * Tabs component
- * @param {Object} props
- * @param {Array} props.tabs - Array of tab objects with {id, label} or {id, name, href}
- * @param {string} [props.activeTab] - Currently active tab ID (for click-based tabs)
- * @param {Function} [props.onTabChange] - Callback when tab is clicked (for click-based tabs)
+ * @typedef {import('../types.js').IconName} IconName
+ */
+
+/**
+ * @typedef {Object} TabDefinition
+ * @property {string} id - Unique tab identifier
+ * @property {string} [label] - Tab display label (alias: name)
+ * @property {string} [name] - Tab display name (alias: label)
+ * @property {string} [href] - Link URL for navigation tabs
+ * @property {boolean} [active] - Whether tab is active (for href-based tabs)
+ * @property {boolean} [disabled] - Whether tab is disabled
+ * @property {IconName} [icon] - Icon name to show before label
+ * @property {string|number} [badge] - Badge text to show after label
+ */
+
+/**
+ * Tabs component for navigation or content switching.
+ * @type {Object}
  */
 export const Tabs = {
+  /**
+   * Renders the tabs component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {TabDefinition[]} [vnode.attrs.tabs=[]] - Array of tab definitions
+   * @param {string} [vnode.attrs.activeTab] - Currently active tab ID (for click-based tabs)
+   * @param {(tabId: string) => void} [vnode.attrs.onTabChange] - Callback when tab is clicked
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       tabs = [],
@@ -61,13 +88,13 @@ export const Tabs = {
             tab.icon && m("span.tabs__icon", m.trust(icons[tab.icon]())),
             tabLabel,
             tab.badge &&
-              m(
-                "span.tabs__badge",
-                {
-                  class: isActive ? "tabs__badge--active" : "",
-                },
-                tab.badge,
-              ),
+            m(
+              "span.tabs__badge",
+              {
+                class: isActive ? "tabs__badge--active" : "",
+              },
+              tab.badge,
+            ),
           ],
         );
       }),
@@ -76,9 +103,19 @@ export const Tabs = {
 };
 
 /**
- * Tab Content wrapper
+ * Tab Content wrapper component for tab panels.
+ * @type {Object}
  */
 export const TabContent = {
+  /**
+   * Renders the tab content panel.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.id] - Tab panel ID (links to tab via aria-controls)
+   * @param {boolean} [vnode.attrs.active=false] - Whether this panel is visible
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { id, active = false, class: className = "" } = vnode.attrs;
 

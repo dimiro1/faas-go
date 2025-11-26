@@ -1,9 +1,25 @@
+/**
+ * @fileoverview Form components for user input.
+ */
+
 import { icons } from "../icons.js";
 
 /**
- * Form Group component - wrapper for form fields
+ * @typedef {import('../types.js').IconName} IconName
+ */
+
+/**
+ * Form Group component - wrapper for form fields.
+ * @type {Object}
  */
 export const FormGroup = {
+  /**
+   * Renders the form group wrapper.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { class: className = "", ...attrs } = vnode.attrs;
     return m(
@@ -18,9 +34,21 @@ export const FormGroup = {
 };
 
 /**
- * Form Label component
+ * Form Label component.
+ * @type {Object}
  */
 export const FormLabel = {
+  /**
+   * Renders the form label.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.for] - ID of the input this label is for
+   * @param {string} [vnode.attrs.text] - Label text
+   * @param {boolean} [vnode.attrs.required=false] - Show required asterisk
+   * @param {boolean} [vnode.attrs.disabled=false] - Disabled styling
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       for: htmlFor,
@@ -49,16 +77,37 @@ export const FormLabel = {
       [
         text,
         required &&
-          m("span.form-label__required", { "aria-hidden": "true" }, "*"),
+        m("span.form-label__required", { "aria-hidden": "true" }, "*"),
       ],
     );
   },
 };
 
 /**
- * Form Input component
+ * Form Input component.
+ * @type {Object}
  */
 export const FormInput = {
+  /**
+   * Renders the form input.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.type='text'] - Input type
+   * @param {string} [vnode.attrs.placeholder] - Placeholder text
+   * @param {string} [vnode.attrs.value] - Input value
+   * @param {string} [vnode.attrs.name] - Input name
+   * @param {string} [vnode.attrs.id] - Input ID
+   * @param {boolean} [vnode.attrs.mono=false] - Monospace font
+   * @param {boolean} [vnode.attrs.error=false] - Error styling
+   * @param {boolean} [vnode.attrs.disabled=false] - Disabled state
+   * @param {boolean} [vnode.attrs.readonly=false] - Read-only state
+   * @param {boolean} [vnode.attrs.required=false] - Required field
+   * @param {IconName} [vnode.attrs.icon] - Icon name to show on left
+   * @param {(e: Event) => void} [vnode.attrs.oninput] - Input handler
+   * @param {(e: Event) => void} [vnode.attrs.onchange] - Change handler
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       type = "text",
@@ -120,13 +169,34 @@ export const FormInput = {
 };
 
 /**
- * Password Input with visibility toggle
+ * Password Input with visibility toggle.
+ * @type {Object}
  */
 export const PasswordInput = {
+  /**
+   * Initializes component state.
+   * @param {Object} vnode - Mithril vnode
+   */
   oninit(vnode) {
     vnode.state.visible = false;
   },
 
+  /**
+   * Renders the password input.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.placeholder] - Placeholder text
+   * @param {string} [vnode.attrs.value] - Input value
+   * @param {string} [vnode.attrs.name] - Input name
+   * @param {string} [vnode.attrs.id] - Input ID
+   * @param {boolean} [vnode.attrs.mono=false] - Monospace font
+   * @param {boolean} [vnode.attrs.error=false] - Error styling
+   * @param {boolean} [vnode.attrs.disabled=false] - Disabled state
+   * @param {boolean} [vnode.attrs.required=false] - Required field
+   * @param {(e: Event) => void} [vnode.attrs.oninput] - Input handler
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       placeholder,
@@ -186,13 +256,31 @@ export const PasswordInput = {
 };
 
 /**
- * Copy Input with copy to clipboard button
+ * Copy Input with copy to clipboard button.
+ * @type {Object}
  */
 export const CopyInput = {
+  /**
+   * Initializes component state.
+   * @param {Object} vnode - Mithril vnode
+   */
   oninit(vnode) {
     vnode.state.copied = false;
   },
 
+  /**
+   * Renders the copy input.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} vnode.attrs.value - Value to copy
+   * @param {string} [vnode.attrs.name] - Input name
+   * @param {string} [vnode.attrs.id] - Input ID
+   * @param {boolean} [vnode.attrs.mono=true] - Monospace font
+   * @param {boolean} [vnode.attrs.disabled=false] - Disabled state
+   * @param {boolean} [vnode.attrs.readonly=true] - Read-only state
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       value,
@@ -215,6 +303,10 @@ export const CopyInput = {
       .filter(Boolean)
       .join(" ");
 
+    /**
+     * Copies the value to clipboard.
+     * @returns {Promise<void>}
+     */
     const handleCopy = async () => {
       try {
         await navigator.clipboard.writeText(value);
@@ -250,10 +342,10 @@ export const CopyInput = {
         [
           vnode.state.copied
             ? m(
-                "span",
-                { style: "color: var(--color-success)" },
-                m.trust(icons.check()),
-              )
+              "span",
+              { style: "color: var(--color-success)" },
+              m.trust(icons.check()),
+            )
             : m.trust(icons.copy()),
         ],
       ),
@@ -262,9 +354,27 @@ export const CopyInput = {
 };
 
 /**
- * Form Textarea component
+ * Form Textarea component.
+ * @type {Object}
  */
 export const FormTextarea = {
+  /**
+   * Renders the form textarea.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.placeholder] - Placeholder text
+   * @param {string} [vnode.attrs.value] - Textarea value
+   * @param {string} [vnode.attrs.name] - Textarea name
+   * @param {string} [vnode.attrs.id] - Textarea ID
+   * @param {number} [vnode.attrs.rows] - Number of visible rows
+   * @param {boolean} [vnode.attrs.error=false] - Error styling
+   * @param {boolean} [vnode.attrs.disabled=false] - Disabled state
+   * @param {boolean} [vnode.attrs.readonly=false] - Read-only state
+   * @param {boolean} [vnode.attrs.required=false] - Required field
+   * @param {(e: Event) => void} [vnode.attrs.oninput] - Input handler
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       placeholder,
@@ -305,9 +415,30 @@ export const FormTextarea = {
 };
 
 /**
- * Form Select component
+ * @typedef {Object} SelectOption
+ * @property {string} value - Option value
+ * @property {string} label - Option display label
+ */
+
+/**
+ * Form Select component.
+ * @type {Object}
  */
 export const FormSelect = {
+  /**
+   * Renders the form select.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {(string|SelectOption)[]} [vnode.attrs.options=[]] - Select options
+   * @param {string} [vnode.attrs.selected] - Currently selected value
+   * @param {string} [vnode.attrs.name] - Select name
+   * @param {string} [vnode.attrs.id] - Select ID
+   * @param {boolean} [vnode.attrs.disabled=false] - Disabled state
+   * @param {boolean} [vnode.attrs.required=false] - Required field
+   * @param {(e: Event) => void} [vnode.attrs.onchange] - Change handler
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       options = [],
@@ -349,9 +480,26 @@ export const FormSelect = {
 };
 
 /**
- * Form Checkbox component
+ * Form Checkbox component.
+ * @type {Object}
  */
 export const FormCheckbox = {
+  /**
+   * Renders the form checkbox.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.label] - Checkbox label text
+   * @param {string} [vnode.attrs.description] - Additional description text
+   * @param {boolean} [vnode.attrs.checked=false] - Checked state
+   * @param {string} [vnode.attrs.name] - Checkbox name
+   * @param {string} [vnode.attrs.id] - Checkbox ID
+   * @param {string} [vnode.attrs.value] - Checkbox value
+   * @param {boolean} [vnode.attrs.disabled=false] - Disabled state
+   * @param {boolean} [vnode.attrs.required=false] - Required field
+   * @param {(e: Event) => void} [vnode.attrs.onchange] - Change handler
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       label,
@@ -394,9 +542,20 @@ export const FormCheckbox = {
 };
 
 /**
- * Form Help Text component
+ * Form Help Text component.
+ * @type {Object}
  */
 export const FormHelp = {
+  /**
+   * Renders the form help text.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.text] - Help text content
+   * @param {boolean} [vnode.attrs.error=false] - Error styling
+   * @param {boolean} [vnode.attrs.success=false] - Success styling
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       text,

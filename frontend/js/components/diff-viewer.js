@@ -1,15 +1,49 @@
-// Diff viewer component
+/**
+ * @fileoverview Diff viewer component for displaying code differences.
+ */
+
 import { icons } from "../icons.js";
 
-// Line types
+/**
+ * Enum for diff line types.
+ * @readonly
+ * @enum {string}
+ */
 export const LineType = {
+  /** Line was added in the new version */
   ADDED: "added",
+  /** Line was removed from the old version */
   REMOVED: "removed",
+  /** Line is unchanged between versions */
   UNCHANGED: "unchanged",
 };
 
-// Version labels component
+/**
+ * @typedef {Object} DiffLine
+ * @property {string} type - Line type (added, removed, unchanged)
+ * @property {string} content - Line content
+ * @property {number} oldLine - Line number in old version (0 if added)
+ * @property {number} newLine - Line number in new version (0 if removed)
+ */
+
+/**
+ * Version labels component showing diff statistics.
+ * Displays additions and deletions count.
+ * @type {Object}
+ */
 export const VersionLabels = {
+  /**
+   * Renders the version labels component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} vnode.attrs.oldLabel - Label for old version
+   * @param {string} vnode.attrs.newLabel - Label for new version
+   * @param {string} [vnode.attrs.oldMeta] - Metadata for old version
+   * @param {string} [vnode.attrs.newMeta] - Metadata for new version
+   * @param {number} vnode.attrs.additions - Number of added lines
+   * @param {number} vnode.attrs.deletions - Number of deleted lines
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { oldLabel, newLabel, oldMeta, newMeta, additions, deletions } =
       vnode.attrs;
@@ -17,22 +51,36 @@ export const VersionLabels = {
     return m(".diff-version-labels", [
       m("span.diff-stats-summary", [
         additions > 0 &&
-          m("span.diff-stats-added", [
-            m.trust(icons.plusSmall()),
-            ` ${additions} addition${additions !== 1 ? "s" : ""} `,
-          ]),
+        m("span.diff-stats-added", [
+          m.trust(icons.plusSmall()),
+          ` ${additions} addition${additions !== 1 ? "s" : ""} `,
+        ]),
         deletions > 0 &&
-          m("span.diff-stats-removed", [
-            m.trust(icons.minusSmall()),
-            ` ${deletions} deletion${deletions !== 1 ? "s" : ""}`,
-          ]),
+        m("span.diff-stats-removed", [
+          m.trust(icons.minusSmall()),
+          ` ${deletions} deletion${deletions !== 1 ? "s" : ""}`,
+        ]),
       ]),
     ]);
   },
 };
 
-// Diff viewer component
+/**
+ * Diff viewer component for displaying code differences.
+ * Renders a table with old/new line numbers and change indicators.
+ * @type {Object}
+ */
 export const DiffViewer = {
+  /**
+   * Renders the diff viewer component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {DiffLine[]} [vnode.attrs.lines=[]] - Array of diff lines to display
+   * @param {string} [vnode.attrs.maxHeight] - Maximum height with overflow scroll
+   * @param {boolean} [vnode.attrs.noBorder] - Remove border styling
+   * @param {string} [vnode.attrs.language] - Language for syntax highlighting
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { lines = [], maxHeight, noBorder, language } = vnode.attrs;
 
@@ -61,8 +109,21 @@ export const DiffViewer = {
   },
 };
 
-// Single diff line
+/**
+ * Single diff line component.
+ * Renders a table row with line numbers, type indicator, and content.
+ * @type {Object}
+ * @private
+ */
 const DiffLine = {
+  /**
+   * Renders a single diff line.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {DiffLine} vnode.attrs.line - The diff line data
+   * @param {string} [vnode.attrs.language] - Language for syntax highlighting
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { line, language } = vnode.attrs;
     const lineClass = `diff-line--${line.type}`;
@@ -79,6 +140,11 @@ const DiffLine = {
   },
 };
 
+/**
+ * Gets the ARIA label for a line type.
+ * @param {string} type - Line type (added, removed, unchanged)
+ * @returns {string} Human-readable description for screen readers
+ */
 function getTypeAriaLabel(type) {
   switch (type) {
     case LineType.ADDED:

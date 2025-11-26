@@ -1,9 +1,36 @@
+/**
+ * @fileoverview Template card components for function creation wizard.
+ */
+
 import { icons } from "../icons.js";
 
 /**
- * Template Card component for function creation
+ * @typedef {Object} FunctionTemplate
+ * @property {string} id - Unique template identifier
+ * @property {string} name - Display name
+ * @property {string} description - Template description
+ * @property {string} icon - Icon name from icons module
+ * @property {string} code - Template Lua code
+ */
+
+/**
+ * Template card component for function creation.
+ * Displays a selectable card with icon, name, and description.
+ * @type {Object}
  */
 export const TemplateCard = {
+  /**
+   * Renders the template card component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} vnode.attrs.name - Template name
+   * @param {string} [vnode.attrs.description] - Template description
+   * @param {string} [vnode.attrs.icon='code'] - Icon name
+   * @param {boolean} [vnode.attrs.selected=false] - Whether card is selected
+   * @param {function} [vnode.attrs.onclick] - Click handler
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       name,
@@ -49,9 +76,18 @@ export const TemplateCard = {
 };
 
 /**
- * Template Cards grid container
+ * Template cards grid container.
+ * Provides CSS grid layout for template cards.
+ * @type {Object}
  */
 export const TemplateCards = {
+  /**
+   * Renders the template cards container.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { class: className = "" } = vnode.attrs;
 
@@ -66,7 +102,9 @@ export const TemplateCards = {
 };
 
 /**
- * Pre-defined templates for function creation
+ * Pre-defined templates for function creation.
+ * Each template includes sample Lua code for common use cases.
+ * @type {FunctionTemplate[]}
  */
 export const FunctionTemplates = [
   {

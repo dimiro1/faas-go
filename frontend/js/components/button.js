@@ -1,6 +1,17 @@
+/**
+ * @fileoverview Button components.
+ */
+
 import { icons } from "../icons.js";
 
-// Button variants
+/**
+ * @typedef {import('../types.js').IconName} IconName
+ */
+
+/**
+ * Available button color variants.
+ * @enum {string}
+ */
 export const ButtonVariant = {
   PRIMARY: "primary",
   DESTRUCTIVE: "destructive",
@@ -10,7 +21,10 @@ export const ButtonVariant = {
   LINK: "link",
 };
 
-// Button sizes
+/**
+ * Available button sizes.
+ * @enum {string}
+ */
 export const ButtonSize = {
   DEFAULT: "default",
   SM: "sm",
@@ -19,23 +33,29 @@ export const ButtonSize = {
 };
 
 /**
- * Button component
- * @param {Object} props
- * @param {string} [props.variant='primary'] - Button variant
- * @param {string} [props.size='default'] - Button size
- * @param {boolean} [props.fullWidth=false] - Full width button
- * @param {boolean} [props.disabled=false] - Disabled state
- * @param {boolean} [props.loading=false] - Loading state
- * @param {string} [props.href] - If provided, renders as anchor
- * @param {string} [props.target] - Link target
- * @param {Function} [props.onclick] - Click handler
- * @param {string} [props.type='button'] - Button type
- * @param {string} [props.icon] - Icon name (left position)
- * @param {string} [props.iconRight] - Icon name (right position)
- * @param {string} [props.class] - Additional classes
- * @param {string} [props.ariaLabel] - Aria label
+ * Button component - renders as button or anchor depending on props.
+ * @type {Object}
  */
 export const Button = {
+  /**
+   * Renders the button component.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.variant='primary'] - Color variant from ButtonVariant
+   * @param {string} [vnode.attrs.size='default'] - Size from ButtonSize
+   * @param {boolean} [vnode.attrs.fullWidth=false] - Full width button
+   * @param {boolean} [vnode.attrs.disabled=false] - Disabled state
+   * @param {boolean} [vnode.attrs.loading=false] - Loading state (shows spinner)
+   * @param {string} [vnode.attrs.href] - If provided, renders as anchor
+   * @param {string} [vnode.attrs.target] - Link target (e.g., "_blank")
+   * @param {() => void} [vnode.attrs.onclick] - Click handler
+   * @param {string} [vnode.attrs.type='button'] - Button type attribute
+   * @param {IconName} [vnode.attrs.icon] - Icon name for left icon
+   * @param {IconName} [vnode.attrs.iconRight] - Icon name for right icon
+   * @param {string} [vnode.attrs.class] - Additional CSS classes
+   * @param {string} [vnode.attrs.ariaLabel] - Aria label for accessibility
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const {
       variant = ButtonVariant.PRIMARY,
@@ -108,9 +128,17 @@ export const Button = {
 };
 
 /**
- * Back button component
+ * Back button component - styled link with back arrow.
+ * @type {Object}
  */
 export const BackButton = {
+  /**
+   * Renders the back button.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} [vnode.attrs.href='#!/'] - Back link URL
+   * @returns {Object} Mithril vnode
+   */
   view(vnode) {
     const { href = "#!/" } = vnode.attrs;
 
