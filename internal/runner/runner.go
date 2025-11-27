@@ -69,6 +69,9 @@ func Run(ctx context.Context, deps Dependencies, req Request) (Response, error) 
 	registerStrings(L)
 	registerRandom(L)
 
+	// Register AI module
+	registerAI(L, deps.HTTP, deps.Env, req.Context.FunctionID)
+
 	// Load and execute the Lua code
 	if err := L.DoString(req.Code); err != nil {
 		enhancedErr := EnhanceError(fmt.Errorf("failed to load Lua code: %w", err), req.Code)

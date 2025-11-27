@@ -8,6 +8,7 @@ A lightweight, self-hosted Function-as-a-Service platform written in Go with Lua
 * **Code Editor** - Monaco Editor with autocomplete and inline documentation
 * **HTTP Triggers** - Execute functions via HTTP requests
 * **Built-in APIs** - HTTP client, KV store, environment variables, logging, and more
+* **AI Integration** - Chat completions with OpenAI and Anthropic
 * **Version Control** - Track and manage function versions
 * **Execution History** - Monitor function executions and logs
 * **Beautiful Error Messages** - Human-friendly error messages with code context, line numbers, and actionable suggestions
@@ -103,6 +104,7 @@ end
 * **strings** - String manipulation
 * **random** - Random generators
 * **base64** - Base64 encoding/decoding
+* **ai** - AI chat completions (OpenAI, Anthropic)
 
 ### Example: Counter Function
 

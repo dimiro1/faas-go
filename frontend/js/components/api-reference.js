@@ -163,6 +163,23 @@ function getTypeClass(type) {
  */
 export const LuaAPISections = [
   {
+    id: "ai",
+    name: "AI",
+    description: "AI provider integrations",
+    groups: [
+      {
+        name: "Chat (ai)",
+        items: [
+          {
+            name: "ai.chat(options)",
+            type: "function",
+            description: "Chat completion with OpenAI or Anthropic",
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: "handler",
     name: "Handler",
     description: "Handler function inputs",
