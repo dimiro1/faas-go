@@ -132,51 +132,6 @@ function handler(ctx, event)
 end`,
   },
   {
-    id: "scheduled",
-    name: "Scheduled Task",
-    description: "Run code on a schedule",
-    icon: "clock",
-    code: `-- Scheduled Task
-function handler(ctx, event)
-    -- This function runs on schedule
-    local timestamp = time.format(time.now(), "2006-01-02 15:04:05")
-
-    log.info("Task executed at " .. timestamp)
-
-    return {
-        statusCode = 200,
-        headers = { ["Content-Type"] = "application/json" },
-        body = json.encode({
-            status = "completed",
-            timestamp = timestamp
-        })
-    }
-end`,
-  },
-  {
-    id: "webhook",
-    name: "Webhook Handler",
-    description: "Process incoming webhooks",
-    icon: "arrowPath",
-    code: `-- Webhook Handler
-function handler(ctx, event)
-    local body = event.body
-    local headers = event.headers
-
-    -- Process webhook payload
-    log.info("Received webhook")
-
-    return {
-        statusCode = 200,
-        headers = { ["Content-Type"] = "application/json" },
-        body = json.encode({
-            received = true,
-            body_length = #body
-        })
-    }
-end`,
-  },
-  {
     id: "api",
     name: "REST API",
     description: "Build RESTful API endpoints",
@@ -213,6 +168,59 @@ function handler(ctx, event)
             })
         }
     end
+end`,
+  },
+  {
+    id: "ai-chat",
+    name: "AI Chatbot",
+    description: "Chat completion with OpenAI or Anthropic",
+    icon: "sparkles",
+    code: `-- AI Chatbot
+-- Set OPENAI_API_KEY or ANTHROPIC_API_KEY in environment variables
+function handler(ctx, event)
+    -- Parse request body
+    local data, err = json.decode(event.body)
+    if err then
+        return {
+            statusCode = 400,
+            headers = { ["Content-Type"] = "application/json" },
+            body = json.encode({ error = "Invalid JSON" })
+        }
+    end
+
+    local message = data.message or "Hello!"
+
+    -- Call AI provider
+    local response, err = ai.chat({
+        provider = "openai",  -- or "anthropic"
+        model = "gpt-4o-mini",  -- or "claude-3-haiku-20240307"
+        messages = {
+            { role = "system", content = "You are a helpful assistant." },
+            { role = "user", content = message }
+        },
+        max_tokens = 500
+    })
+
+    if err then
+        log.error("AI error: " .. err)
+        return {
+            statusCode = 500,
+            headers = { ["Content-Type"] = "application/json" },
+            body = json.encode({ error = err })
+        }
+    end
+
+    log.info("AI responded with " .. response.usage.output_tokens .. " tokens")
+
+    return {
+        statusCode = 200,
+        headers = { ["Content-Type"] = "application/json" },
+        body = json.encode({
+            reply = response.content,
+            model = response.model,
+            tokens = response.usage.input_tokens + response.usage.output_tokens
+        })
+    }
 end`,
   },
   {

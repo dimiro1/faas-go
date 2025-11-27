@@ -326,6 +326,18 @@ const API_DOCS = {
     snippet: "random.id()",
     description: "Generates globally unique sortable ID (20-character string)",
   },
+  "ai.chat": {
+    signature: "ai.chat(options: table): table | nil, error | nil",
+    snippet: `ai.chat({
+\tprovider = "\${1:openai}",
+\tmodel = "\${2:gpt-4o-mini}",
+\tmessages = {
+\t\t{role = "user", content = "\${3:Hello}"}
+\t}
+})`,
+    description:
+      "Send chat completion request to AI provider (openai or anthropic). Returns {content, model, usage}.",
+  },
 };
 
 /**

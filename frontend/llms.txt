@@ -263,6 +263,62 @@ local joined = strings.join(parts, "-")
 local replaced = strings.replace("hello world", "world", "lua", -1)
 ```
 
+### AI Chat (ai)
+
+Send chat completion requests to AI providers (OpenAI and Anthropic):
+
+- ai.chat(options: table): table | nil, error | nil - Send chat completion request
+
+Options table:
+```lua
+{
+  provider = "openai",  -- Required: "openai" or "anthropic"
+  model = "gpt-4o-mini",  -- Required: model name
+  messages = {  -- Required: array of message tables
+    {role = "system", content = "You are helpful"},
+    {role = "user", content = "Hello!"}
+  },
+  max_tokens = 1000,  -- Optional: max tokens (default: 1024)
+  temperature = 0.7,  -- Optional: sampling temperature
+  endpoint = "https://custom.api.com"  -- Optional: override default endpoint
+}
+```
+
+Response table:
+```lua
+{
+  content = "Hello! How can I help?",
+  model = "gpt-4o-mini",
+  usage = {
+    input_tokens = 15,
+    output_tokens = 10
+  }
+}
+```
+
+Environment variables (per function):
+- `OPENAI_API_KEY` - Required for OpenAI provider
+- `ANTHROPIC_API_KEY` - Required for Anthropic provider
+- `OPENAI_ENDPOINT` - Optional: override OpenAI endpoint (default: https://api.openai.com/v1)
+- `ANTHROPIC_ENDPOINT` - Optional: override Anthropic endpoint (default: https://api.anthropic.com)
+
+Example:
+```lua
+local response, err = ai.chat({
+  provider = "openai",
+  model = "gpt-4o-mini",
+  messages = {
+    {role = "system", content = "You are a helpful assistant"},
+    {role = "user", content = "What is 2+2?"}
+  }
+})
+if err then
+  log.error("AI request failed: " .. err)
+else
+  log.info("AI response: " .. response.content)
+end
+```
+
 ### Random Generation (random)
 
 Cryptographically secure random value generation:
@@ -433,6 +489,53 @@ function handler(ctx, event)
     statusCode = 200,
     headers = { ["Content-Type"] = "application/json" },
     body = json.encode(result)
+  }
+end
+```
+
+### AI Chatbot
+
+```lua
+function handler(ctx, event)
+  -- Parse user message from request
+  local data, err = json.decode(event.body)
+  if err then
+    return {
+      statusCode = 400,
+      body = json.encode({ error = "Invalid JSON" })
+    }
+  end
+
+  -- Call AI
+  local response, err = ai.chat({
+    provider = "openai",
+    model = "gpt-4o-mini",
+    messages = {
+      {role = "system", content = "You are a helpful assistant"},
+      {role = "user", content = data.message}
+    },
+    max_tokens = 500
+  })
+
+  if err then
+    log.error("AI request failed: " .. err)
+    return {
+      statusCode = 500,
+      headers = { ["Content-Type"] = "application/json" },
+      body = json.encode({ error = err })
+    }
+  end
+
+  log.info("AI responded with " .. response.usage.output_tokens .. " tokens")
+
+  return {
+    statusCode = 200,
+    headers = { ["Content-Type"] = "application/json" },
+    body = json.encode({
+      reply = response.content,
+      model = response.model,
+      tokens = response.usage.input_tokens + response.usage.output_tokens
+    })
   }
 end
 ```
