@@ -119,25 +119,30 @@ func extractCodeContext(sourceCode string, lineNum, colNum, contextLines int) st
 
 // detectErrorPattern identifies the type of error
 func detectErrorPattern(errMsg string) string {
-	patterns := map[string]string{
-		`attempt to index.*nil`:              "nil_index",
-		`attempt to index a non-table`:       "non_table_index",
-		`attempt to call.*nil`:               "nil_call",
-		`bad argument.*expected.*got`:        "bad_argument",
-		`unexpected symbol`:                  "syntax_error",
-		`syntax error`:                       "syntax_error",
-		`'end' expected`:                     "missing_end",
-		`attempt to perform arithmetic`:      "arithmetic_error",
-		`attempt to concatenate`:             "concat_error",
-		`attempt to compare`:                 "compare_error",
-		`handler function not found`:         "no_handler",
-		`handler did not return a table`:     "bad_return",
+	// Use ordered slice to ensure consistent pattern matching
+	// More specific patterns should come first
+	patterns := []struct {
+		regex string
+		name  string
+	}{
+		{`attempt to index.*nil`, "nil_index"},
+		{`attempt to index a non-table`, "non_table_index"},
+		{`attempt to call.*nil`, "nil_call"},
+		{`bad argument.*expected.*got`, "bad_argument"},
+		{`unexpected symbol`, "syntax_error"},
+		{`syntax error`, "syntax_error"},
+		{`'end' expected`, "missing_end"},
+		{`attempt to perform arithmetic`, "arithmetic_error"},
+		{`attempt to concatenate`, "concat_error"},
+		{`attempt to compare`, "compare_error"},
+		{`handler function not found`, "no_handler"},
+		{`handler did not return a table`, "bad_return"},
 	}
 
-	for pattern, name := range patterns {
-		matched, _ := regexp.MatchString(pattern, errMsg)
+	for _, p := range patterns {
+		matched, _ := regexp.MatchString(p.regex, errMsg)
 		if matched {
-			return name
+			return p.name
 		}
 	}
 	return "unknown"
