@@ -9,8 +9,6 @@ There are a few things that I want to implement in the near future:
 ### Quick wins
 
 - Make the admin application responsive for mobile devices.
-- Add the chance to maximize the code editor on the admin application.
-  - We can create a button that toggles the maximization of the code editor.
 - Cleanup the codebase by separating the API types from the database types.
 - Setting up goreleaser.
 - Vendor JS dependencies
@@ -26,7 +24,7 @@ There are a few things that I want to implement in the near future:
 ### Nice additions
 
 - Implement a dashbard with real-time metrics and function monitoring.
-- Add end to end tests for the entire system. Specially to test the admin application.
+- Add more end to end tests for the entire system. Specially to test the admin application.
 - Implement a blob storage API.
   - For this one, I want to introduce a bucket list interface where the user can list the files, view them, delete them, etc.
   - We offer a a new set of lua apis to interact with the blob storage.
