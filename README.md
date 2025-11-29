@@ -1,4 +1,8 @@
-# FaaS-Go (temporary name)
+<p align="center">
+  <img src="logo/logo-dark.png" alt="Lunar Logo" width="300">
+</p>
+
+# Lunar (formerly FaaS-Go)
 
 A lightweight, self-hosted Function-as-a-Service platform written in Go with Lua scripting.
 
