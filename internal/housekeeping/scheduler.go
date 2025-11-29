@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/dimiro1/faas-go/internal/store"
+	"github.com/dimiro1/lunar/internal/store"
 	"github.com/robfig/cron/v3"
 )
 

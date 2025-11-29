@@ -1,4 +1,4 @@
-module github.com/dimiro1/faas-go
+module github.com/dimiro1/lunar
 
 go 1.25.4
 

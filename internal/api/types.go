@@ -1,6 +1,6 @@
 package api
 
-import "github.com/dimiro1/faas-go/internal/store"
+import "github.com/dimiro1/lunar/internal/store"
 
 // LogLevel represents the severity level of a log entry
 type LogLevel string

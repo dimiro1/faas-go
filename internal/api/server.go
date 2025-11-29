@@ -5,13 +5,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dimiro1/faas-go/internal/ai"
-	"github.com/dimiro1/faas-go/internal/email"
-	"github.com/dimiro1/faas-go/internal/env"
-	internalhttp "github.com/dimiro1/faas-go/internal/http"
-	"github.com/dimiro1/faas-go/internal/kv"
-	"github.com/dimiro1/faas-go/internal/logger"
-	"github.com/dimiro1/faas-go/internal/store"
+	"github.com/dimiro1/lunar/internal/ai"
+	"github.com/dimiro1/lunar/internal/email"
+	"github.com/dimiro1/lunar/internal/env"
+	internalhttp "github.com/dimiro1/lunar/internal/http"
+	"github.com/dimiro1/lunar/internal/kv"
+	"github.com/dimiro1/lunar/internal/logger"
+	"github.com/dimiro1/lunar/internal/store"
 )
 
 // Server represents the API server

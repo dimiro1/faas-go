@@ -48,7 +48,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: Build
-        run: go build -v -o faas-go ./cmd
+        run: go build -v -o lunar ./cmd
 
       - name: Run vet
         run: go vet ./...

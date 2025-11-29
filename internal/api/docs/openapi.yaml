@@ -1,13 +1,13 @@
 openapi: 3.1.1
 info:
-  title: FaaS Application API
+  title: Lunar Application API
   description: |
     API for managing and executing serverless functions. This API allows you to create, manage,
     and execute functions written in Lua, with support for versioning, environment variables,
     and execution logging.
   version: 1.0.0
   contact:
-    name: FaaS API Support
+    name: Lunar API Support
 
 servers:
   - url: /

@@ -1,6 +1,6 @@
 .PHONY: build test lint clean run help dev install-tools fmt-frontend test-frontend test-e2e test-all
 
-BINARY_NAME=faas-go
+BINARY_NAME=lunar
 BUILD_DIR=build
 
 help:

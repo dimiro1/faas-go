@@ -26,7 +26,7 @@ import { routes } from "../routes.js";
 import { APIReference, LuaAPISections } from "../components/api-reference.js";
 
 /**
- * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').LunarFunction} lunarFunction
  */
 
 /**
@@ -37,7 +37,7 @@ import { APIReference, LuaAPISections } from "../components/api-reference.js";
 export const FunctionCode = {
   /**
    * Currently loaded function.
-   * @type {FaaSFunction|null}
+   * @type {LunarFunction|null}
    */
   func: null,
 

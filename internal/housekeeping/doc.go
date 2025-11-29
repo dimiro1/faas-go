@@ -1,4 +1,4 @@
-// Package housekeeping provides automated maintenance tasks for the FaaS system.
+// Package housekeeping provides automated maintenance tasks for the Lunar system.
 //
 // The scheduler runs hourly to delete old execution logs based on function
 // retention settings. Functions can specify retention periods of 7, 15, 30,

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dimiro1/faas-go/internal/events"
+	"github.com/dimiro1/lunar/internal/events"
 )
 
 func TestIsSensitiveKey(t *testing.T) {

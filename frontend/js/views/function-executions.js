@@ -28,7 +28,7 @@ import {
 import { TabContent, Tabs } from "../components/tabs.js";
 
 /**
- * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').LunarFunction} lunarFunction
  * @typedef {import('../types.js').Execution} Execution
  */
 
@@ -40,7 +40,7 @@ import { TabContent, Tabs } from "../components/tabs.js";
 export const FunctionExecutions = {
   /**
    * Currently loaded function.
-   * @type {FaaSFunction|null}
+   * @type {lunarFunction|null}
    */
   func: null,
 

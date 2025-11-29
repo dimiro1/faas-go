@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	internalhttp "github.com/dimiro1/faas-go/internal/http"
+	internalhttp "github.com/dimiro1/lunar/internal/http"
 )
 
 // anthropicProvider implements provider for Anthropic

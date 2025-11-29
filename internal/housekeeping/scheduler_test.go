@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dimiro1/faas-go/internal/store"
+	"github.com/dimiro1/lunar/internal/store"
 )
 
 func TestNewScheduler(t *testing.T) {
@@ -49,7 +49,7 @@ func TestScheduler_CleanupOldExecutions(t *testing.T) {
 
 	// Create executions with different timestamps
 	now := time.Now().Unix()
-	oldTime := now - (10 * 24 * 60 * 60) // 10 days ago (should be deleted)
+	oldTime := now - (10 * 24 * 60 * 60)   // 10 days ago (should be deleted)
 	recentTime := now - (2 * 24 * 60 * 60) // 2 days ago (should remain)
 
 	oldExec := store.Execution{

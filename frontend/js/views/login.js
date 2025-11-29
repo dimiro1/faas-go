@@ -75,7 +75,7 @@ export const Login = {
         m(Card, [
           m(CardContent, { large: true }, [
             m(".login-header", [
-              m("h1.login-title", "FaaS-Go"),
+              m("h1.login-title", "Lunar"),
               m("p.login-subtitle", "Enter your API key to continue"),
             ]),
 

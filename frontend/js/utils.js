@@ -1,5 +1,5 @@
 /**
- * @fileoverview Utility functions for the FaaS Dashboard.
+ * @fileoverview Utility functions for the lunar Dashboard.
  */
 
 import { routes } from "./routes.js";

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dimiro1/faas-go/internal/migrate"
+	"github.com/dimiro1/lunar/internal/migrate"
 	_ "modernc.org/sqlite"
 )
 
@@ -1281,7 +1281,7 @@ func TestSQLiteDB_DeleteOldExecutions(t *testing.T) {
 
 	// Create executions with different timestamps
 	now := time.Now().Unix()
-	oldTime := now - (10 * 24 * 60 * 60) // 10 days ago
+	oldTime := now - (10 * 24 * 60 * 60)   // 10 days ago
 	recentTime := now - (2 * 24 * 60 * 60) // 2 days ago
 
 	// Manually insert executions with specific timestamps

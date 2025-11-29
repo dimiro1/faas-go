@@ -3,8 +3,8 @@ package runner
 import (
 	"time"
 
-	"github.com/dimiro1/faas-go/internal/ai"
-	"github.com/dimiro1/faas-go/internal/store"
+	"github.com/dimiro1/lunar/internal/ai"
+	"github.com/dimiro1/lunar/internal/store"
 	lua "github.com/yuin/gopher-lua"
 )
 

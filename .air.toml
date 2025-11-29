@@ -2,8 +2,8 @@ root = "."
 tmp_dir = "build"
 
 [build]
-  cmd = "go build -o ./build/faas ./cmd"
-  bin = "./build/faas"
+  cmd = "go build -o ./build/lunar ./cmd"
+  bin = "./build/lunar"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor", "node_modules", "build"]
   exclude_regex = ["_test.go"]

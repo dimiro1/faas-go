@@ -1,5 +1,5 @@
 services:
-  faas-go:
+  lunar:
     build:
       context: .
       dockerfile: Dockerfile
@@ -13,8 +13,8 @@ services:
       - API_KEY=0ff5b4f692337f19430863fefecf3bfa274a66bea3884a426ec2f92165299377
     volumes:
       # Persist data directory (named volume managed by Docker)
-      - faas-data:/app/data
+      - lunar-data:/app/data
     restart: unless-stopped
 
 volumes:
-  faas-data:
+  lunar-data:

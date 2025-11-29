@@ -23,7 +23,7 @@ import {
 } from "../components/badge.js";
 
 /**
- * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').LunarFunction} LunarFunction
  */
 
 /**
@@ -34,7 +34,7 @@ import {
 export const FunctionsList = {
   /**
    * Array of loaded functions.
-   * @type {FaaSFunction[]}
+   * @type {LunarFunction[]}
    */
   functions: [],
 

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/dimiro1/faas-go/internal/email"
-	"github.com/dimiro1/faas-go/internal/store"
+	"github.com/dimiro1/lunar/internal/email"
+	"github.com/dimiro1/lunar/internal/store"
 	lua "github.com/yuin/gopher-lua"
 )
 

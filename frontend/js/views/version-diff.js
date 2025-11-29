@@ -21,7 +21,7 @@ import {
 } from "../components/diff-viewer.js";
 
 /**
- * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').LunarFunction} LunarFunction
  * @typedef {import('../types.js').DiffResponse} DiffResponse
  */
 
@@ -33,7 +33,7 @@ import {
 export const VersionDiff = {
   /**
    * Currently loaded function.
-   * @type {FaaSFunction|null}
+   * @type {LunarFunction|null}
    */
   func: null,
 
@@ -135,20 +135,24 @@ export const VersionDiff = {
       ]),
 
       m(Card, [
-        m(CardHeader, {
-          title: "Code Changes",
-        }, [
-          m(VersionLabels, {
-            oldLabel: `v${VersionDiff.diffData.old_version}`,
-            newLabel: `v${VersionDiff.diffData.new_version}`,
-            additions: VersionDiff.diffData.diff.filter(
-              (l) => l.line_type === "added",
-            ).length,
-            deletions: VersionDiff.diffData.diff.filter(
-              (l) => l.line_type === "removed",
-            ).length,
-          }),
-        ]),
+        m(
+          CardHeader,
+          {
+            title: "Code Changes",
+          },
+          [
+            m(VersionLabels, {
+              oldLabel: `v${VersionDiff.diffData.old_version}`,
+              newLabel: `v${VersionDiff.diffData.new_version}`,
+              additions: VersionDiff.diffData.diff.filter(
+                (l) => l.line_type === "added",
+              ).length,
+              deletions: VersionDiff.diffData.diff.filter(
+                (l) => l.line_type === "removed",
+              ).length,
+            }),
+          ],
+        ),
         m(CardContent, { noPadding: true }, [
           m(DiffViewer, {
             lines: VersionDiff.diffData.diff.map((line) => ({

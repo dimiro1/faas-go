@@ -61,15 +61,15 @@ func TestLoadDataDir_FromParameter(t *testing.T) {
 func TestLoadDataDir_FromEnv(t *testing.T) {
 	getenv := func(key string) string {
 		if key == "DATA_DIR" {
-			return "/var/lib/faas"
+			return "/var/lib/lunar"
 		}
 		return ""
 	}
 
 	dataDir := loadDataDir(getenv, "")
 
-	if dataDir != "/var/lib/faas" {
-		t.Errorf("expected data dir /var/lib/faas, got %s", dataDir)
+	if dataDir != "/var/lib/lunar" {
+		t.Errorf("expected data dir /var/lib/lunar, got %s", dataDir)
 	}
 }
 
@@ -386,7 +386,7 @@ func TestLoadConfig_WithBaseURL(t *testing.T) {
 	tmpDir := t.TempDir()
 	env := map[string]string{
 		"PORT":     "8080",
-		"BASE_URL": "https://faas.example.com",
+		"BASE_URL": "https://lunar.example.com",
 		"API_KEY":  "test-key",
 	}
 
@@ -399,8 +399,8 @@ func TestLoadConfig_WithBaseURL(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if config.BaseURL != "https://faas.example.com" {
-		t.Errorf("expected base URL 'https://faas.example.com', got %s", config.BaseURL)
+	if config.BaseURL != "https://lunar.example.com" {
+		t.Errorf("expected base URL 'https://lunar.example.com', got %s", config.BaseURL)
 	}
 }
 

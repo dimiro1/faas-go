@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dimiro1/faas-go/internal/migrate"
+	"github.com/dimiro1/lunar/internal/migrate"
 	_ "modernc.org/sqlite"
 )
 

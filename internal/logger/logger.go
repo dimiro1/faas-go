@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dimiro1/faas-go/internal/masking"
+	"github.com/dimiro1/lunar/internal/masking"
 	"github.com/rs/xid"
 	_ "modernc.org/sqlite"
 )

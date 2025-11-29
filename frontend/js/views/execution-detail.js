@@ -27,7 +27,7 @@ import { AIRequestViewer } from "../components/ai-request-viewer.js";
 import { EmailRequestViewer } from "../components/email-request-viewer.js";
 
 /**
- * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').LunarFunction} LunarFunction
  * @typedef {import('../types.js').Execution} Execution
  * @typedef {import('../types.js').ExecutionLog} ExecutionLog
  * @typedef {import('../types.js').AIRequest} AIRequest
@@ -42,7 +42,7 @@ import { EmailRequestViewer } from "../components/email-request-viewer.js";
 export const ExecutionDetail = {
   /**
    * Parent function of the execution.
-   * @type {FaaSFunction|null}
+   * @type {LunarFunction|null}
    */
   func: null,
 

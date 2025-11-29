@@ -9,11 +9,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/dimiro1/faas-go/internal/env"
-	internalhttp "github.com/dimiro1/faas-go/internal/http"
-	"github.com/dimiro1/faas-go/internal/kv"
-	"github.com/dimiro1/faas-go/internal/logger"
-	"github.com/dimiro1/faas-go/internal/store"
+	"github.com/dimiro1/lunar/internal/env"
+	internalhttp "github.com/dimiro1/lunar/internal/http"
+	"github.com/dimiro1/lunar/internal/kv"
+	"github.com/dimiro1/lunar/internal/logger"
+	"github.com/dimiro1/lunar/internal/store"
 )
 
 // Helper function to create a test function in the database with an initial version

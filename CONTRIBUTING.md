@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for want to contribute to FaaS-Go! We value any type of contribution, whether it's reporting bugs, suggesting features, or submitting code changes.
+Thanks for want to contribute to Lunar! We value any type of contribution, whether it's reporting bugs, suggesting features, or submitting code changes.
 
 ## Roadmap
 

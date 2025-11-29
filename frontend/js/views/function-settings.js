@@ -35,7 +35,7 @@ import {
 import { EnvEditor } from "../components/env-editor.js";
 
 /**
- * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').LunarFunction} LunarFunction
  */
 
 /**
@@ -54,7 +54,7 @@ import { EnvEditor } from "../components/env-editor.js";
 export const FunctionSettings = {
   /**
    * Currently loaded function.
-   * @type {FaaSFunction|null}
+   * @type {LunarFunction|null}
    */
   func: null,
 
@@ -370,24 +370,28 @@ export const FunctionSettings = {
               ]),
               m(FormGroup, [
                 m(FormLabel, { text: "Log Retention Period" }),
-                m("select.form-select", {
-                  value: FunctionSettings.editedRetentionDays !== null
-                    ? FunctionSettings.editedRetentionDays
-                    : func.retention_days || 7,
-                  onchange: (e) => {
-                    const value = parseInt(e.target.value, 10);
-                    if (value !== (func.retention_days || 7)) {
-                      FunctionSettings.editedRetentionDays = value;
-                    } else {
-                      FunctionSettings.editedRetentionDays = null;
-                    }
+                m(
+                  "select.form-select",
+                  {
+                    value: FunctionSettings.editedRetentionDays !== null
+                      ? FunctionSettings.editedRetentionDays
+                      : func.retention_days || 7,
+                    onchange: (e) => {
+                      const value = parseInt(e.target.value, 10);
+                      if (value !== (func.retention_days || 7)) {
+                        FunctionSettings.editedRetentionDays = value;
+                      } else {
+                        FunctionSettings.editedRetentionDays = null;
+                      }
+                    },
                   },
-                }, [
-                  m("option", { value: 7 }, "7 days"),
-                  m("option", { value: 15 }, "15 days"),
-                  m("option", { value: 30 }, "30 days"),
-                  m("option", { value: 365 }, "1 year"),
-                ]),
+                  [
+                    m("option", { value: 7 }, "7 days"),
+                    m("option", { value: 15 }, "15 days"),
+                    m("option", { value: 30 }, "30 days"),
+                    m("option", { value: 365 }, "1 year"),
+                  ],
+                ),
                 m(FormHelp, {
                   text:
                     "Executions older than this will be automatically deleted",

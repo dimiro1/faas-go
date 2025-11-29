@@ -1,4 +1,4 @@
-// Package api provides the HTTP API server for the FaaS platform.
+// Package api provides the HTTP API server for the lunar platform.
 //
 // The API implements the OpenAPI specification defined in docs/openapi.yaml and provides
 // endpoints for managing functions, versions, executions, and runtime execution.

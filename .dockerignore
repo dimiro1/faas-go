@@ -3,7 +3,7 @@
 .gitignore
 
 # Build artifacts
-faas-go
+lunar
 build/
 *.exe
 *.dll

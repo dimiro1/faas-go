@@ -1,4 +1,4 @@
-# FaaS-Go: Lua Function Development Guide
+# Lunar: Lua Function Development Guide
 
 > Serverless platform for creating HTTP functions in Lua with a comprehensive standard library
 

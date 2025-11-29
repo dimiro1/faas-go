@@ -10,17 +10,17 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/dimiro1/faas-go/frontend"
-	"github.com/dimiro1/faas-go/internal/ai"
-	"github.com/dimiro1/faas-go/internal/api"
-	"github.com/dimiro1/faas-go/internal/email"
-	"github.com/dimiro1/faas-go/internal/env"
-	"github.com/dimiro1/faas-go/internal/housekeeping"
-	internalhttp "github.com/dimiro1/faas-go/internal/http"
-	"github.com/dimiro1/faas-go/internal/kv"
-	"github.com/dimiro1/faas-go/internal/logger"
-	"github.com/dimiro1/faas-go/internal/migrate"
-	store "github.com/dimiro1/faas-go/internal/store"
+	"github.com/dimiro1/lunar/frontend"
+	"github.com/dimiro1/lunar/internal/ai"
+	"github.com/dimiro1/lunar/internal/api"
+	"github.com/dimiro1/lunar/internal/email"
+	"github.com/dimiro1/lunar/internal/env"
+	"github.com/dimiro1/lunar/internal/housekeeping"
+	internalhttp "github.com/dimiro1/lunar/internal/http"
+	"github.com/dimiro1/lunar/internal/kv"
+	"github.com/dimiro1/lunar/internal/logger"
+	"github.com/dimiro1/lunar/internal/migrate"
+	store "github.com/dimiro1/lunar/internal/store"
 	_ "modernc.org/sqlite"
 )
 
@@ -37,7 +37,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	dbPath := filepath.Join(config.DataDir, "faas.db")
+	dbPath := filepath.Join(config.DataDir, "lunar.db")
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
 		slog.Error("Failed to open database", "error", err)
@@ -90,7 +90,7 @@ func main() {
 	})
 
 	addr := ":" + config.Port
-	slog.Info("Starting FaaS-Go server",
+	slog.Info("Starting Lunar server",
 		"port", config.Port,
 		"data_dir", config.DataDir,
 		"execution_timeout", config.ExecutionTimeout)

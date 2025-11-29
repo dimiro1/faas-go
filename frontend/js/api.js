@@ -1,10 +1,10 @@
 /**
- * @fileoverview API client for the FaaS Dashboard.
+ * @fileoverview API client for the Lunar Dashboard.
  * Provides methods for authentication, function management, and execution.
  */
 
 /**
- * @typedef {import('./types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('./types.js').LunarFunction} LunarFunction
  * @typedef {import('./types.js').FunctionsListResponse} FunctionsListResponse
  * @typedef {import('./types.js').FunctionVersion} FunctionVersion
  * @typedef {import('./types.js').VersionsListResponse} VersionsListResponse
@@ -59,7 +59,7 @@ m.request = function (options) {
 };
 
 /**
- * API client for the FaaS Dashboard.
+ * API client for the lunar Dashboard.
  * @namespace
  */
 export const API = {
@@ -123,7 +123,7 @@ export const API = {
     /**
      * Gets a single function by ID.
      * @param {string} id - Function ID
-     * @returns {Promise<FaaSFunction>} The function
+     * @returns {Promise<LunarFunction>} The function
      */
     get: (id) => apiRequest({ method: "GET", url: `/api/functions/${id}` }),
 
@@ -133,7 +133,7 @@ export const API = {
      * @param {string} data.name - Function name
      * @param {string} [data.description] - Function description
      * @param {string} data.code - Initial function code
-     * @returns {Promise<FaaSFunction>} The created function
+     * @returns {Promise<LunarFunction>} The created function
      */
     create: (data) =>
       apiRequest({ method: "POST", url: "/api/functions", body: data }),
@@ -146,7 +146,7 @@ export const API = {
      * @param {string} [data.description] - New description
      * @param {string} [data.code] - New code (creates new version)
      * @param {boolean} [data.disabled] - Enable/disable function
-     * @returns {Promise<FaaSFunction>} The updated function
+     * @returns {Promise<LunarFunction>} The updated function
      */
     update: (id, data) =>
       apiRequest({ method: "PUT", url: `/api/functions/${id}`, body: data }),
@@ -163,7 +163,7 @@ export const API = {
      * Updates environment variables for a function.
      * @param {string} id - Function ID
      * @param {Object.<string, string>} env_vars - Environment variables
-     * @returns {Promise<FaaSFunction>} The updated function
+     * @returns {Promise<LunarFunction>} The updated function
      */
     updateEnv: (id, env_vars) =>
       apiRequest({
@@ -208,7 +208,7 @@ export const API = {
      * Activates a specific version.
      * @param {string} functionId - Function ID
      * @param {number} version - Version number to activate
-     * @returns {Promise<FaaSFunction>} The updated function
+     * @returns {Promise<LunarFunction>} The updated function
      */
     activate: (functionId, version) =>
       apiRequest({

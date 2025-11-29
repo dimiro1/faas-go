@@ -1,7 +1,7 @@
 package runner
 
 import (
-	"github.com/dimiro1/faas-go/internal/logger"
+	"github.com/dimiro1/lunar/internal/logger"
 	lua "github.com/yuin/gopher-lua"
 )
 

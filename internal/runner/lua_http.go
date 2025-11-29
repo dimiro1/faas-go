@@ -1,7 +1,7 @@
 package runner
 
 import (
-	internalhttp "github.com/dimiro1/faas-go/internal/http"
+	internalhttp "github.com/dimiro1/lunar/internal/http"
 	lua "github.com/yuin/gopher-lua"
 )
 

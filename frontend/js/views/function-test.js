@@ -24,7 +24,7 @@ import { CodeViewer } from "../components/code-viewer.js";
 import { FormGroup, FormLabel } from "../components/form.js";
 
 /**
- * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').LunarFunction} LunarFunction
  * @typedef {import('../types.js').ExecuteResponse} ExecuteResponse
  * @typedef {import('../types.js').ExecutionLog} ExecutionLog
  */
@@ -44,7 +44,7 @@ import { FormGroup, FormLabel } from "../components/form.js";
 export const FunctionTest = {
   /**
    * Currently loaded function.
-   * @type {FaaSFunction|null}
+   * @type {LunarFunction|null}
    */
   func: null,
 

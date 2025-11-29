@@ -2,7 +2,7 @@
   <img src="logo/logo-dark.png" alt="Lunar Logo" width="300">
 </p>
 
-# Lunar (formerly FaaS-Go)
+# Lunar (formerly lunar-Go)
 
 A lightweight, self-hosted Function-as-a-Service platform written in Go with Lua scripting.
 
@@ -62,22 +62,22 @@ A lightweight, self-hosted Function-as-a-Service platform written in Go with Lua
 ### Building from Source
 
 ```bash
-git clone https://github.com/dimiro1/faas-go.git
-cd faas-go
+git clone https://github.com/dimiro1/lunar.git
+cd lunar
 make build
 ```
 
 ### Running
 
 ```bash
-./faas-go
+./lunar
 ```
 
 The API will be available at `http://localhost:3000` and the dashboard at `http://localhost:3000/`.
 
 ### First-Time Setup
 
-On first run, FaaS-Go will automatically generate an API key and save it to `data/api_key.txt`. The key will be printed in the server logs:
+On first run, Lunar will automatically generate an API key and save it to `data/api_key.txt`. The key will be printed in the server logs:
 
 ```
 INFO Generated new API key key=cf31cb0cdc7811ca9cec6a3c77579b3ea28c1e4e10d6fc1061ae71788834c21b file=data/api_key.txt
@@ -185,8 +185,8 @@ curl -X GET http://localhost:3000/fn/{function-id}?name=John
 
 ```bash
 # Build and run with Docker
-docker build -t faas-go .
-docker run -p 3000:3000 -v faas-data:/app/data faas-go
+docker build -t lunar .
+docker run -p 3000:3000 -v lunar-data:/app/data lunar
 
 # Or use Docker Compose
 docker compose up -d
@@ -194,7 +194,7 @@ docker compose up -d
 
 ### Railway
 
-FaaS-Go is ready to deploy on [Railway](https://railway.app):
+Lunar is ready to deploy on [Railway](https://railway.app):
 
 1. **Connect Repository** - Link your GitHub repository to Railway
 2. **Add Volume** - Create a volume and mount it to `/data`
@@ -210,7 +210,7 @@ The Dockerfile is Railway-compatible and will:
 
 ## Configuration
 
-FaaS-Go can be configured via environment variables:
+Lunar can be configured via environment variables:
 
 ```bash
 PORT=3000                 # HTTP server port (default: 3000)
@@ -224,7 +224,7 @@ BASE_URL=http://localhost:3000  # Base URL for the deployment (auto-detected if 
 
 The dashboard requires authentication via API key. You can:
 
-1. **Auto-generate** (recommended) - Let FaaS-Go generate a secure key on first run
+1. **Auto-generate** (recommended) - Let Lunar generate a secure key on first run
 2. **Set manually** - Provide your own key via the `API_KEY` environment variable
 
 API calls can authenticate using either:

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Type definitions for the FaaS Dashboard frontend.
+ * @fileoverview Type definitions for the Lunar Dashboard frontend.
  * These JSDoc typedefs provide IDE autocompletion and type checking.
  */
 
@@ -24,7 +24,7 @@
  */
 
 /**
- * @typedef {Object} FaaSFunction
+ * @typedef {Object} LunarFunction
  * @property {string} id - Function ID
  * @property {string} name - Function name
  * @property {string} [description] - Optional description
@@ -37,7 +37,7 @@
 
 /**
  * @typedef {Object} FunctionsListResponse
- * @property {FaaSFunction[]} functions - List of functions
+ * @property {LunarFunction[]} functions - List of functions
  * @property {Pagination} pagination - Pagination info
  */
 

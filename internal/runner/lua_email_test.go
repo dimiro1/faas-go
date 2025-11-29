@@ -9,12 +9,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dimiro1/faas-go/internal/email"
-	"github.com/dimiro1/faas-go/internal/env"
-	"github.com/dimiro1/faas-go/internal/events"
-	internalhttp "github.com/dimiro1/faas-go/internal/http"
-	"github.com/dimiro1/faas-go/internal/kv"
-	"github.com/dimiro1/faas-go/internal/logger"
+	"github.com/dimiro1/lunar/internal/email"
+	"github.com/dimiro1/lunar/internal/env"
+	"github.com/dimiro1/lunar/internal/events"
+	internalhttp "github.com/dimiro1/lunar/internal/http"
+	"github.com/dimiro1/lunar/internal/kv"
+	"github.com/dimiro1/lunar/internal/logger"
 )
 
 func TestRun_Email_MissingFrom(t *testing.T) {

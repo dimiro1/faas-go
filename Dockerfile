@@ -14,7 +14,7 @@ RUN go mod download
 COPY . .
 
 # Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags='-w -s' -o faas-go ./cmd
+RUN CGO_ENABLED=0 GOOS=linux go build -a -ldflags='-w -s' -o lunar ./cmd
 
 # Runtime stage
 FROM alpine:latest
@@ -25,7 +25,7 @@ RUN apk add --no-cache ca-certificates tzdata
 WORKDIR /app
 
 # Copy binary from builder
-COPY --from=builder /app/faas-go .
+COPY --from=builder /app/lunar .
 
 # Expose port
 EXPOSE 3000
@@ -35,4 +35,4 @@ ENV DATA_DIR=/data \
     EXECUTION_TIMEOUT=300
 
 # Run the application
-CMD ["./faas-go"]
+CMD ["./lunar"]

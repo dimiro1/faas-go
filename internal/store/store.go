@@ -1,4 +1,4 @@
-// Package store provides database interfaces and types for the FaaS application.
+// Package store provides database interfaces and types for the Lunar application.
 // It defines the DB interface for function, version, and execution operations,
 // along with core data types used throughout the application.
 package store
@@ -15,7 +15,7 @@ var (
 	ErrExecutionNotFound = errors.New("execution not found")
 )
 
-// DB defines the database interface for the FaaS API.
+// DB defines the database interface for the Lunar API.
 type DB interface {
 	// CreateFunction creates a new function. Returns the created function with
 	// timestamps populated.

@@ -9,7 +9,6 @@ import {
   TableEmpty,
   TableRow,
 } from "../../../js/components/table.js";
-import { Badge, BadgeVariant } from "../../../js/components/badge.js";
 import { CodeViewer } from "../../../js/components/code-viewer.js";
 
 describe("AIRequestViewer", () => {
@@ -246,8 +245,8 @@ describe("AIRequestViewer", () => {
       // Tokens are now displayed as [input, " in ", output, " out"]
       expect(Array.isArray(tokensCell.children)).toBe(true);
       expect(tokensCell.children.length).toBe(4);
-      expect(tokensCell.children[0].children).toBe(100);
-      expect(tokensCell.children[2].children).toBe(50);
+      expect(tokensCell.children[0].children[0].children).toBe("100");
+      expect(tokensCell.children[2].children[0].children).toBe("50");
     });
   });
 

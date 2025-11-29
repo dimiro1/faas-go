@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/dimiro1/faas-go/internal/events"
+	"github.com/dimiro1/lunar/internal/events"
 )
 
 const redactedValue = "[REDACTED]"

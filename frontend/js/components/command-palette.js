@@ -7,7 +7,7 @@ import { API } from "../api.js";
 import { paths } from "../routes.js";
 
 /**
- * @typedef {import('../types.js').FaaSFunction} FaaSFunction
+ * @typedef {import('../types.js').LunarFunction} lunarFunction
  */
 
 /**
@@ -57,7 +57,7 @@ export const CommandPalette = {
 
   /**
    * All loaded functions.
-   * @type {FaaSFunction[]}
+   * @type {LunarFunction[]}
    */
   functions: [],
 
