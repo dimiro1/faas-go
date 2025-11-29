@@ -15,6 +15,7 @@ import {
   CardDivider,
   CardFooter,
   CardHeader,
+  MaximizableCard,
 } from "../components/card.js";
 import {
   Badge,
@@ -66,6 +67,7 @@ import {
 } from "../components/diff-viewer.js";
 import { AIRequestViewer } from "../components/ai-request-viewer.js";
 import { EmailRequestViewer } from "../components/email-request-viewer.js";
+import { CodeEditor } from "../components/code-editor.js";
 
 /**
  * @typedef {import('../components/env-editor.js').EnvVar} EnvVar
@@ -164,6 +166,7 @@ export const Preview = {
     "api-reference",
     "log-viewer",
     "code-viewer",
+    "code-editor",
     "env-editor",
     "request-builder",
     "diff-viewer",
@@ -240,6 +243,8 @@ export const Preview = {
         return Preview.renderLogViewer();
       case "code-viewer":
         return Preview.renderCodeViewer();
+      case "code-editor":
+        return Preview.renderCodeEditor();
       case "env-editor":
         return Preview.renderEnvEditor();
       case "request-builder":
@@ -827,6 +832,84 @@ end`;
           }),
         ]),
       ]),
+    ]);
+  },
+
+  /**
+   * Renders code editor component previews.
+   * @returns {Object} Mithril vnode
+   */
+  renderCodeEditor: () => {
+    const sampleCode = `function handler(ctx, event)
+  -- Get name from query params
+  local name = "World"
+  if event.query and event.query.name then
+    name = event.query.name
+  end
+
+  log.info("Greeting: " .. name)
+
+  return {
+    statusCode = 200,
+    headers = { ["Content-Type"] = "application/json" },
+    body = json.encode({ message = "Hello, " .. name .. "!" })
+  }
+end`;
+
+    return m(".preview-section", [
+      m("h3", "Maximizable Card with Code Editor"),
+      m("p.preview-description", [
+        "Click the maximize button in the card header to expand the card. ",
+        "Press ",
+        m("kbd", "Esc"),
+        " or click outside to minimize.",
+      ]),
+      m(
+        MaximizableCard,
+        {
+          title: "main.lua",
+          icon: "code",
+          style: "max-width: 700px; margin-bottom: 1.5rem;",
+        },
+        m(CodeEditor, {
+          id: "preview-code-editor",
+          value: sampleCode,
+          height: "300px",
+        }),
+      ),
+
+      m("h3", "Without Maximize Button"),
+      m(Card, { style: "max-width: 700px; margin-bottom: 1.5rem;" }, [
+        m(CardHeader, { title: "Read-only snippet" }),
+        m(CardContent, { noPadding: true }, [
+          m(CodeEditor, {
+            id: "preview-code-editor-readonly",
+            value: `log.info("Hello!")`,
+            height: "80px",
+            readOnly: true,
+          }),
+        ]),
+      ]),
+
+      m("h3", "JSON Editor (Maximizable)"),
+      m(
+        MaximizableCard,
+        {
+          title: "config.json",
+          icon: "document",
+          style: "max-width: 700px;",
+        },
+        m(CodeEditor, {
+          id: "preview-code-editor-json",
+          value: `{
+  "name": "my-function",
+  "version": "1.0.0",
+  "description": "A sample function"
+}`,
+          language: "json",
+          height: "150px",
+        }),
+      ),
     ]);
   },
 

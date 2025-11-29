@@ -80,6 +80,7 @@ export const CardHeader = {
       icon,
       variant = CardVariant.DEFAULT,
       class: className = "",
+      actions = [],
       ...attrs
     } = vnode.attrs;
 
@@ -105,6 +106,9 @@ export const CardHeader = {
       .filter(Boolean)
       .join(" ");
 
+    // Use actions prop if provided, otherwise fall back to children
+    const actionsContent = actions.length > 0 ? actions : vnode.children;
+
     return m("div", { class: classes, ...attrs }, [
       m(".card__header-title-wrapper", [
         icon && m("span", { class: iconClasses }, m.trust(icons[icon]())),
@@ -115,7 +119,8 @@ export const CardHeader = {
           ])
           : m("h3", { class: titleClasses }, title),
       ]),
-      m(".card__header-title-wrapper", vnode.children),
+      actionsContent &&
+      m(".card__header-actions", actionsContent),
     ]);
   },
 };
@@ -197,5 +202,168 @@ export const CardDivider = {
    */
   view() {
     return m("hr.card__divider");
+  },
+};
+
+/**
+ * Maximize button component for card headers.
+ * @type {Object}
+ */
+export const CardMaximizeBtn = {
+  /**
+   * Renders the maximize button.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {() => void} vnode.attrs.onclick - Click handler to trigger maximize
+   * @returns {Object} Mithril vnode
+   */
+  view(vnode) {
+    return m(
+      "button.card-maximize-btn",
+      {
+        onclick: vnode.attrs.onclick,
+        title: "Maximize",
+      },
+      m.trust(icons.arrowsPointingOut()),
+    );
+  },
+};
+
+/**
+ * Maximizable Card component that can expand to fullscreen overlay.
+ * @type {Object}
+ */
+export const MaximizableCard = {
+  /**
+   * Renders the maximizable card.
+   * @param {Object} vnode - Mithril vnode
+   * @param {Object} vnode.attrs - Component attributes
+   * @param {string} vnode.attrs.title - Card header title
+   * @param {IconName} [vnode.attrs.icon] - Optional header icon
+   * @param {string} [vnode.attrs.variant='default'] - Color variant from CardVariant
+   * @param {Array} [vnode.attrs.headerActions=[]] - Additional header action elements
+   * @param {string} [vnode.attrs.class] - Additional CSS classes for the card
+   * @param {*} vnode.children - Child elements to render in card content
+   * @returns {Object} Mithril vnode
+   */
+  view(vnode) {
+    const {
+      title,
+      icon,
+      variant = CardVariant.DEFAULT,
+      headerActions = [],
+      class: className = "",
+      ...attrs
+    } = vnode.attrs;
+
+    // Initialize state
+    if (vnode.state.isMaximized === undefined) {
+      vnode.state.isMaximized = false;
+      vnode.state.escapeHandler = null;
+    }
+
+    /**
+     * Removes the global Escape key listener.
+     */
+    const removeEscapeListener = () => {
+      if (vnode.state.escapeHandler) {
+        document.removeEventListener("keydown", vnode.state.escapeHandler);
+        vnode.state.escapeHandler = null;
+      }
+    };
+
+    /**
+     * Closes the maximized view.
+     */
+    const closeMaximized = () => {
+      removeEscapeListener();
+      vnode.state.isMaximized = false;
+      m.redraw();
+    };
+
+    /**
+     * Sets up the global Escape key listener when maximized.
+     */
+    const setupEscapeListener = () => {
+      removeEscapeListener();
+      vnode.state.escapeHandler = (e) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          e.stopPropagation();
+          closeMaximized();
+        }
+      };
+      document.addEventListener("keydown", vnode.state.escapeHandler);
+    };
+
+    /**
+     * Toggles the maximized state.
+     */
+    const toggleMaximize = () => {
+      vnode.state.isMaximized = !vnode.state.isMaximized;
+      if (vnode.state.isMaximized) {
+        setupEscapeListener();
+      }
+      m.redraw();
+    };
+
+    /**
+     * Handles click events on the overlay background.
+     * @param {MouseEvent} e - Mouse event
+     */
+    const handleOverlayClick = (e) => {
+      if (e.target.classList.contains("card-maximized-overlay")) {
+        closeMaximized();
+      }
+    };
+
+    // Build header actions with maximize button
+    const allActions = [
+      ...headerActions,
+      m(CardMaximizeBtn, { onclick: toggleMaximize }),
+    ];
+
+    // Render maximized overlay if active
+    if (vnode.state.isMaximized) {
+      return m(
+        ".card-maximized-overlay",
+        {
+          onclick: handleOverlayClick,
+          onremove: removeEscapeListener,
+        },
+        m(".card-maximized", [
+          m(".card__header", [
+            m(".card__header-title-wrapper", [
+              icon &&
+              m(
+                "span.card__header-icon",
+                m.trust(icons[icon]()),
+              ),
+              m("h3.card__title", title),
+            ]),
+            m(
+              "button.card-maximized__close",
+              {
+                onclick: closeMaximized,
+                title: "Minimize",
+              },
+              m.trust(icons.arrowsPointingIn()),
+            ),
+          ]),
+          m(".card-maximized__content", vnode.children),
+        ]),
+      );
+    }
+
+    // Render normal card
+    return m(Card, { variant, class: className, ...attrs }, [
+      m(CardHeader, {
+        title,
+        icon,
+        variant,
+        actions: allActions,
+      }),
+      m(CardContent, { noPadding: true }, vnode.children),
+    ]);
   },
 };

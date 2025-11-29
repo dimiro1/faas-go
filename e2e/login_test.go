@@ -46,6 +46,7 @@ func TestLoginFlow(t *testing.T) {
 	).
 		WaitVisible(`input[type="password"]`).
 		Type(`input[type="password"]`, testAPIKey).
+		Sleep(200 * time.Millisecond).
 		Click(`button[type="submit"]`).
 		Sleep(1 * time.Second).
 		AssertURL("functions")

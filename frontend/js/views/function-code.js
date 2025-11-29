@@ -12,7 +12,7 @@ import {
   ButtonSize,
   ButtonVariant,
 } from "../components/button.js";
-import { Card, CardContent, CardHeader } from "../components/card.js";
+import { Card, CardContent, MaximizableCard } from "../components/card.js";
 import {
   Badge,
   BadgeSize,
@@ -173,29 +173,30 @@ export const FunctionCode = {
       // Content
       m(TabContent, [
         m(".code-tab-container", [
-          m(Card, { class: "code-card" }, [
-            m(CardHeader, {
-              title: `main.lua`,
+          m(
+            MaximizableCard,
+            {
+              title: "main.lua",
               icon: "code",
-              actions: [m("span.code-editor-lang", "lua")],
+              class: "code-card",
+              headerActions: [m("span.code-editor-lang", "lua")],
+            },
+            m(CodeEditor, {
+              id: "code-viewer",
+              height: "calc(100vh - 340px)",
+              value: FunctionCode.editedCode !== null
+                ? FunctionCode.editedCode
+                : func.active_version.code,
+              onChange: (value) => {
+                if (value !== func.active_version.code) {
+                  FunctionCode.editedCode = value;
+                } else {
+                  FunctionCode.editedCode = null;
+                }
+                m.redraw();
+              },
             }),
-            m(CardContent, { noPadding: true }, [
-              m(CodeEditor, {
-                id: "code-viewer",
-                value: FunctionCode.editedCode !== null
-                  ? FunctionCode.editedCode
-                  : func.active_version.code,
-                onChange: (value) => {
-                  if (value !== func.active_version.code) {
-                    FunctionCode.editedCode = value;
-                  } else {
-                    FunctionCode.editedCode = null;
-                  }
-                  m.redraw();
-                },
-              }),
-            ]),
-          ]),
+          ),
           m(".api-reference-sidebar", [
             m(APIReference, {
               sections: LuaAPISections,

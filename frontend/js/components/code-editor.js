@@ -582,61 +582,75 @@ export const CodeEditor = {
       height = "500px",
     } = vnode.attrs;
 
-    return m("div", {
-      id: id,
-      style: `height: ${height};`,
-      oncreate: (divVnode) => {
-        const container = divVnode.dom;
-        if (container) {
-          // Use require to load Monaco Editor from CDN
-          require(["vs/editor/editor.main"], function () {
-            if (!window.monaco) return;
+    /**
+     * Creates the Monaco editor in the given container.
+     * @param {HTMLElement} container - Container element
+     */
+    const createEditor = (container) => {
+      require(["vs/editor/editor.main"], function () {
+        if (!window.monaco) return;
 
-            registerGitHubDarkTheme();
-            registerLuaCompletions();
+        registerGitHubDarkTheme();
+        registerLuaCompletions();
 
-            const editor = monaco.editor.create(container, {
-              value: value || "",
-              language: language,
-              theme: theme,
-              readOnly: readOnly,
-              automaticLayout: true,
-              minimap: {
-                enabled: minimap,
-              },
-              lineNumbers: lineNumbers ? "on" : "off",
-              scrollBeyondLastLine: false,
-              fontSize: 14,
-              tabSize: 2,
-              suggestOnTriggerCharacters: true,
-              quickSuggestions: true,
-            });
+        const editor = monaco.editor.create(container, {
+          value: value || "",
+          language: language,
+          theme: theme,
+          readOnly: readOnly,
+          automaticLayout: true,
+          minimap: {
+            enabled: minimap,
+          },
+          lineNumbers: lineNumbers ? "on" : "off",
+          scrollBeyondLastLine: false,
+          fontSize: 14,
+          tabSize: 2,
+          suggestOnTriggerCharacters: true,
+          quickSuggestions: true,
+          padding: {
+            top: 8,
+            bottom: 8,
+          },
+        });
 
-            if (onChange) {
-              editor.onDidChangeModelContent(() => {
-                onChange(editor.getValue());
-              });
-            }
-
-            vnode.state.editor = editor;
+        if (onChange) {
+          editor.onDidChangeModelContent(() => {
+            onChange(editor.getValue());
           });
         }
-      },
-      onupdate: (divVnode) => {
-        if (vnode.state.editor && value !== vnode.state.editor.getValue()) {
-          const position = vnode.state.editor.getPosition();
-          vnode.state.editor.setValue(value || "");
-          if (position) {
-            vnode.state.editor.setPosition(position);
+
+        vnode.state.editor = editor;
+      });
+    };
+
+    // Render the editor container
+    return m(".code-editor-container", { style: `height: ${height};` }, [
+      m("div", {
+        id: id,
+        style: `height: ${height};`,
+        oncreate: (divVnode) => {
+          const container = divVnode.dom;
+          if (container) {
+            createEditor(container);
           }
-        }
-      },
-      onremove: () => {
-        if (vnode.state.editor) {
-          vnode.state.editor.dispose();
-          vnode.state.editor = null;
-        }
-      },
-    });
+        },
+        onupdate: () => {
+          if (vnode.state.editor && value !== vnode.state.editor.getValue()) {
+            const position = vnode.state.editor.getPosition();
+            vnode.state.editor.setValue(value || "");
+            if (position) {
+              vnode.state.editor.setPosition(position);
+            }
+          }
+        },
+        onremove: () => {
+          if (vnode.state.editor) {
+            vnode.state.editor.dispose();
+            vnode.state.editor = null;
+          }
+        },
+      }),
+    ]);
   },
 };

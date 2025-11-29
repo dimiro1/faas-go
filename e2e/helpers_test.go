@@ -357,6 +357,7 @@ func loginAndNavigate(srv *httptest.Server, path string) chromedp.Tasks {
 		chromedp.Navigate(srv.URL + "#!/login"),
 		chromedp.WaitVisible(`input[type="password"]`, chromedp.ByQuery),
 		chromedp.SendKeys(`input[type="password"]`, testAPIKey, chromedp.ByQuery),
+		chromedp.Sleep(100 * time.Millisecond),
 		chromedp.Click(`button[type="submit"]`, chromedp.ByQuery),
 		chromedp.Sleep(1 * time.Second),
 		chromedp.Navigate(srv.URL + path),
