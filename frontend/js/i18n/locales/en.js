@@ -243,6 +243,7 @@ export default {
     request: "Request",
     method: "Method",
     url: "URL",
+    requestUrl: "Request URL",
     queryParams: "Query Parameters",
     headers: "Headers (JSON)",
     requestBody: "Request Body",

@@ -245,6 +245,7 @@ export default {
     request: "Requisição",
     method: "Método",
     url: "URL",
+    requestUrl: "URL da requisição",
     queryParams: "Parâmetros de Query",
     headers: "Headers (JSON)",
     requestBody: "Corpo da Requisição",
