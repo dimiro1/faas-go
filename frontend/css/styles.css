@@ -7,13 +7,15 @@
   --color-surface-50: rgba(24, 24, 27, 0.5);
   --color-panel: #0d0d0d;
   --color-border: #27272a;
-  --color-subtle: #71717a;
+  --color-subtle: #9a9a9a;
+
   --color-text: #e4e4e7;
-  --color-text-muted: #71717a;
+  --color-text-muted: #9a9a9a;
   --color-primary: #fafafa;
   --color-accent: #3b82f6;
   --color-success: #10b981;
-  --color-danger: #ef4444;
+  --color-danger: #d62828;
+  --color-input-danger: #ff6b6b;
   --color-danger-bg: rgba(239, 68, 68, 0.1);
   --color-warning: #f59e0b;
   --color-api-ctx: #34d399;
@@ -863,7 +865,7 @@ main {
 }
 
 .form-input--error {
-  border-color: var(--color-danger);
+  border-color: var(--color-input-danger);
   background-color: var(--color-danger-bg);
 }
 
@@ -943,7 +945,7 @@ main {
 }
 
 .form-help--error {
-  color: var(--color-danger);
+  color: var(--color-input-danger);
 }
 
 .form-help--success {

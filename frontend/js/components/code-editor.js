@@ -379,8 +379,9 @@ const registerGitHubDarkTheme = () => {
       "editor.lineHighlightBackground": "#161b22",
       "editor.selectionBackground": "#264f78",
       "editorCursor.foreground": "#c9d1d9",
-      "editorLineNumber.foreground": "#484f58",
+      "editorLineNumber.foreground": "#7d8590",
       "editorLineNumber.activeForeground": "#c9d1d9",
+      "editorGutter.background": "#0d1117",
     },
   });
 };
