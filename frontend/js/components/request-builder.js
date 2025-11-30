@@ -84,7 +84,6 @@ export const RequestBuilder = {
             selected: method,
             onchange: (e) => onMethodChange && onMethodChange(e.target.value),
             ["aria-label"]: t("requestBuilder.method"),
-
           }),
           m(CopyInput, {
             value: url + (query ? `?${query}` : ""),
